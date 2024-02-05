@@ -10,48 +10,6 @@ namespace Systems.Ability
 {
     public class AbilitySystemComponent : MonoBehaviour
     {
-        private class GrantedAbility
-        {
-            private readonly Ability _ability;
-            private int _charges;
-            
-            public GrantedAbility(Ability ability)
-            {
-                _ability = ability;
-                _charges = ability.IsConsumableAbility() ? 1 : -1;
-            }
-
-            public bool IsConsumable()
-            {
-                return _ability.IsConsumableAbility();
-            }
-
-            public bool HasCharge()
-            {
-                return _charges > 0;
-            }
-
-            public Ability GetAbility()
-            {
-                return _ability;
-            }
-
-            public void ConsumeCharge()
-            {
-                _charges--;
-            }
-            
-            public void AddCharge()
-            {
-                _charges++;
-            }
-        }
-        
-        private Dictionary<string, GrantedAbility> _abilities = new ();
-        private Dictionary<KeyCode, string> _keyBindings = new ();
-        private Dictionary<string, float> _stats = new ();
-        [ItemCanBeNull] private Dictionary<string, IEnumerator> _runningAbilities = new ();
-
         /// <summary>
         /// Define a name/tag and float value pair that will be used and modified by the ability system.
         /// </summary>
@@ -141,7 +99,7 @@ namespace Systems.Ability
         }
 
         /// <summary>
-        /// Trigger an ability using its name.
+        /// Trigger an ability using its name. Handle its costs and charges.
         /// </summary>
         /// <param name="name">an ability name/tag</param>
         public void TriggerAbility(string name)
@@ -155,7 +113,7 @@ namespace Systems.Ability
         }
 
         /// <summary>
-        /// Handle the execution of the ability inside a Coroutine.
+        /// Handle the execution, charges, and costs of the ability inside a Coroutine.
         /// </summary>
         /// <param name="name">an ability name/tag</param>
         /// <returns></returns>
@@ -191,6 +149,7 @@ namespace Systems.Ability
                 _stats[cost.Key] -= cost.Value;
             }
             
+            //start ability
             _runningAbilities[name] = thisAbility.GetAbility().OnAbilityTriggered(gameObject);
             yield return StartCoroutine(_runningAbilities[name]); //wait for ability to complete
             
@@ -205,6 +164,7 @@ namespace Systems.Ability
                 yield break;
             } 
             
+            //mark ability as complete
             _runningAbilities[name] = null;
             
             //handle consumables
@@ -222,6 +182,7 @@ namespace Systems.Ability
         {
             if (_runningAbilities.ContainsKey(name) && _runningAbilities[name] != null)
             {
+                StopCoroutine(_runningAbilities[name]);
                 _runningAbilities[name] = null;
             }
         }
@@ -255,5 +216,47 @@ namespace Systems.Ability
                 }
             }
         }
+        
+        private class GrantedAbility
+        {
+            private readonly Ability _ability;
+            private int _charges;
+            
+            public GrantedAbility(Ability ability)
+            {
+                _ability = ability;
+                _charges = ability.IsConsumableAbility() ? 1 : -1;
+            }
+
+            public bool IsConsumable()
+            {
+                return _ability.IsConsumableAbility();
+            }
+
+            public bool HasCharge()
+            {
+                return _charges > 0;
+            }
+
+            public Ability GetAbility()
+            {
+                return _ability;
+            }
+
+            public void ConsumeCharge()
+            {
+                _charges--;
+            }
+            
+            public void AddCharge()
+            {
+                _charges++;
+            }
+        }
+        
+        private Dictionary<string, GrantedAbility> _abilities = new ();
+        private Dictionary<KeyCode, string> _keyBindings = new ();
+        private Dictionary<string, float> _stats = new ();
+        [ItemCanBeNull] private Dictionary<string, IEnumerator> _runningAbilities = new ();
     }
 }
