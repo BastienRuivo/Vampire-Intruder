@@ -152,18 +152,7 @@ namespace Systems.Ability
             //start ability
             _runningAbilities[name] = thisAbility.GetAbility().OnAbilityTriggered(gameObject);
             yield return StartCoroutine(_runningAbilities[name]); //wait for ability to complete
-            
-            //handle ability cancel
-            if (_runningAbilities[name] == null)
-            {
-                //revert ability costs
-                foreach (KeyValuePair<string,float> cost in costs)
-                {
-                    _stats[cost.Key] += cost.Value;
-                }
-                yield break;
-            } 
-            
+           
             //mark ability as complete
             _runningAbilities[name] = null;
             
@@ -184,6 +173,14 @@ namespace Systems.Ability
             {
                 StopCoroutine(_runningAbilities[name]);
                 _runningAbilities[name] = null;
+                
+                var costs = _abilities[name].GetAbility().GetAbilityCosts();
+                
+                //revert ability costs
+                foreach (KeyValuePair<string,float> cost in costs)
+                {
+                    _stats[cost.Key] += cost.Value;
+                }
             }
         }
 
@@ -192,7 +189,8 @@ namespace Systems.Ability
         /// </summary>
         public void CancelAbilities()
         {
-            foreach (string ability in _runningAbilities.Keys)
+            List<string> abilities = _runningAbilities.Keys.ToList();
+            foreach (string ability in abilities)
             {
                 CancelAbility(ability);
             }
@@ -258,5 +256,7 @@ namespace Systems.Ability
         private Dictionary<KeyCode, string> _keyBindings = new ();
         private Dictionary<string, float> _stats = new ();
         [ItemCanBeNull] private Dictionary<string, IEnumerator> _runningAbilities = new ();
+        
+        //todo add a way to affect stats of ASC from an ability.
     }
 }
