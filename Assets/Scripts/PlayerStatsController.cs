@@ -11,7 +11,7 @@ public class PlayerStatsController : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.LogWarning("Multiple XXX");
+            Debug.LogWarning("Multiple PlayerStatsController");
             return;
         }
         instance = this;
