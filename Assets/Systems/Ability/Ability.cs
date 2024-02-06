@@ -12,8 +12,6 @@ namespace Systems.Ability
 
         protected bool ConsumableAbility = false;
 
-        private bool _isInPlay;
-
         public Dictionary<string, float> GetAbilityCosts()
         {
             return AbilityCosts;
