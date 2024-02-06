@@ -13,9 +13,11 @@ namespace Systems.Ability
         /// </summary>
         /// <param name="name">a name/tag</param>
         /// <param name="baseValue">a default value</param>
-        public void DefineStat(string name, float baseValue = 0.0f)
+        /// <param name="lowerRange">minimum value</param>
+        /// <param name="upperRange">maximum value, disabled if equals 0</param>
+        public void DefineStat(string name, float baseValue = 0.0f, float lowerRange = 0.0f, float upperRange = 0.0f)
         {
-            if(!_stats.TryAdd(name, baseValue)) return;
+            if(!_stats.TryAdd(name, new Attribute(baseValue, lowerRange, upperRange))) return;
         }
         
         /// <param name="name">name/tag associated with this stat.</param>
@@ -27,7 +29,7 @@ namespace Systems.Ability
                 Debug.LogError($"Attempted to query unknown stat with name \"{name}\"");
                 return -1; //TODO throw exception here
             }
-            return _stats[name];
+            return _stats[name].GetValue();
         }
         
         /// <param name="name">name/tag associated with this stat.</param>
@@ -54,6 +56,23 @@ namespace Systems.Ability
             if(_abilities[name].HasCharge())
                 return _abilities[name].GetRemainingCharges();
             return -1;
+        }
+
+        /// <param name="name">name/tag associated with this stat.</param>
+        /// <param name="statName"></param>
+        /// <returns>the remaining charges if the ability is a consumable, else returns -1.</returns>
+        public float QueryAbilityCosts(string name, string statName)
+        {
+            if (!_abilities.ContainsKey(name))
+            {
+                Debug.LogError($"Attempted to query state data from unknown ability with name \"{name}\"");
+                return -1; //TODO throw exception here
+            }
+
+            if (_abilities[name].GetAbility().GetAbilityCosts().ContainsKey(statName))
+                return _abilities[name].GetAbility().GetAbilityCosts()[statName];
+            
+            return 0.0f;
         }
 
         /// <summary>
@@ -167,7 +186,7 @@ namespace Systems.Ability
             
             //block excecution of abilities that are not ready to use (no charges or in cooldown)
             if (thisAbility.IsConsumable() && !(thisAbility.HasCharge())) yield break;
-            if (thisAbility.HasCharge() && thisAbility.IsInCooldown()) yield break;
+            if (thisAbility.HasCooldown() && thisAbility.IsInCooldown()) yield break;
             
             //check ability costs
             var costs = thisAbility.GetAbility().GetAbilityCosts();
@@ -181,7 +200,7 @@ namespace Systems.Ability
                     break;
                 } //todo throw error here
                 
-                if(_stats[cost.Key] < cost.Value)
+                if(_stats[cost.Key].CanAffordSubtraction(cost.Value))
                 {
                     isAbilityValid = false;
                     break;
@@ -379,10 +398,68 @@ namespace Systems.Ability
                 return _binding;
             }
         }
+
+        private class Attribute
+        {
+            private float _value;
+            private readonly float _rangeMin;
+            private readonly float _rangeMax;
+
+            public Attribute(float value, float rangeMin = 0, float rangeMax = 0)
+            {
+                if (value < rangeMax || (HasUpperBounds() && value > rangeMax))
+                {
+                    Debug.LogWarning("Attribute default value out of range.");
+                    Clamp();
+                }
+                
+                _value = value;
+                _rangeMin = rangeMin;
+                _rangeMax = rangeMax;
+            }
+
+            public bool CanAffordSubtraction(float v)
+            {
+                return v > (_value - _rangeMin);
+            }
+
+            public float GetValue()
+            {
+                return _value;
+            }
+            
+            private void Clamp()
+            {
+                _value = (HasUpperBounds() && _value > _rangeMax) ? _rangeMax : _value < _rangeMin ? _rangeMin : _value;
+            }
+
+
+            private static Attribute Clamp(Attribute a)
+            {
+                a.Clamp();
+                return a;
+            }
+
+            public static Attribute operator + (Attribute a, float v)
+            {
+                a._value += v;
+                return Clamp(a);
+            }
+            
+            public static Attribute operator - (Attribute a, float v)
+            {
+                return a + -1 * v;
+            }
+
+            private bool HasUpperBounds()
+            {
+                return _rangeMax > 0;
+            }
+        }
         
         private readonly Dictionary<string, GrantedAbility> _abilities = new ();
         private readonly Dictionary<KeyCode, string> _keyBindings = new ();
-        private readonly Dictionary<string, float> _stats = new ();
+        private readonly Dictionary<string, Attribute> _stats = new ();
         [ItemCanBeNull] private readonly Dictionary<string, IEnumerator> _runningAbilities = new ();
         
         //todo add a way to affect stats of ASC from an ability.

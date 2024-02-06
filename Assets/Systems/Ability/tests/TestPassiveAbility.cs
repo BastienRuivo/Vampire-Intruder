@@ -20,7 +20,7 @@ namespace Systems.Ability.tests
             //RefundOnCancel = false; //true by default.
             
             //Specify the ability cooldown.
-            //Cooldown = 1.0f; //-1 aka cooldown disabled by default.
+            Cooldown = 2.0f; //-1 aka cooldown disabled by default.
             
             //Add the ability stat costs here.
             //AbilityCosts.Add("Blood", 15);
