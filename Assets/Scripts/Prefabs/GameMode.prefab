@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba75133f55b17384797a62374c655d9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameEventTickTime: 60
+  gameEventTickTime: 10
   gameEventTickCount: 12
 --- !u!82 &8049043940307857882
 AudioSource:
