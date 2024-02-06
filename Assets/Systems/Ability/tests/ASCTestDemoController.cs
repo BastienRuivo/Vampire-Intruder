@@ -19,6 +19,7 @@ public class ASCTestAsync : MonoBehaviour
         
         //Grant ability. For consumable ones this will just increment the available charge count if the ability has already been granted.
         _ascRef.GrantAbility<TestAbility>("TestAbility");
+        _ascRef.GrantAbility<TestPassiveAbility>("TestPassiveAbility");
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TestAbility", KeyCode.A);
