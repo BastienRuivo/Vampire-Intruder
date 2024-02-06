@@ -380,10 +380,10 @@ namespace Systems.Ability
             }
         }
         
-        private Dictionary<string, GrantedAbility> _abilities = new ();
-        private Dictionary<KeyCode, string> _keyBindings = new ();
-        private Dictionary<string, float> _stats = new ();
-        [ItemCanBeNull] private Dictionary<string, IEnumerator> _runningAbilities = new ();
+        private readonly Dictionary<string, GrantedAbility> _abilities = new ();
+        private readonly Dictionary<KeyCode, string> _keyBindings = new ();
+        private readonly Dictionary<string, float> _stats = new ();
+        [ItemCanBeNull] private readonly Dictionary<string, IEnumerator> _runningAbilities = new ();
         
         //todo add a way to affect stats of ASC from an ability.
     }
