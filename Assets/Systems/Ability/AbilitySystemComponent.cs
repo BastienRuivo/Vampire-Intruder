@@ -93,6 +93,12 @@ namespace Systems.Ability
         /// <param name="code">a key code</param>
         public void BindAbility(string name, KeyCode code)
         {
+            if (code == KeyCode.None)
+            {
+                Debug.LogWarning($"Unable to bind ability \"{name}\" to key None. Consider using UnbindAbility instead.");
+                return;
+            }
+            
             if (!_abilities.ContainsKey(name))
             {
                 Debug.LogError($"Unable to bind unknown ability \"{name}\".");
@@ -101,8 +107,20 @@ namespace Systems.Ability
             
             if(_keyBindings.TryAdd(code, name))
                 return;
+            
+            //handle unbinding of previous ability
+            _abilities[_keyBindings[code]].Bind(KeyCode.None);
+            
+            //handle removing previous binding of new ability
+            if (_abilities[name].GetBinding() != KeyCode.None)
+            {
+                _keyBindings.Remove(_abilities[name].GetBinding());
+                _abilities[name].Bind(KeyCode.None);
+            }
 
+            //Commit binding
             _keyBindings[code] = name;
+            _abilities[name].Bind(code);
         }
 
         /// <summary>
@@ -113,6 +131,8 @@ namespace Systems.Ability
         {
             if(!_keyBindings.ContainsKey(code)) return;
 
+            _abilities[_keyBindings[code]].Bind(KeyCode.None);
+            
             _keyBindings.Remove(code);
         }
         
@@ -275,6 +295,8 @@ namespace Systems.Ability
             private int _charges;
             private float _currentCooldown;
             private bool _inCooldown = false;
+
+            private KeyCode _binding = KeyCode.None;
             
             public GrantedAbility(Ability ability)
             {
@@ -345,6 +367,16 @@ namespace Systems.Ability
                     Debug.LogError("Tried to put in cooldown an ability that was already in this state.");
                 _inCooldown = true;
                 _currentCooldown = _ability.GetCooldown();
+            }
+
+            public void Bind(KeyCode code)
+            {
+                _binding = code;
+            }
+
+            public KeyCode GetBinding()
+            {
+                return _binding;
             }
         }
         
