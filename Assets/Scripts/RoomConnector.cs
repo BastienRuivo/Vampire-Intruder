@@ -34,14 +34,31 @@ public class RoomConnector : MonoBehaviour
         SetRoomVisibility(currentRoom, 1.0f);
         SetRoomVisibility(targetRoom, 1.0f);
         targetWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
+        currentWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
 
+    }
+
+    void ResetMaterial(GameObject obj)
+    {
+        if (obj == null) return;
+        if (obj.GetComponent<Renderer>().material.name.Contains(defaultMtl.name))
+        {
+            obj.GetComponent<Renderer>().material.color = defaultMtl.color;
+        }
+        else
+        {
+            obj.GetComponent<Renderer>().material.color = transparentMtl.color;
+        }
     }
 
     public void Exit()
     {
-        currentWalls.GetComponent<Renderer>().material.color = defaultMtl.color;
+        ResetMaterial(targetWalls);
+        ResetMaterial(currentWalls);
         roomFadeAway = DisableRoom(targetRoom);
         StartCoroutine(roomFadeAway);
+
+        PlayerStatsController.instance.currentRoom = currentRoom;
     }
 
     private void SetRoomVisibility(GameObject roomRoot, float value)

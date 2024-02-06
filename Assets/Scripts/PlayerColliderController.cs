@@ -7,7 +7,6 @@ using UnityEngine;
 public class PlayerColliderController : MonoBehaviour
 {
     private int exitLock = 0;
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("Enter tag " + collision.gameObject.tag);
