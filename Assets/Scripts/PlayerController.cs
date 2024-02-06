@@ -83,42 +83,49 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
-        float hAxis = Input.GetAxis("Horizontal");
-        float vAxis = Input.GetAxis("Vertical");
+        float hAxis = 0f;
+        float vAxis = 0f;
+        if (PlayerStatsController.instance.CanMove())
+        {
+            hAxis = Input.GetAxis("Horizontal");
+            vAxis = Input.GetAxis("Vertical");
+        }
         
-        if(hAxis > 0 && vAxis == 0)
+        if(hAxis != 0 && vAxis != 0) 
         {
-            directionPerso = Direction.Left;
+            if(hAxis > 0 && vAxis == 0)
+            {
+                directionPerso = Direction.Left;
+            }
+            if(hAxis > 0 && vAxis > 0)
+            {
+                directionPerso = Direction.UpRight;
+            }
+            if(hAxis == 0 && vAxis > 0)
+            {
+                directionPerso = Direction.Up;
+            }
+            if(hAxis < 0 && vAxis > 0)
+            {
+                directionPerso = Direction.UpLeft;
+            }
+            if(hAxis < 0 && vAxis == 0)
+            {
+                directionPerso = Direction.Right;
+            }
+            if(hAxis < 0 && vAxis < 0)
+            {
+                directionPerso = Direction.BackLeft;
+            }
+            if(hAxis == 0 && vAxis < 0)
+            {
+                directionPerso = Direction.Back;
+            }
+            if(hAxis > 0 && vAxis < 0)
+            {
+                directionPerso = Direction.BackRight;
+            }
         }
-        if(hAxis > 0 && vAxis > 0)
-        {
-            directionPerso = Direction.UpRight;
-        }
-        if(hAxis == 0 && vAxis > 0)
-        {
-            directionPerso = Direction.Up;
-        }
-        if(hAxis < 0 && vAxis > 0)
-        {
-            directionPerso = Direction.UpLeft;
-        }
-        if(hAxis < 0 && vAxis == 0)
-        {
-            directionPerso = Direction.Right;
-        }
-        if(hAxis < 0 && vAxis < 0)
-        {
-            directionPerso = Direction.BackLeft;
-        }
-        if(hAxis == 0 && vAxis < 0)
-        {
-            directionPerso = Direction.Back;
-        }
-        if(hAxis > 0 && vAxis < 0)
-        {
-            directionPerso = Direction.BackRight;
-        }
-
 
         Vector3 direction = new Vector3(hAxis, vAxis, 0).normalized;
         rigidBody.velocity = direction * speed * Time.deltaTime;

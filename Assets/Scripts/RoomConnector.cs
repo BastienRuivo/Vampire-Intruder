@@ -26,6 +26,7 @@ public class RoomConnector : MonoBehaviour
     public void Enter()
     {
         RoomConnector rm = targetCollider.GetComponent<RoomConnector>();
+        // Disable Coroutine if one is already started
         if (rm.roomFadeAway != null)
         {
             StopCoroutine(roomFadeAway);
@@ -55,6 +56,8 @@ public class RoomConnector : MonoBehaviour
     {
         ResetMaterial(targetWalls);
         ResetMaterial(currentWalls);
+
+        // Start coroutine
         roomFadeAway = DisableRoom(targetRoom);
         StartCoroutine(roomFadeAway);
 
