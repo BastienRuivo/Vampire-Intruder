@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DefaultNamespace;
 using Interfaces;
 using UnityEngine;
@@ -38,9 +39,11 @@ public struct GameState
     }
 }// todo remove if unused
 
+
 public class GameController : MonoBehaviour
 {
     /// <returns>Game Mode Controller.</returns>
+    /// 
     public static GameController GetGameMode()
     {
         if (GameObject.FindGameObjectsWithTag("GameController").Length != 0)
@@ -54,7 +57,10 @@ public class GameController : MonoBehaviour
     public float gameEventTickTime = 60.0f;
     [FormerlySerializedAs("GameEventTickCount")] 
     public int gameEventTickCount = 12;
-    
+
+    [Header("Rooms")]
+    public List<GameObject> rooms;
+
     private AudioSource _bellAudioSource;
     
     private int _eventCount = 0;
@@ -143,6 +149,21 @@ public class GameController : MonoBehaviour
         _bellAudioSource = GetComponent<AudioSource>();
         
         SubscribeToGameEvent(new TestEventReceiver());
+        HideOtherMaps();
+    }
+
+    private void HideOtherMaps()
+    {
+        rooms.Where(obj => obj.name != PlayerStatsController.instance.currentRoom.name).ToList().ForEach(obj =>
+        {
+            var renderers = obj.GetComponentsInChildren<Renderer>();
+            foreach (var r in renderers)
+            {
+                Color c = r.material.color;
+                c.a = 0f;
+                r.material.color = c;
+            }
+        });
     }
 
     // Update is called once per frame
