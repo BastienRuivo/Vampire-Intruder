@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -15,9 +13,11 @@ namespace Systems.Ability
         /// </summary>
         /// <param name="name">a name/tag</param>
         /// <param name="baseValue">a default value</param>
-        public void DefineStat(string name, float baseValue = 0.0f)
+        /// <param name="lowerRange">minimum value</param>
+        /// <param name="upperRange">maximum value, disabled if equals 0</param>
+        public void DefineStat(string name, float baseValue = 0.0f, float lowerRange = 0.0f, float upperRange = 0.0f)
         {
-            if(!_stats.TryAdd(name, baseValue)) return;
+            if(!_stats.TryAdd(name, new Attribute(baseValue, lowerRange, upperRange))) return;
         }
         
         /// <param name="name">name/tag associated with this stat.</param>
@@ -29,7 +29,50 @@ namespace Systems.Ability
                 Debug.LogError($"Attempted to query unknown stat with name \"{name}\"");
                 return -1; //TODO throw exception here
             }
-            return _stats[name];
+            return _stats[name].GetValue();
+        }
+        
+        /// <param name="name">name/tag associated with this stat.</param>
+        /// <returns>The remaining cooldown of an ability.</returns>
+        public float QueryAbilityCooldown(string name)
+        {
+            if (!_abilities.ContainsKey(name))
+            {
+                Debug.LogError($"Attempted to query state data from unknown ability with name \"{name}\"");
+                return -1; //TODO throw exception here
+            }
+            return _abilities[name].GetCurrentCooldown();
+        }
+        
+        /// <param name="name">name/tag associated with this stat.</param>
+        /// <returns>the remaining charges if the ability is a consumable, else returns -1.</returns>
+        public int QueryAbilityCharges(string name)
+        {
+            if (!_abilities.ContainsKey(name))
+            {
+                Debug.LogError($"Attempted to query state data from unknown ability with name \"{name}\"");
+                return -1; //TODO throw exception here
+            }
+            if(_abilities[name].HasCharge())
+                return _abilities[name].GetRemainingCharges();
+            return -1;
+        }
+
+        /// <param name="name">name/tag associated with this stat.</param>
+        /// <param name="statName"></param>
+        /// <returns>the remaining charges if the ability is a consumable, else returns -1.</returns>
+        public float QueryAbilityCosts(string name, string statName)
+        {
+            if (!_abilities.ContainsKey(name))
+            {
+                Debug.LogError($"Attempted to query state data from unknown ability with name \"{name}\"");
+                return -1; //TODO throw exception here
+            }
+
+            if (_abilities[name].GetAbility().GetAbilityCosts().ContainsKey(statName))
+                return _abilities[name].GetAbility().GetAbilityCosts()[statName];
+            
+            return 0.0f;
         }
 
         /// <summary>
@@ -69,6 +112,12 @@ namespace Systems.Ability
         /// <param name="code">a key code</param>
         public void BindAbility(string name, KeyCode code)
         {
+            if (code == KeyCode.None)
+            {
+                Debug.LogWarning($"Unable to bind ability \"{name}\" to key None. Consider using UnbindAbility instead.");
+                return;
+            }
+            
             if (!_abilities.ContainsKey(name))
             {
                 Debug.LogError($"Unable to bind unknown ability \"{name}\".");
@@ -77,8 +126,20 @@ namespace Systems.Ability
             
             if(_keyBindings.TryAdd(code, name))
                 return;
+            
+            //handle unbinding of previous ability
+            _abilities[_keyBindings[code]].Bind(KeyCode.None);
+            
+            //handle removing previous binding of new ability
+            if (_abilities[name].GetBinding() != KeyCode.None)
+            {
+                _keyBindings.Remove(_abilities[name].GetBinding());
+                _abilities[name].Bind(KeyCode.None);
+            }
 
+            //Commit binding
             _keyBindings[code] = name;
+            _abilities[name].Bind(code);
         }
 
         /// <summary>
@@ -89,6 +150,8 @@ namespace Systems.Ability
         {
             if(!_keyBindings.ContainsKey(code)) return;
 
+            _abilities[_keyBindings[code]].Bind(KeyCode.None);
+            
             _keyBindings.Remove(code);
         }
         
@@ -120,9 +183,12 @@ namespace Systems.Ability
         private IEnumerator HandleAbility(string name)
         {
             GrantedAbility thisAbility = _abilities[name];
-            if (thisAbility.IsConsumable() && !(thisAbility.HasCharge())) yield break;
             
-            //check costs
+            //block excecution of abilities that are not ready to use (no charges or in cooldown)
+            if (thisAbility.IsConsumable() && !(thisAbility.HasCharge())) yield break;
+            if (thisAbility.HasCooldown() && thisAbility.IsInCooldown()) yield break;
+            
+            //check ability costs
             var costs = thisAbility.GetAbility().GetAbilityCosts();
             bool isAbilityValid = true;
             foreach (KeyValuePair<string,float> cost in costs)
@@ -134,7 +200,7 @@ namespace Systems.Ability
                     break;
                 } //todo throw error here
                 
-                if(_stats[cost.Key] < cost.Value)
+                if(_stats[cost.Key].CanAffordSubtraction(cost.Value))
                 {
                     isAbilityValid = false;
                     break;
@@ -156,6 +222,10 @@ namespace Systems.Ability
             //mark ability as complete
             _runningAbilities[name] = null;
             
+            //handle cooldown
+            if(thisAbility.HasCooldown())
+                thisAbility.Cooldown();
+            
             //handle consumables
             if (!thisAbility.IsConsumable()) yield break;
             thisAbility.ConsumeCharge();
@@ -169,18 +239,20 @@ namespace Systems.Ability
         /// <param name="name">an ability name/tag</param>
         public void CancelAbility(string name)
         {
-            if (_runningAbilities.ContainsKey(name) && _runningAbilities[name] != null)
+            if (!_runningAbilities.ContainsKey(name) || _runningAbilities[name] == null)
+                return;
+            
+            StopCoroutine(_runningAbilities[name]);
+            _runningAbilities[name] = null;
+
+            if (!_abilities[name].GetAbility().DoRefundOnCancel()) return;
+            
+            var costs = _abilities[name].GetAbility().GetAbilityCosts();
+            
+            //revert ability costs
+            foreach (KeyValuePair<string,float> cost in costs)
             {
-                StopCoroutine(_runningAbilities[name]);
-                _runningAbilities[name] = null;
-                
-                var costs = _abilities[name].GetAbility().GetAbilityCosts();
-                
-                //revert ability costs
-                foreach (KeyValuePair<string,float> cost in costs)
-                {
-                    _stats[cost.Key] += cost.Value;
-                }
+                _stats[cost.Key] += cost.Value;
             }
         }
 
@@ -205,6 +277,27 @@ namespace Systems.Ability
         // Update is called once per frame
         void Update()
         {
+            //Solve abilities cooldown
+            foreach (KeyValuePair<string, GrantedAbility> ability in _abilities)
+            {
+                GrantedAbility abilityToCheck = ability.Value;
+                if (abilityToCheck.HasCooldown() && abilityToCheck.IsInCooldown())
+                {
+                    abilityToCheck.UpdateCooldown();
+                }
+            }
+            
+            //Handle passive/self-triggering abilities
+            foreach (KeyValuePair<string, GrantedAbility> ability in _abilities)
+            {
+                Ability abilityToCheck = ability.Value.GetAbility();
+                if (abilityToCheck.IsSelfTriggeringAbility())
+                {
+                    if(abilityToCheck.ShouldAbilityTrigger(gameObject))
+                        TriggerAbility(ability.Key);
+                }
+            }
+            
             //Auto trigger abilities bound to input keys
             foreach (KeyValuePair<KeyCode,string> binding in _keyBindings)
             {
@@ -219,11 +312,16 @@ namespace Systems.Ability
         {
             private readonly Ability _ability;
             private int _charges;
+            private float _currentCooldown;
+            private bool _inCooldown = false;
+
+            private KeyCode _binding = KeyCode.None;
             
             public GrantedAbility(Ability ability)
             {
                 _ability = ability;
                 _charges = ability.IsConsumableAbility() ? 1 : -1;
+                _currentCooldown = ability.GetCooldown() > 0 ? 0 : -1;
             }
 
             public bool IsConsumable()
@@ -234,6 +332,11 @@ namespace Systems.Ability
             public bool HasCharge()
             {
                 return _charges > 0;
+            }
+
+            public int GetRemainingCharges()
+            {
+                return _charges;
             }
 
             public Ability GetAbility()
@@ -250,12 +353,114 @@ namespace Systems.Ability
             {
                 _charges++;
             }
+
+            public bool HasCooldown()
+            {
+                return _ability.GetCooldown() > 0;
+            }
+
+            public bool IsInCooldown()
+            {
+                return _inCooldown;
+            }
+
+            public float GetCurrentCooldown()
+            {
+                return _currentCooldown;
+            }
+
+            public void UpdateCooldown()
+            {
+                if (!HasCooldown())
+                    return;
+                _currentCooldown -= Time.deltaTime;
+                if (_currentCooldown <= 0)
+                    _inCooldown = false;
+            }
+
+            public void Cooldown()
+            {
+                if (!HasCooldown())
+                    return;
+                if(_inCooldown) 
+                    Debug.LogError("Tried to put in cooldown an ability that was already in this state.");
+                _inCooldown = true;
+                _currentCooldown = _ability.GetCooldown();
+            }
+
+            public void Bind(KeyCode code)
+            {
+                _binding = code;
+            }
+
+            public KeyCode GetBinding()
+            {
+                return _binding;
+            }
+        }
+
+        private class Attribute
+        {
+            private float _value;
+            private readonly float _rangeMin;
+            private readonly float _rangeMax;
+
+            public Attribute(float value, float rangeMin = 0, float rangeMax = 0)
+            {
+                if (value < rangeMax || (HasUpperBounds() && value > rangeMax))
+                {
+                    Debug.LogWarning("Attribute default value out of range.");
+                    Clamp();
+                }
+                
+                _value = value;
+                _rangeMin = rangeMin;
+                _rangeMax = rangeMax;
+            }
+
+            public bool CanAffordSubtraction(float v)
+            {
+                return v > (_value - _rangeMin);
+            }
+
+            public float GetValue()
+            {
+                return _value;
+            }
+            
+            private void Clamp()
+            {
+                _value = (HasUpperBounds() && _value > _rangeMax) ? _rangeMax : _value < _rangeMin ? _rangeMin : _value;
+            }
+
+
+            private static Attribute Clamp(Attribute a)
+            {
+                a.Clamp();
+                return a;
+            }
+
+            public static Attribute operator + (Attribute a, float v)
+            {
+                a._value += v;
+                return Clamp(a);
+            }
+            
+            public static Attribute operator - (Attribute a, float v)
+            {
+                return a + -1 * v;
+            }
+
+            private bool HasUpperBounds()
+            {
+                return _rangeMax > 0;
+            }
         }
         
-        private Dictionary<string, GrantedAbility> _abilities = new ();
-        private Dictionary<KeyCode, string> _keyBindings = new ();
-        private Dictionary<string, float> _stats = new ();
-        [ItemCanBeNull] private Dictionary<string, IEnumerator> _runningAbilities = new ();
+        private readonly Dictionary<string, GrantedAbility> _abilities = new ();
+        private readonly Dictionary<KeyCode, string> _keyBindings = new ();
+        private readonly Dictionary<string, Attribute> _stats = new ();
+        [ItemCanBeNull] private readonly Dictionary<string, IEnumerator> _runningAbilities = new ();
         
         //todo add a way to affect stats of ASC from an ability.
     }
