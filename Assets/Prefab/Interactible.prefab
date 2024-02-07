@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1541939039910489340}
   m_Layer: 0
   m_Name: Interactible
-  m_TagString: Untagged
+  m_TagString: Interactible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -54,7 +54,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: dcaee032ea75bea4d958dc891846c5c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 6e43e4d31e52a18419d0652b58b71a29, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!61 &7286355327672963702
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -144,4 +144,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  afterUse: 0
+  replacementSprite: {fileID: 0}
+  reference: 
+  objectivePhrase: 
+  isMainObjective: 0
+  glowColor: {r: 1, g: 0.8194418, b: 0, a: 0}
   duration: 10
+  currentTime: 0
+  isActive: 0
+  isColliding: 0
+  interacted: 0

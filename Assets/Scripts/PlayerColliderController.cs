@@ -24,6 +24,11 @@ public class PlayerColliderController : MonoBehaviour
             }
             exitLock++;
         }
+
+        if (collision.gameObject.tag == "Interactible")
+        {
+            collision.gameObject.GetComponent<Interaction>().StartCollision();
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -40,6 +45,11 @@ public class PlayerColliderController : MonoBehaviour
             if(exitLock == 1)
                 collision.gameObject.GetComponent<RoomConnector>().Exit();
             exitLock--;
+        }
+
+        if (collision.gameObject.tag == "Interactible")
+        {
+            collision.gameObject.GetComponent<Interaction>().EndCollision();
         }
     }
 }
