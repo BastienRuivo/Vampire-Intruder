@@ -99,6 +99,11 @@ public class GameController : MonoBehaviour
         Debug.Log("Level failed (Captured).");
     }
 
+    public float GetGameTimeProgression()
+    {
+        return (_eventTime + _eventCount * gameEventTickTime) / (gameEventTickTime * gameEventTickCount);
+    }
+
     /// <summary>
     /// Subscribe to Game Mode's Game Event
     /// </summary>
