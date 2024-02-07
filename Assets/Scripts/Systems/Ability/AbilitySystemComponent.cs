@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DefaultNamespace;
+using Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -30,6 +32,24 @@ namespace Systems.Ability
                 return -1; //TODO throw exception here
             }
             return _stats[name].GetValue();
+        }
+
+        /// <summary>
+        /// Subscribe to events caused by any change in stats. Context is the game object owner of this ability system.
+        /// </summary>
+        /// <param name="observer">subscriber object</param>
+        public void SubscribeToStatChanges(IEventObserver<GameObject> observer)
+        {
+            _statChangeEventDispatcher.Subscribe(observer);
+        }
+
+        /// <summary>
+        /// Unsubscribe from events caused by any change in stats.
+        /// </summary>
+        /// <param name="observer">subscriber object</param>
+        public void UnsubscribeToStatChanges(IEventObserver<GameObject> observer)
+        {
+            _statChangeEventDispatcher.Unsubscribe(observer);
         }
         
         /// <param name="name">name/tag associated with this stat.</param>
@@ -215,6 +235,8 @@ namespace Systems.Ability
                 _stats[cost.Key] -= cost.Value;
             }
             
+            if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
+            
             //start ability
             _runningAbilities[name] = thisAbility.GetAbility().OnAbilityTriggered(gameObject);
             yield return StartCoroutine(_runningAbilities[name]); //wait for ability to complete
@@ -254,6 +276,8 @@ namespace Systems.Ability
             {
                 _stats[cost.Key] += cost.Value;
             }
+            
+            if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
         }
 
         /// <summary>
@@ -462,7 +486,7 @@ namespace Systems.Ability
         private readonly Dictionary<string, Attribute> _stats = new ();
         [ItemCanBeNull] private readonly Dictionary<string, IEnumerator> _runningAbilities = new ();
 
-        //private EventDispatcher<float> t;
+        private EventDispatcher<GameObject> _statChangeEventDispatcher;
 
         //todo add a way to affect stats of ASC from an ability.
     }
