@@ -1,7 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Experimental.Rendering;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public enum AlertStage
 {
@@ -12,57 +16,104 @@ public enum AlertStage
 
 public class GuardManager : MonoBehaviour
 {
-    public bool playerInFOV;
     public LayerMask visionMask;
 
     public AlertStage alertStage;
     [Range(0,100)]  public float alertLevel; // 0-100
+    [Range(1,5)]  public float viewDistance = 3.5f; // 0-100
 
+    [FormerlySerializedAs("TraceResolution")] public uint traceResolution = 128;
+    
+    private float _foVThetaMin;
+    private float _foVThetaMax;
+
+    private bool _playerInFOV;
+    private bool _playerInRange;
+
+    //Cone trace
+    private GameObject _visionCone;
+    private Texture2D _linearShadowMap;
+    private Color[] _shadowMapData;
+    private Vector2 _firstDir;
+    private float _coneAngle;
+    private float _coneAngleMin;
+    
     private void Awake() {
         alertStage = AlertStage.Idle;
         alertLevel = 0;
     }
 
-    private void Update() {
-        updateAlertStage(playerInFOV);
-
-        Color c = Color.green;
-        if(alertStage == AlertStage.Suspicious)
-            c = Color.Lerp(Color.green, Color.red, alertLevel/100);
-        if(alertStage == AlertStage.Alerted){
-            if(playerInFOV){
-                playerInFOV = false;
-                GameController.GetGameMode().GetCaught();
-            }
-                
-            c = Color.red;
+    private void Start()
+    {
+        _linearShadowMap = new Texture2D((int)traceResolution, 1, TextureFormat.RFloat, false);
+        _shadowMapData = new Color[traceResolution] ;
+        for (var i = 0; i < _shadowMapData.Length; i++)
+        {
+            _shadowMapData[i] = new Color(0,0,0);
         }
-        GetComponent<SpriteRenderer>().color = c;
+        _linearShadowMap.SetPixels(_shadowMapData);
+        _linearShadowMap.Apply();
+        
+        //find children
+        foreach (Transform child in transform.GetChild(0).transform)
+        {
+            if (!child.gameObject.CompareTag("EnemyVisionDecal")) continue;
+            _visionCone = child.gameObject;
+            child.gameObject.GetComponent<SpriteRenderer>().material.SetTexture("_ShadowMap", _linearShadowMap);
+        }
+    }
+
+    private void Update()
+    {
+        
+        GameObject player = GetPlayer();
+        
+        //handle distance
+        UpdateRange(player.transform.position);
+        if(!_playerInRange) {updateAlertStage(false); DebugStageAlert(); return; }
+        
+        //handle range
+        UpdateFieldOfView(player.transform.position);
+        UpdateShadowMap();
+        SpriteRenderer coneSprite = _visionCone.GetComponent<SpriteRenderer>();
+        coneSprite.material.SetVector("_ObserverPosition",transform.position);
+        coneSprite.material.SetFloat("_ObserverMinAngle",_coneAngleMin);
+        coneSprite.material.SetFloat("_ObserverViewDistance",viewDistance);
+        coneSprite.material.SetFloat("_ObserverFieldOfView",_coneAngle);
+        
+        
+        if(!_playerInFOV) {updateAlertStage(false); DebugStageAlert(); return; }
+
+        //handle direct line trace
+        if(!noWallBetweenPlayerAndEnemy(player.transform.position)) {updateAlertStage(false); DebugStageAlert(); return; }
+        
+        updateAlertStage(true);
+        DebugStageAlert();
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if(other.CompareTag("Player") && noWallBetweenPlayerAndEnemy(other.gameObject.transform.position))
-        {
-            playerInFOV = true;
-        }
+        //if(other.CompareTag("Player") && noWallBetweenPlayerAndEnemy(other.gameObject.transform.position))
+        //{
+        //    _playerInFOV = true;
+        //}
     }
 
     private void OnTriggerStay2D(Collider2D other) {
-        if(other.CompareTag("Player"))
-        {
-            if(noWallBetweenPlayerAndEnemy(other.gameObject.transform.position)){
-                playerInFOV = true;
-            }else{
-                playerInFOV = false;
-            }
-        }
+        //if(other.CompareTag("Player"))
+        //{
+        //    if(noWallBetweenPlayerAndEnemy(other.gameObject.transform.position)){
+        //        _playerInFOV = true;
+        //    }else{
+        //        _playerInFOV = false;
+        //    }
+        //}
     }
 
     private void OnTriggerExit2D(Collider2D other) {
-        if(other.CompareTag("Player"))
-        {
-            playerInFOV = false;
-        }
+        //if(other.CompareTag("Player"))
+        //{
+        //    _playerInFOV = false;
+        //}
     }
 
     private void updateAlertStage(bool playerInFOV)
@@ -94,23 +145,138 @@ public class GuardManager : MonoBehaviour
         }
     }
 
+    private void DebugStageAlert()
+    {
+        //Debug.Log($"{_playerInRange} {_playerInFOV}");
+        Color c = Color.green;
+        if(alertStage == AlertStage.Suspicious)
+            c = Color.Lerp(Color.green, Color.red, alertLevel/100);
+        if(alertStage == AlertStage.Alerted){
+            if(_playerInFOV)
+                Debug.Log("ECHEC DE LA MISSION");
+            c = Color.red;
+        }
+        GetComponent<SpriteRenderer>().color = c;
+    }//todo replace with real animation.
+
+    private void UpdateRange(Vector3 playerPosition)
+    {
+        Vector3 origin = transform.position;
+        _playerInRange = (Vector3.Distance(origin, playerPosition) < viewDistance);
+    }
+
+    private void UpdateFieldOfView(Vector3 playerPosition)
+    {
+        PolygonCollider2D childCollider = GetComponentInChildren<PolygonCollider2D>();
+        if (childCollider is PolygonCollider2D)
+        {
+            Vector2[] path = childCollider.GetPath(0);
+
+            Vector2 origin = childCollider.transform.TransformPoint(path[1]);
+            Vector2 boundA = childCollider.transform.TransformPoint(path[0]);
+            Vector2 boundB = childCollider.transform.TransformPoint(path[2]);
+
+            float angleA = ComputeAngle(origin, boundA);
+            float angleB = ComputeAngle(origin, boundB);
+
+            _foVThetaMin = angleA > angleB ? angleB : angleA;
+            _firstDir = angleA > angleB ? boundA - origin : boundB - origin;
+            _foVThetaMax = angleA > angleB ? angleA : angleB;
+            
+            float theta = _foVThetaMax - _foVThetaMin;
+            if (theta > Mathf.PI)
+            {
+                (_foVThetaMax, _foVThetaMin) = (_foVThetaMin, _foVThetaMax);
+                _firstDir = angleA > angleB ? boundB - origin : boundA - origin;
+                theta = 2 * Mathf.PI - theta;
+            }
+
+            _coneAngleMin = _foVThetaMin;
+            _coneAngle = theta;
+            _firstDir.Normalize();
+
+            float playerAngle = ComputeAngle(origin, playerPosition);
+            float dThetaMax = _foVThetaMax - playerAngle;
+            float dThetaMix = _foVThetaMin - playerAngle;
+            _playerInFOV = ((dThetaMax >= 0 && dThetaMax < theta) || (dThetaMix <= 0 && dThetaMix > -1 * theta));
+        } //todo check
+        else
+        {
+            _playerInFOV = false;
+            Debug.LogError("No vision path collider attached to enemy.");
+        }
+    }
+
     private bool noWallBetweenPlayerAndEnemy(Vector3 playerPosition)
     {
         Vector3 direction = playerPosition - transform.position;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Vector3.Distance(playerPosition,transform.position), visionMask);
-        Debug.DrawRay(transform.position, direction, Color.red);
-        if(hit.collider != null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        // Debug.DrawRay(transform.position, direction, Color.red);
+
+        return hit.collider == null;
     }
 
-    
+    private float ComputeAngle(Vector3 observer, Vector3 target)
+    {
+        Vector3 direction = target - observer;
+        float Pi2 = Mathf.PI * 2;
+        return (Mathf.Atan2(direction.y, direction.x) + Pi2) % Pi2;
+    }
 
+    private void UpdateShadowMap()
+    {
+        float step = _coneAngle / (float)(traceResolution - 1.0f);
+        float angle = 0.0f;
+        
+        //Ray casting
+        for (uint i = 0; i < traceResolution; i++)
+        {
+            Vector2 dir2D = RotateVector(_firstDir, -angle);
+            Vector3 direction = new Vector3(dir2D.x, dir2D.y, 0.0f);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, viewDistance, visionMask);
+            //Debug.DrawRay(transform.position, direction, hit.collider == null? Color.red : Color.green, 0.1f);
+            
+            //Store depth
+            if (hit.collider == null)
+            {
+                _shadowMapData[i].r = 1.0f;
+                _shadowMapData[i].b = 1.0f;
+                _shadowMapData[i].g = 1.0f;
+            }
+            else
+            {
+                _shadowMapData[i].r = hit.distance / viewDistance;
+                _shadowMapData[i].b = hit.distance / viewDistance;
+                _shadowMapData[i].g = hit.distance / viewDistance;
+            }
+            
+            angle += step;
+        }
+        
+        _linearShadowMap.SetPixels(_shadowMapData);
+        _linearShadowMap.Apply();
+    }
+
+    private GameObject GetPlayer()
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("Player");
+        if (objects.Length == 0)
+        {
+            Debug.LogError("Player not found.");
+        }
+        return objects[0];
+    }
+    
+    private Vector2 RotateVector(Vector2 vector, float angleRadians)
+    {
+        float cosTheta = (float)Math.Cos(angleRadians);
+        float sinTheta = (float)Math.Sin(angleRadians);
+
+        float newX = vector.x * cosTheta - vector.y * sinTheta;
+        float newY = vector.x * sinTheta + vector.y * cosTheta;
+
+        return new Vector2(newX, newY);
+    }
 }
 // CONE VISION
 //          Collider[] targetsInFOV = Physics.OverlapSphere(
