@@ -17,6 +17,13 @@ public enum AlertStage
 public class GuardManager : MonoBehaviour
 {
     public LayerMask visionMask;
+    public GameObject currentRoom;
+
+    [Header("Pathfinding")]
+    [SerializeField]
+    private GameObject node;
+    [SerializeField]
+    private bool isPathReversed;
 
     public AlertStage alertStage;
     [Range(0,100)]  public float alertLevel; // 0-100
@@ -93,6 +100,16 @@ public class GuardManager : MonoBehaviour
         {
             GameController.GetGameMode().GetCaught();
         }
+    }
+
+    private void InitPathfinding() 
+    {
+
+    }
+
+    private void Pathfinding()
+    {
+
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

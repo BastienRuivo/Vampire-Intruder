@@ -12,6 +12,7 @@ TagManager:
   - GameUIEyeBall
   - GameUIHealthBar
   - EnemyVisionDecal
+  - Node
   layers:
   - Default
   - TransparentFX
