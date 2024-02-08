@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Systems.Ability;
+using Systems.Ability.Abilities;
+using Systems.Ability.tests;
 using UnityEngine;
 
 public enum Direction
@@ -29,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private Rigidbody2D rigidBody;
     public Direction directionPerso;
+    private AbilitySystemComponent _ascRef;
 
     private enum State
     {
@@ -36,11 +40,35 @@ public class PlayerController : MonoBehaviour
         Walking
     }
 
+    public static GameObject GetPlayer()
+    {
+        GameObject[] candidates = GameObject.FindGameObjectsWithTag("Player");
+        if (candidates.Length > 0)
+            return candidates[0];
+        Debug.LogError("Player not found in this scene.");
+        return null;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody2D>();
+        
+        _ascRef = GetComponent<AbilitySystemComponent>();
+        
+        //Defines statistics the ASC will work with.
+        _ascRef.DefineStat("Blood", baseValue:100.0f, lowerRange:-15.0f);
+        _ascRef.DefineStat("BloodMax", baseValue:100.0f, lowerRange:1.0f);
+        
+        //Grant ability. For consumable ones this will just increment the available charge count if the ability has already been granted.
+        _ascRef.GrantAbility<AVampireBite>("Bite");
+        _ascRef.GrantAbility<TestAbility>("Test");
+        _ascRef.GrantAbility<AVampireThirst>("Thirst");
+        
+        //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
+        _ascRef.BindAbility("Bite", KeyCode.Q);
+        _ascRef.BindAbility("Test", KeyCode.E);
     }
 
     private void ZoomCamera()

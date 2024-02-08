@@ -9,6 +9,8 @@ TagManager:
   - RoomChanger
   - WallChanger
   - Enemy
+  - GameUIEyeBall
+  - GameUIHealthBar
   layers:
   - Default
   - TransparentFX

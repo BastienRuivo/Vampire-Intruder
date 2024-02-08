@@ -486,7 +486,7 @@ namespace Systems.Ability
         private readonly Dictionary<string, Attribute> _stats = new ();
         [ItemCanBeNull] private readonly Dictionary<string, IEnumerator> _runningAbilities = new ();
 
-        private EventDispatcher<GameObject> _statChangeEventDispatcher;
+        private readonly EventDispatcher<GameObject> _statChangeEventDispatcher = new ();
 
         //todo add a way to affect stats of ASC from an ability.
     }

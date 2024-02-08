@@ -23,7 +23,7 @@ namespace Systems.Ability.tests
             //Cooldown = 1.0f; //-1 aka cooldown disabled by default.
             
             //Add the ability stat costs here.
-            AbilityCosts.Add("Blood", 25);
+            AbilityCosts.Add("Blood", 12.5f);
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
@@ -36,7 +36,7 @@ namespace Systems.Ability.tests
             //AbilitySystemComponent avatarASC = GetAbilitySystemComponent(avatar);
             
             //wait for a period of time;
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(0.5f);
             
             //wait for a frame;
             //yield return null;
