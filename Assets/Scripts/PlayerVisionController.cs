@@ -15,23 +15,13 @@ public class PlayerVisionController : MonoBehaviour
     }
 
     private void Update() {
-        //click enfonce 
-
         if(Input.GetMouseButton(0))
         {
-            // Récupérer la position du personnage
             Vector3 characterPosition = transform.position;
-
-            // Récupérer la position du clic de souris
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePosition.z = 0f; // Assurer que la position z est la même que celle du personnage
-
-            // Calculer la différence de position entre le personnage et le clic de souris
+            mousePosition.z = 0f;
             Vector3 direction = mousePosition - characterPosition;
-
-            // Calculer l'angle en degrés entre le personnage et le clic de souris
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
             vision.localRotation = Quaternion.Euler(0,0, angle + 90);
         }
         else

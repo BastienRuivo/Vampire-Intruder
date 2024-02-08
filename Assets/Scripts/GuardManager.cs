@@ -30,8 +30,11 @@ public class GuardManager : MonoBehaviour
         if(alertStage == AlertStage.Suspicious)
             c = Color.Lerp(Color.green, Color.red, alertLevel/100);
         if(alertStage == AlertStage.Alerted){
-            if(playerInFOV)
-                Debug.Log("ECHEC DE LA MISSION");
+            if(playerInFOV){
+                playerInFOV = false;
+                GameController.GetGameMode().GetCaught();
+            }
+                
             c = Color.red;
         }
         GetComponent<SpriteRenderer>().color = c;

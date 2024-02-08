@@ -61,13 +61,15 @@ public class GameController : MonoBehaviour
     [Header("Rooms")]
     public List<GameObject> rooms;
 
-    private AudioSource _bellAudioSource;
+    public AudioClip _TimeBell;
+    public AudioClip _CaughtBell;
     
     private int _eventCount = 0;
     private float _eventTime = 0.0f;
 
     private EventDispatcher<int> _gameEventDispatcher = new ();
     private EventDispatcher<GameProgressionState> _gameProgressionEventDispatcher = new ();
+
 
     /// <summary>
     /// Finish the level.
@@ -76,6 +78,7 @@ public class GameController : MonoBehaviour
     {
         //todo implementation of going to the next level, computing the impacts of this level to the next one.
         //may need a singleton "GameState" to save the results from one game to another.
+        GameEndingManager.instance.onPlayerVictory();
         Debug.Log("Level Completed.");
     }
     
@@ -86,6 +89,7 @@ public class GameController : MonoBehaviour
     {
         //todo implementation of going to the next level, computing the impacts of this level to the next one.
         //may need a singleton "GameState" to save the results from one game to another.
+        GameEndingManager.instance.onPlayerDeath(GameEndingManager.GameOverState.TimeEnd);
         Debug.Log("Level failed (time is up).");
     }
     
@@ -94,9 +98,16 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void GetCaught()
     {
-        //todo implementation of going to the next level, computing the impacts of this level to the next one.
-        //may need a singleton "GameState" to save the results from one game to another.
-        Debug.Log("Level failed (Captured).");
+        // Vérifiez si l'instance de GameEndingManager existe avant d'y accéder
+        if (GameEndingManager.instance != null)
+        {
+            AudioManager.instance.playClip(_CaughtBell, transform.position);
+            GameEndingManager.instance.onPlayerDeath(GameEndingManager.GameOverState.Caught);
+        }
+        else
+        {
+            Debug.LogError("GameEndingManager instance is null!");
+        }
     }
 
     public float GetGameTimeProgression()
@@ -151,11 +162,12 @@ public class GameController : MonoBehaviour
     void Start()
     {
         _eventTime = gameEventTickTime;
-        _bellAudioSource = GetComponent<AudioSource>();
         
         SubscribeToGameEvent(new TestEventReceiver());
         HideOtherMaps();
+        
     }
+
 
     private void HideOtherMaps()
     {
@@ -171,14 +183,12 @@ public class GameController : MonoBehaviour
         });
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    void needSong(){
         _eventTime += Time.deltaTime;
         if (_eventTime < gameEventTickTime)
             return;
         
-        _bellAudioSource.Play();
+        AudioManager.instance.playClip(_TimeBell, transform.position);
         
         _gameEventDispatcher.BroadcastEvent(_eventCount);
         if (_eventCount < gameEventTickCount)
@@ -198,5 +208,11 @@ public class GameController : MonoBehaviour
         
         _eventTime -= gameEventTickTime;
         _eventCount++;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        needSong();
     }
 }
