@@ -29,6 +29,7 @@ public class Interaction : MonoBehaviour
     public string objectivePhrase;
     public bool isMainObjective;
     public Color glowColor;
+    public GameObject clock;
 
     [Header("Timer")]
     public float duration;
@@ -54,16 +55,19 @@ public class Interaction : MonoBehaviour
 
         spriteRenderer= GetComponent<SpriteRenderer>();
         spriteRenderer.material.SetColor("_Color", glowColor);
+        clock.GetComponent<SpriteRenderer>().enabled = false;
     }
 
     public void StartCollision()
     {
         isColliding= true;
+        clock.GetComponent<SpriteRenderer>().enabled = true;
     }
 
     public void EndCollision()
     {
         isColliding= false;
+        clock.GetComponent<SpriteRenderer>().enabled = false;
     }
 
     private void Update()
@@ -108,6 +112,10 @@ public class Interaction : MonoBehaviour
             else if (type == InteractibleType.TIMER_RESET)
             {
                 currentTime = duration;
+            }
+            if(clock != null)
+            {
+                clock.GetComponent<SpriteRenderer>().material.SetFloat("_t", 1f - currentTime / duration);
             }
         }
         else
