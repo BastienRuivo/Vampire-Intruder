@@ -34,7 +34,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_EyeballView
-  m_Shader: {fileID: -6465566751694194690, guid: 7b386b13193fa344abe38b39c9b6a4f0, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 0f905f88e9d0b964eb64650cd8e89ac9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -85,8 +85,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_1634ff6b601443239c84b1fc39ba8727_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: ec8e835ebcc2b2a49a3cacd4fbce12f6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_16b42420c506458a87b3b123a8fe9e97_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: e1f370b48b8121b4190496077a8620bc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_17e7324b5ea847b098508663038678df_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_27e4f50e34454f7aacfda14688e99395_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_306e488994ac4cdbb7bb7f35570a7e5c_Texture_1_Texture2D:
@@ -95,6 +107,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_3cd8dbc9fdda439491ad01ca71d431ac_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_53dd9ab856d5460f81bb0f18716b4e3c_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_7797ff021e5e42caa0d0d31935c2603a_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: e1f370b48b8121b4190496077a8620bc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_97187e0b149449f4b3f0d1e55459a5a6_Texture_1_Texture2D:
@@ -148,7 +168,7 @@ Material:
     - _Pattern2Speed: 0.1
     - _Pattern2Tiling: 0.5
     - _PatternStrenth: 0.798
-    - _QueueControl: -1
+    - _QueueControl: 0
     - _QueueOffset: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
