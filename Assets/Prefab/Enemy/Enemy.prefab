@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6463680674939606716}
   - component: {fileID: 6180498148441204807}
   - component: {fileID: 5035097011402267896}
-  - component: {fileID: 9164211132758642890}
   - component: {fileID: 6446200479537799780}
   - component: {fileID: 6123221713736057825}
   m_Layer: 0
@@ -116,41 +115,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!70 &9164211132758642890
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2671610580363259081}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.85, y: 0.85}
-  m_Direction: 0
 --- !u!114 &6446200479537799780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +131,9 @@ MonoBehaviour:
   visionMask:
     serializedVersion: 2
     m_Bits: 64
+  currentRoom: {fileID: 0}
+  node: {fileID: 0}
+  isPathReversed: 0
   alertStage: 0
   alertLevel: 0
 --- !u!95 &6123221713736057825
