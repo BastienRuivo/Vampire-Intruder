@@ -25,13 +25,19 @@ public class GuardManager : MonoBehaviour
     public GameObject currentRoom;
     public GameObject player;
 
+    public enum AnimationState
+    {
+        IDLE = 0,
+        WALKING = 1
+    }
+
     public AlertStage alertStage;
-    [Range(0,100)]  public float alertLevel; // 0-100
+    public float alertLevel;
+    private float _currentAlert;
     [Range(1,5)]  public float viewDistance = 3.5f; // 0-100
 
     [Header("Pathfinding")]
     public float defaultSpeed = 200f;
-    public float spotSpeed = 2000f;
     public float nextPointDistance = 0.25f;
     public float timerRefresh = 2f;
     public float timerRefreshPlayer = 0.2f;
@@ -39,9 +45,12 @@ public class GuardManager : MonoBehaviour
     public float currentWaitingTimer = 0f;
     public float caughtDistance = 0.2f;
 
+    [Header("SpotEffect")]
+    public float spotSpeed = 2000f;
+    public float camSpeed = 10f;
+    public AudioClip _spotSound;
+
     private GameObject visionAnchor;
-
-
     private GameObject target;
     private bool isPathReversed = false;
     private Path currentPath;
@@ -50,36 +59,10 @@ public class GuardManager : MonoBehaviour
     private bool shouldUpdatePath = false;
     private bool hasBeenAlerted = false;
     private float speed;
-
-
-    Seeker seeker;
-    Rigidbody2D body;
+    private Seeker seeker;
+    private Rigidbody2D body;
 
     IEnumerator updatePathCoroutine;
-
-    private IEnumerator UpdatePath()
-    {
-        shouldUpdatePath = false;
-        if (!seeker.IsDone())
-        {
-            yield return null;
-        }
-        seeker.StartPath(body.position, target.transform.position, OnPathComplete);
-        yield return new WaitForSeconds(target.tag == "Player" ? timerRefreshPlayer: timerRefresh);
-        shouldUpdatePath = true;
-    }
-
-    void OnPathComplete(Path p)
-    {
-        if (p.error)
-        {
-            Debug.Log("Error in path");
-            return;
-        }
-        currentPath = p;
-        currentPointInPath = 0;
-    }
-
 
     [FormerlySerializedAs("TraceResolution")] public uint traceResolution = 128;
     
@@ -89,6 +72,7 @@ public class GuardManager : MonoBehaviour
     private bool _playerInFOV;
     private bool _playerInRange;
 
+
     //Cone trace
     private GameObject _visionCone;
     private Texture2D _linearShadowMap;
@@ -96,6 +80,8 @@ public class GuardManager : MonoBehaviour
     private Vector2 _firstDir;
     private float _coneAngle;
     private float _coneAngleMin;
+    private Animator _animator;
+    private Transform _cameraPos;
     
     private void Awake() {
         alertStage = AlertStage.Idle;
@@ -132,6 +118,7 @@ public class GuardManager : MonoBehaviour
         StartCoroutine(updatePathCoroutine);
 
         visionAnchor = transform.GetChild(0).gameObject;
+        _animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -145,7 +132,37 @@ public class GuardManager : MonoBehaviour
             StartCoroutine(updatePathCoroutine);
         }
 
+        if(_cameraPos != null)
+        {
+            var newPos = Vector3.Lerp(_cameraPos.transform.position, body.position, Time.deltaTime * 10f);
+            newPos.z = _cameraPos.position.z;
+            _cameraPos.position = newPos;
+        }
+
         HandleVision();
+    }
+
+    private IEnumerator UpdatePath()
+    {
+        shouldUpdatePath = false;
+        if (!seeker.IsDone())
+        {
+            yield return null;
+        }
+        seeker.StartPath(body.position, target.transform.position, OnPathComplete);
+        yield return new WaitForSeconds(target.tag == "Player" ? timerRefreshPlayer : timerRefresh);
+        shouldUpdatePath = true;
+    }
+
+    void OnPathComplete(Path p)
+    {
+        if (p.error)
+        {
+            Debug.Log("Error in path");
+            return;
+        }
+        currentPath = p;
+        currentPointInPath = 0;
     }
 
     private void HandleVision()
@@ -258,6 +275,11 @@ public class GuardManager : MonoBehaviour
                 StopCoroutine(updatePathCoroutine);
 
                 target = player;
+                PlayerState.GetInstance().LockInput();
+                AudioManager.GetInstance().playClip(_spotSound, transform.position);
+                _cameraPos = player.transform.Find("Camera");
+                //_cameraPos.position = player.transform.position;
+
                 updatePathCoroutine = UpdatePath();
                 StartCoroutine(updatePathCoroutine);
                 speed = spotSpeed;
@@ -361,6 +383,7 @@ public class GuardManager : MonoBehaviour
         if(currentWaitingTimer > 0)
         {
             currentWaitingTimer -= Time.deltaTime;
+            _animator.SetInteger("state", (int)AnimationState.IDLE);
             return;
         }
 
@@ -395,11 +418,14 @@ public class GuardManager : MonoBehaviour
 
         visionAnchor.transform.rotation = Quaternion.Lerp(visionAnchor.transform.rotation, Quaternion.AngleAxis(angle + 90f, Vector3.forward), Time.deltaTime * angularSpeed);
 
-
-
-
         Vector2 force = dir * speed * Time.deltaTime;
-
+        if(body.velocity.magnitude > 0)
+        {
+            _animator.SetFloat("xSpeed", body.velocity.x);
+            _animator.SetFloat("ySpeed", body.velocity.y);
+            _animator.SetInteger("state", (int)AnimationState.WALKING);
+        }
+        
         float distance = Vector2.Distance(body.position, pathPos);
         if (distance < nextPointDistance) currentPointInPath++;
 

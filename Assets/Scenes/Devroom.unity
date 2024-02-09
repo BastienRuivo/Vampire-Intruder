@@ -6810,9 +6810,9 @@ GameObject:
   - component: {fileID: 1793583097}
   - component: {fileID: 1793583098}
   - component: {fileID: 1793583099}
-  - component: {fileID: 1793583100}
   - component: {fileID: 1793583101}
   - component: {fileID: 1793583102}
+  - component: {fileID: 1793583103}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -7002,19 +7002,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2366de736b8520c49be70644fb6c228c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1793583100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1793583092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c080406ab3db4404582cfd0529728b17, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentRoom: {fileID: 1584813463}
 --- !u!114 &1793583101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7042,6 +7029,19 @@ MonoBehaviour:
   visionMask:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &1793583103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793583092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c080406ab3db4404582cfd0529728b17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentRoom: {fileID: 1584813463}
 --- !u!1001 &1916538331
 PrefabInstance:
   m_ObjectHideFlags: 0
