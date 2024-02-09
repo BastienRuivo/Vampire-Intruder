@@ -1665,7 +1665,6 @@ GameObject:
   - component: {fileID: 1793583098}
   - component: {fileID: 1793583099}
   - component: {fileID: 1793583100}
-  - component: {fileID: 1793583101}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1876,7 +1875,6 @@ GameObject:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1533278181}
   - {fileID: 1793583094}
   - {fileID: 1609359702}
   - {fileID: 1450032112}

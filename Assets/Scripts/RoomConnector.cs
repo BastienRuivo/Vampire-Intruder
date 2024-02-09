@@ -22,19 +22,17 @@ public class RoomConnector : MonoBehaviour
     public Material defaultMtl;
 
     private IEnumerator roomFadeAway = null;
+    public bool fade = false;
 
     public void Enter()
     {
-        RoomConnector rm = targetCollider.GetComponent<RoomConnector>();
-        if (rm.roomFadeAway != null)
-        {
-            StopCoroutine(roomFadeAway);
-            roomFadeAway = null;
-        }
-        SetRoomVisibility(currentRoom, 1.0f);
-        SetRoomVisibility(targetRoom, 1.0f);
+
+        //SetRoomVisibility(currentRoom, 1.0f);
+        //SetRoomVisibility(targetRoom, 1.0f);
+        SetRoomVisibility(targetRoom, 1f);
         targetWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
         currentWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
+
 
     }
 
@@ -53,9 +51,22 @@ public class RoomConnector : MonoBehaviour
 
     public void Exit()
     {
-        ResetMaterial(targetWalls);
-        ResetMaterial(currentWalls);
+        SetRoomVisibility(currentRoom, 1f);
+        //SetRoomVisibility(targetRoom, 0f);
+        //ResetMaterial(targetWalls);
+        //ResetMaterial(currentWalls);
+
+        //// Start coroutine
+        RoomConnector rm = targetCollider.GetComponent<RoomConnector>();
+        // Disable Coroutine if one is already started
+        if (rm.roomFadeAway != null)
+        {
+            rm.fade = false;
+            StopCoroutine(rm.roomFadeAway);
+            SetRoomVisibility(currentRoom, 1f);
+        }
         roomFadeAway = DisableRoom(targetRoom);
+        fade = true;
         StartCoroutine(roomFadeAway);
 
         PlayerStatsController.instance.currentRoom = currentRoom;
@@ -82,6 +93,7 @@ public class RoomConnector : MonoBehaviour
     {
         for (float alpha = 1f; alpha > 0f; alpha -= Time.deltaTime)
         {
+            if (!fade) break;
             SetRoomVisibility(roomRoot, alpha);
             yield return null;
         }

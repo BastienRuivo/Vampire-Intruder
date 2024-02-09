@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class PlayerStatsController : MonoBehaviour
 {
-    public GameObject currentRoom;
     public static PlayerStatsController instance;
+
+    [Header("Values")]
+    public GameObject currentRoom;
+    private bool inputLocked = false;
 
     private void Awake()
     {
@@ -16,4 +19,21 @@ public class PlayerStatsController : MonoBehaviour
         }
         instance = this;
     }
+
+    public void LockInput()
+    {
+        inputLocked= true;
+    }
+
+    public void UnlockInput()
+    {
+        inputLocked= false;
+    }
+
+    public bool CanMove()
+    {
+        return !inputLocked;
+    }
+
+
 }
