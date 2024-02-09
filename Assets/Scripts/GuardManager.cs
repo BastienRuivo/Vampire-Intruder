@@ -9,6 +9,8 @@ using UnityEngine.UI;
 using Pathfinding;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
 public enum AlertStage
 {
@@ -35,6 +37,9 @@ public class GuardManager : MonoBehaviour
     public float timerRefreshPlayer = 0.2f;
     public float timerWaitingBetweenNodes = 2f;
     public float currentWaitingTimer = 0f;
+    public float caughtDistance = 0.2f;
+
+    private GameObject visionAnchor;
 
 
     private GameObject target;
@@ -125,43 +130,55 @@ public class GuardManager : MonoBehaviour
 
         updatePathCoroutine = UpdatePath();
         StartCoroutine(updatePathCoroutine);
+
+        visionAnchor = transform.GetChild(0).gameObject;
     }
 
     private void Update()
     {
         DebugStageAlert();
-        GameObject player = GetPlayer();
-        
+
+        if (shouldUpdatePath)
+        {
+            updatePathCoroutine = UpdatePath();
+            StartCoroutine(updatePathCoroutine);
+        }
+
+        HandleVision();
+    }
+
+    private void HandleVision()
+    {
         //handle distance
         UpdateRange(player.transform.position);
-        if(!_playerInRange) {updateAlertStage(false); return; }
-        
+        if (!_playerInRange) { updateAlertStage(false); return; }
+
         //handle range
         UpdateFieldOfView(player.transform.position);
         UpdateShadowMap();
         SpriteRenderer coneSprite = _visionCone.GetComponent<SpriteRenderer>();
-        coneSprite.material.SetVector("_ObserverPosition",transform.position);
-        coneSprite.material.SetFloat("_ObserverMinAngle",_coneAngleMin);
-        coneSprite.material.SetFloat("_ObserverViewDistance",viewDistance);
-        coneSprite.material.SetFloat("_ObserverFieldOfView",_coneAngle);
-        
-        
-        if(!_playerInFOV) {updateAlertStage(false); return; }
+        coneSprite.material.SetVector("_ObserverPosition", transform.position);
+        coneSprite.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
+        coneSprite.material.SetFloat("_ObserverViewDistance", viewDistance);
+        coneSprite.material.SetFloat("_ObserverFieldOfView", _coneAngle);
+
+
+
+
+        if (!_playerInFOV) { updateAlertStage(false); return; }
 
         //handle direct line trace
-        if(!noWallBetweenPlayerAndEnemy(player.transform.position)) {updateAlertStage(false);  return; }
-        
-        updateAlertStage(true);
-
-        if (_playerInFOV && alertStage == AlertStage.Alerted)
+        if (!noWallBetweenPlayerAndEnemy(player.transform.position))
         {
-            GameController.GetGameMode().GetCaught();
+            updateAlertStage(false);
+            return;
         }
 
-        if(shouldUpdatePath)
+        updateAlertStage(true);
+
+        if (_playerInFOV && alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
         {
-            updatePathCoroutine = UpdatePath();
-            StartCoroutine(updatePathCoroutine);
+            GameController.GetGameMode().GetCaught();
         }
     }
 
@@ -302,6 +319,7 @@ public class GuardManager : MonoBehaviour
     private bool noWallBetweenPlayerAndEnemy(Vector3 playerPosition)
     {
         Vector3 direction = playerPosition - transform.position;
+
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, Vector3.Distance(playerPosition,transform.position), visionMask);
         // Debug.DrawRay(transform.position, direction, Color.red);
 
@@ -362,6 +380,23 @@ public class GuardManager : MonoBehaviour
         }
         Vector3 pathPos = currentPath.vectorPath[currentPointInPath];
         Vector2 dir = (new Vector2(pathPos.x, pathPos.y) - body.position).normalized;
+        float angle;
+        float angularSpeed = 1f;
+        if(target.tag == player.tag)
+        {
+            angle = ComputeAngle(transform.position, target.transform.position) * Mathf.Rad2Deg;
+            angularSpeed = 25f;
+        }
+        else
+        {
+            angle = ComputeAngle(transform.position, pathPos) * Mathf.Rad2Deg;
+        }
+
+        visionAnchor.transform.rotation = Quaternion.Lerp(visionAnchor.transform.rotation, Quaternion.AngleAxis(angle + 90f, Vector3.forward), Time.deltaTime * angularSpeed);
+
+
+
+
         Vector2 force = dir * speed * Time.deltaTime;
 
         float distance = Vector2.Distance(body.position, pathPos);
@@ -403,16 +438,6 @@ public class GuardManager : MonoBehaviour
         
         _linearShadowMap.SetPixels(_shadowMapData);
         _linearShadowMap.Apply();
-    }
-
-    private GameObject GetPlayer()
-    {
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("Player");
-        if (objects.Length == 0)
-        {
-            Debug.LogError("Player not found.");
-        }
-        return objects[0];
     }
     
     private Vector2 RotateVector(Vector2 vector, float angleRadians)
