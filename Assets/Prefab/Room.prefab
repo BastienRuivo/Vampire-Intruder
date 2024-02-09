@@ -793,7 +793,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1187781423193352209}
   - component: {fileID: 8178000995815174322}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -838,7 +838,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4842493339523072994}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Entrances
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -876,7 +876,7 @@ GameObject:
   - component: {fileID: 6218636211760218302}
   - component: {fileID: 8701072589873705097}
   - component: {fileID: 3060506969895527326}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6815,6 +6815,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4842493339523072994}
     m_Modifications:
+    - target: {fileID: 103950687321192119, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3664519210418217607, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3664519210418217607, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: m_TagString
       value: RoomChanger
@@ -7103,6 +7111,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: West
       objectReference: {fileID: 0}
+    - target: {fileID: 7840718909793780055, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7121,6 +7133,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4842493339523072994}
     m_Modifications:
+    - target: {fileID: 103950687321192119, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3664519210418217607, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3664519210418217607, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: m_TagString
       value: RoomChanger
@@ -7412,6 +7432,10 @@ PrefabInstance:
     - target: {fileID: 7840718909793780055, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: m_Name
       value: East
+      objectReference: {fileID: 0}
+    - target: {fileID: 7840718909793780055, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

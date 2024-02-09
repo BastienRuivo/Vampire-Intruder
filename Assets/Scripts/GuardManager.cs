@@ -65,12 +65,12 @@ public class GuardManager : MonoBehaviour
 
     private void Update()
     {
-        
+        DebugStageAlert();
         GameObject player = GetPlayer();
         
         //handle distance
         UpdateRange(player.transform.position);
-        if(!_playerInRange) {updateAlertStage(false); DebugStageAlert(); return; }
+        if(!_playerInRange) {updateAlertStage(false); return; }
         
         //handle range
         UpdateFieldOfView(player.transform.position);
@@ -82,13 +82,17 @@ public class GuardManager : MonoBehaviour
         coneSprite.material.SetFloat("_ObserverFieldOfView",_coneAngle);
         
         
-        if(!_playerInFOV) {updateAlertStage(false); DebugStageAlert(); return; }
+        if(!_playerInFOV) {updateAlertStage(false); return; }
 
         //handle direct line trace
-        if(!noWallBetweenPlayerAndEnemy(player.transform.position)) {updateAlertStage(false); DebugStageAlert(); return; }
+        if(!noWallBetweenPlayerAndEnemy(player.transform.position)) {updateAlertStage(false);  return; }
         
         updateAlertStage(true);
-        DebugStageAlert();
+
+        if (_playerInFOV && alertStage == AlertStage.Alerted)
+        {
+            GameController.GetGameMode().GetCaught();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -148,15 +152,15 @@ public class GuardManager : MonoBehaviour
     private void DebugStageAlert()
     {
         //Debug.Log($"{_playerInRange} {_playerInFOV}");
-        Color c = Color.green;
+        Color r = new Color(1,0,0,1);
+        Color g = new Color(0,1,0,1);
+        Color c = g;
         if(alertStage == AlertStage.Suspicious)
-            c = Color.Lerp(Color.green, Color.red, alertLevel/100);
+            c = Color.Lerp(g, r, alertLevel/100);
         if(alertStage == AlertStage.Alerted){
-            if(_playerInFOV)
-                Debug.Log("ECHEC DE LA MISSION");
-            c = Color.red;
+            c = r;
         }
-        GetComponent<SpriteRenderer>().color = c;
+        gameObject.GetComponent<SpriteRenderer>().color = c;
     }//todo replace with real animation.
 
     private void UpdateRange(Vector3 playerPosition)

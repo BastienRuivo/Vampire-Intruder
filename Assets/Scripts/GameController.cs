@@ -151,19 +151,19 @@ public class GameController : MonoBehaviour
         _gameProgressionEventDispatcher.Unsubscribe(observer);
     }
     
-    private class TestEventReceiver : IEventObserver<int>
-    {
-        public void OnEvent(int context)
-        {
-            Debug.Log($"On game Event, Event {context}");
-        }
-    }
+    //private class TestEventReceiver : IEventObserver<int>
+    //{
+    //    public void OnEvent(int context)
+    //    {
+    //        Debug.Log($"On game Event, Event {context}");
+    //    }
+    //}
 
     void Start()
     {
         _eventTime = gameEventTickTime;
         
-        SubscribeToGameEvent(new TestEventReceiver());
+        //SubscribeToGameEvent(new TestEventReceiver());
         HideOtherMaps();
         
     }

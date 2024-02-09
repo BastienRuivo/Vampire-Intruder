@@ -32,7 +32,6 @@ public class GameUiController : MonoBehaviour, IEventObserver<GameProgressionSta
         foreach (Transform child in transform)
         {
             GameObject childGameObject = child.gameObject;
-            Debug.Log(childGameObject.tag);
             if (childGameObject.CompareTag("GameUIHealthBar"))
             {
                 _healthBarPanel = childGameObject;
