@@ -234,7 +234,7 @@ public class GuardManager : MonoBehaviour
             c = Color.Lerp(g, r, alertLevel/100);
         if(alertStage == AlertStage.Alerted){
             c = r;
-            if(playerInFOV && !hasBeenAlerted)
+            if(_playerInFOV && !hasBeenAlerted)
             {
                 speed = spotSpeed;
                 StopCoroutine(updatePathCoroutine);
