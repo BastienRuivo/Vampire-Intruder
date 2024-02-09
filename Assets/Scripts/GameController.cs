@@ -171,7 +171,7 @@ public class GameController : MonoBehaviour
 
     private void HideOtherMaps()
     {
-        rooms.Where(obj => obj.name != PlayerStatsController.instance.currentRoom.name).ToList().ForEach(obj =>
+        rooms.Where(obj => obj.name != PlayerStateController.GetInstance().currentRoom.name).ToList().ForEach(obj =>
         {
             var renderers = obj.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class PlayerStatsController : MonoBehaviour
+public class PlayerStateController : MonoBehaviour
 {
-    public static PlayerStatsController instance;
+    private static PlayerStateController instance;
 
     [Header("Values")]
     public GameObject currentRoom;
@@ -31,6 +31,11 @@ public class PlayerStatsController : MonoBehaviour
     public bool CanMove()
     {
         return !inputLocked;
+    }
+
+    public static PlayerStateController GetInstance()
+    {
+        return instance;
     }
 
 

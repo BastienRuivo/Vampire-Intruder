@@ -98,8 +98,8 @@ public class Interaction : MonoBehaviour
             if (v != interacted)
             {
                 interacted = v;
-                if(interacted) PlayerStatsController.instance.LockInput();
-                else PlayerStatsController.instance.UnlockInput();
+                if(interacted) PlayerStateController.GetInstance().LockInput();
+                else PlayerStateController.GetInstance().UnlockInput();
             }
         }
 
@@ -127,7 +127,7 @@ public class Interaction : MonoBehaviour
 
     private void OnEnd()
     {
-        PlayerStatsController.instance.UnlockInput();
+        PlayerStateController.GetInstance().UnlockInput();
         isActive = false;
         spriteRenderer.material.SetFloat("_t", 0f);
         switch (afterUse)

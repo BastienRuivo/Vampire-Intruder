@@ -69,7 +69,7 @@ public class RoomConnector : MonoBehaviour
         fade = true;
         StartCoroutine(roomFadeAway);
 
-        PlayerStatsController.instance.currentRoom = currentRoom;
+        PlayerStateController.GetInstance().currentRoom = currentRoom;
     }
 
     private void SetRoomVisibility(GameObject roomRoot, float value)
