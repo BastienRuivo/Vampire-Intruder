@@ -12,11 +12,12 @@ TagManager:
   - GameUIEyeBall
   - GameUIHealthBar
   - EnemyVisionDecal
+  - Node
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Wall

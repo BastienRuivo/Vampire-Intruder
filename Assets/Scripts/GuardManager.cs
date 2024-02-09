@@ -6,6 +6,9 @@ using UnityEditor;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Pathfinding;
+using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 
 public enum AlertStage
 {
@@ -17,10 +20,61 @@ public enum AlertStage
 public class GuardManager : MonoBehaviour
 {
     public LayerMask visionMask;
+    public GameObject currentRoom;
+    public GameObject player;
 
     public AlertStage alertStage;
     [Range(0,100)]  public float alertLevel; // 0-100
     [Range(1,5)]  public float viewDistance = 3.5f; // 0-100
+
+    [Header("Pathfinding")]
+    public float defaultSpeed = 200f;
+    public float spotSpeed = 2000f;
+    public float nextPointDistance = 0.25f;
+    public float timerRefresh = 2f;
+    public float timerRefreshPlayer = 0.2f;
+    public float timerWaitingBetweenNodes = 2f;
+    public float currentWaitingTimer = 0f;
+
+
+    private GameObject target;
+    private bool isPathReversed = false;
+    private Path currentPath;
+    private int currentPointInPath = 0;
+    private bool reachedEnd = false;
+    private bool shouldUpdatePath = false;
+    private bool hasBeenAlerted = false;
+    private float speed;
+
+
+    Seeker seeker;
+    Rigidbody2D body;
+
+    IEnumerator updatePathCoroutine;
+
+    private IEnumerator UpdatePath()
+    {
+        shouldUpdatePath = false;
+        if (!seeker.IsDone())
+        {
+            yield return null;
+        }
+        seeker.StartPath(body.position, target.transform.position, OnPathComplete);
+        yield return new WaitForSeconds(target.tag == "Player" ? timerRefreshPlayer: timerRefresh);
+        shouldUpdatePath = true;
+    }
+
+    void OnPathComplete(Path p)
+    {
+        if (p.error)
+        {
+            Debug.Log("Error in path");
+            return;
+        }
+        currentPath = p;
+        currentPointInPath = 0;
+    }
+
 
     [FormerlySerializedAs("TraceResolution")] public uint traceResolution = 128;
     
@@ -61,6 +115,16 @@ public class GuardManager : MonoBehaviour
             _visionCone = child.gameObject;
             child.gameObject.GetComponent<SpriteRenderer>().material.SetTexture("_ShadowMap", _linearShadowMap);
         }
+
+        target = FindClosestNode();
+        Debug.Log("Target" + target.ToString());
+        seeker = GetComponent<Seeker>();
+        body = GetComponent<Rigidbody2D>();
+
+        speed = defaultSpeed;
+
+        updatePathCoroutine = UpdatePath();
+        StartCoroutine(updatePathCoroutine);
     }
 
     private void Update()
@@ -93,6 +157,17 @@ public class GuardManager : MonoBehaviour
         {
             GameController.GetGameMode().GetCaught();
         }
+
+        if(shouldUpdatePath)
+        {
+            updatePathCoroutine = UpdatePath();
+            StartCoroutine(updatePathCoroutine);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        FollowPath();
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -159,6 +234,19 @@ public class GuardManager : MonoBehaviour
             c = Color.Lerp(g, r, alertLevel/100);
         if(alertStage == AlertStage.Alerted){
             c = r;
+            if(_playerInFOV && !hasBeenAlerted)
+            {
+                speed = spotSpeed;
+                StopCoroutine(updatePathCoroutine);
+
+                target = player;
+                updatePathCoroutine = UpdatePath();
+                StartCoroutine(updatePathCoroutine);
+                speed = spotSpeed;
+                hasBeenAlerted = true;
+
+                currentWaitingTimer = 0f;
+            }
         }
         gameObject.GetComponent<SpriteRenderer>().color = c;
     }//todo replace with real animation.
@@ -226,6 +314,62 @@ public class GuardManager : MonoBehaviour
         float Pi2 = Mathf.PI * 2;
         return (Mathf.Atan2(direction.y, direction.x) + Pi2) % Pi2;
     }
+    private GameObject FindClosestNode()
+    {
+        Node[] nodes = currentRoom.transform.Find("Nodes").GetComponentsInChildren<Node>();
+
+        int closest = -1;
+        float closestDist = 10e8f;
+
+        for (int i = 0; i < nodes.Length; i++)
+        {
+            if (nodes[i] != null)
+            {
+                float dist = Vector3.Distance(transform.position, nodes[i].transform.position);
+                if (dist >= closestDist) continue;
+                closest = i;
+                closestDist = dist;
+            }
+        }
+
+        return closest != -1 ? nodes[closest].gameObject : null;
+    }
+
+    private void FollowPath()
+    {
+        if (currentPath == null) return;
+
+        if(currentWaitingTimer > 0)
+        {
+            currentWaitingTimer -= Time.deltaTime;
+            return;
+        }
+
+        reachedEnd = currentPointInPath >= currentPath.vectorPath.Count;
+        if(reachedEnd)
+        {
+            Node node = target.GetComponent<Node>();
+            if (node != null)
+            {
+                if (node.isPathEnd) isPathReversed = false;
+                target = node.NextTarget(isPathReversed);
+                StopCoroutine(updatePathCoroutine);
+                updatePathCoroutine = UpdatePath();
+                StartCoroutine(updatePathCoroutine);
+                currentWaitingTimer = timerWaitingBetweenNodes;
+            }
+            return;
+        }
+        Vector3 pathPos = currentPath.vectorPath[currentPointInPath];
+        Vector2 dir = (new Vector2(pathPos.x, pathPos.y) - body.position).normalized;
+        Vector2 force = dir * speed * Time.deltaTime;
+
+        float distance = Vector2.Distance(body.position, pathPos);
+        if (distance < nextPointDistance) currentPointInPath++;
+
+        body.AddForce(force);
+    }
+    
 
     private void UpdateShadowMap()
     {
