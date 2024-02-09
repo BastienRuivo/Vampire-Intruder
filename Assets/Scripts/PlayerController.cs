@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
     {
         float hAxis = 0f;
         float vAxis = 0f;
-        if (PlayerStateController.GetInstance().CanMove())
+        if (PlayerState.GetInstance().CanMove())
         {
             hAxis = Input.GetAxis("Horizontal");
             vAxis = Input.GetAxis("Vertical");

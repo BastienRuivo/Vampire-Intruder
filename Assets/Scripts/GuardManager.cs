@@ -136,6 +136,7 @@ public class GuardManager : MonoBehaviour
 
     private void Update()
     {
+        if (GameState.GetInstance().status != 0) return;
         DebugStageAlert();
 
         if (shouldUpdatePath)

@@ -2,22 +2,12 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : Singleton<AudioManager>
 {
     public AudioClip[] playlist;
     public AudioSource audioSource; 
     //private int indexSong = 0;
     //public AudioMixerGroup soundEffectMixeur; 
-
-    public static AudioManager instance;
-
-    private void Awake(){
-        if(instance != null){
-            Debug.LogWarning("Multiple AudioManager");
-            return;
-        }
-        instance = this;
-    }
 
     // void Start()
     // {

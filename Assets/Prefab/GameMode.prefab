@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7249826681079629665}
+  - component: {fileID: -4150688089692269074}
   - component: {fileID: 7433975258528184725}
   m_Layer: 0
   m_Name: GameMode
@@ -32,6 +33,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4150688089692269074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2269025568167697371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52eabb2b81dbd5f4caf3b94ed3fd7126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7433975258528184725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47,4 +60,5 @@ MonoBehaviour:
   gameEventTickTime: 10
   gameEventTickCount: 12
   rooms: []
-  _bell: {fileID: 8300000, guid: e4fae1baabc2dc440a0113b2830f3b83, type: 3}
+  _TimeBell: {fileID: 0}
+  _CaughtBell: {fileID: 0}

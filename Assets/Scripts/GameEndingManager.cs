@@ -30,7 +30,7 @@ public class GameEndingManager : MonoBehaviour
     public void onPlayerVictory(){
         victoryUI.SetActive(true);
         Time.timeScale = 0;
-        AudioManager.instance.playClip(_bell, transform.position);
+        AudioManager.GetInstance().playClip(_bell, transform.position);
     }
 
     public void onPlayerDeath(GameOverState gameOverState){
@@ -45,7 +45,7 @@ public class GameEndingManager : MonoBehaviour
         }
         gameOverUI.SetActive(true);
         Time.timeScale = 0;
-        AppStateScript.instance.vie--;
+        AppState.GetInstance().vie--;
     }
 
     public void retryButtonGO(){

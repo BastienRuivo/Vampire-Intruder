@@ -5,7 +5,7 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 
-public class Interaction : MonoBehaviour
+public class Interactible : MonoBehaviour
 {
     public enum InteractibleType
     {
@@ -98,8 +98,8 @@ public class Interaction : MonoBehaviour
             if (v != interacted)
             {
                 interacted = v;
-                if(interacted) PlayerStateController.GetInstance().LockInput();
-                else PlayerStateController.GetInstance().UnlockInput();
+                if(interacted) PlayerState.GetInstance().LockInput();
+                else PlayerState.GetInstance().UnlockInput();
             }
         }
 
@@ -127,7 +127,7 @@ public class Interaction : MonoBehaviour
 
     private void OnEnd()
     {
-        PlayerStateController.GetInstance().UnlockInput();
+        PlayerState.GetInstance().UnlockInput();
         isActive = false;
         spriteRenderer.material.SetFloat("_t", 0f);
         switch (afterUse)

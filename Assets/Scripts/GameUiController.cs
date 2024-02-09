@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class GameUiController : MonoBehaviour, IEventObserver<GameProgressionState>, IEventObserver<GameObject>
+public class GameUiController : MonoBehaviour, IEventObserver<TimeProgression>, IEventObserver<GameObject>
 {
     public float dialogLineDuration = 4.0f;
 
@@ -52,20 +52,20 @@ public class GameUiController : MonoBehaviour, IEventObserver<GameProgressionSta
         _eyeballBarPanel.GetComponent<Image>().material.SetFloat("_Damage",_playerBloodStatEyeEffectSmooth.UpdateGetValue());
     }
 
-    public void OnEvent(GameProgressionState context)
+    public void OnEvent(TimeProgression context)
     {
         switch (context)
         {
-            case GameProgressionState.Begin:
+            case TimeProgression.Begin:
                 StartCoroutine(DialogRoutine($"Jessika : \"{jessikaBeginQuote}\""));
                 break;
-            case GameProgressionState.Middle:
+            case TimeProgression.Middle:
                 StartCoroutine(DialogRoutine($"Jessika : \"{jessikaMiddleQuote}\""));
                 break;
-            case GameProgressionState.Last:
+            case TimeProgression.Last:
                 StartCoroutine(DialogRoutine($"Jessika : \"{jessikaFinalQuote}\""));
                 break;
-            case GameProgressionState.End:
+            case TimeProgression.End:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(context), context, null);

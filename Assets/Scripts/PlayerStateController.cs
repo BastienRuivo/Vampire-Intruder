@@ -1,22 +1,12 @@
 using UnityEngine;
 
-public class PlayerStateController : MonoBehaviour
+public class PlayerState : Singleton<PlayerState>
 {
-    private static PlayerStateController instance;
+  
 
     [Header("Values")]
     public GameObject currentRoom;
     private bool inputLocked = false;
-
-    private void Awake()
-    {
-        if (instance != null)
-        {
-            Debug.LogWarning("Multiple PlayerStatsController");
-            return;
-        }
-        instance = this;
-    }
 
     public void LockInput()
     {
@@ -32,11 +22,4 @@ public class PlayerStateController : MonoBehaviour
     {
         return !inputLocked;
     }
-
-    public static PlayerStateController GetInstance()
-    {
-        return instance;
-    }
-
-
 }

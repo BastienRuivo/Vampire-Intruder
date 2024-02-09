@@ -27,7 +27,7 @@ public class PlayerColliderController : MonoBehaviour
 
         if (collision.gameObject.tag == "Interactible")
         {
-            collision.gameObject.GetComponent<Interaction>().StartCollision();
+            collision.gameObject.GetComponent<Interactible>().StartCollision();
         }
     }
 
@@ -49,7 +49,7 @@ public class PlayerColliderController : MonoBehaviour
 
         if (collision.gameObject.tag == "Interactible")
         {
-            collision.gameObject.GetComponent<Interaction>().EndCollision();
+            collision.gameObject.GetComponent<Interactible>().EndCollision();
         }
     }
 }

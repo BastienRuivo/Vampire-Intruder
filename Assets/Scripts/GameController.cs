@@ -7,51 +7,24 @@ using Interfaces;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public enum GameProgressionState
-{
-    /// <summary>
-    /// First event of the game.
-    /// </summary>
-    Begin,
-    /// <summary>
-    /// Event marking the middle of the game.
-    /// </summary>
-    Middle,
-    /// <summary>
-    /// Last game event tick before the end of the game.
-    /// </summary>
-    Last,
-    /// <summary>
-    /// Event when the player get killed.
-    /// </summary>
-    End
-}
-    
-public struct GameState
-{
-    public readonly GameProgressionState Progression;
-    public readonly int EventID;
-
-    public GameState(GameProgressionState progression, int eventID)
-    {
-        Progression = progression;
-        EventID = eventID;
-    }
-}// todo remove if unused
 
 
-public class GameController : MonoBehaviour
+
+
+public class GameController : Singleton<GameController>
 {
     /// <returns>Game Mode Controller.</returns>
     /// 
     public static GameController GetGameMode()
     {
-        if (GameObject.FindGameObjectsWithTag("GameController").Length != 0)
-            return GameObject.FindGameObjectsWithTag("GameController")[0].GetComponent<GameController>();
-        Debug.LogError("Unable to get Game Mode.");
-        return null;
-    } //todo check
-    
+        return GetInstance();
+    }
+
+    public static GameState GetGameState()
+    {
+        return GameState.GetInstance();
+    }
+
     [Header("Game Duration")]
     [FormerlySerializedAs("GameEventTickTime")] 
     public float gameEventTickTime = 60.0f;
@@ -68,7 +41,7 @@ public class GameController : MonoBehaviour
     private float _eventTime = 0.0f;
 
     private EventDispatcher<int> _gameEventDispatcher = new ();
-    private EventDispatcher<GameProgressionState> _gameProgressionEventDispatcher = new ();
+    private EventDispatcher<TimeProgression> _gameProgressionEventDispatcher = new ();
 
 
     /// <summary>
@@ -76,6 +49,8 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void LeaveLevel()
     {
+        GetGameState().status = GameStatus.Ended;
+
         //todo implementation of going to the next level, computing the impacts of this level to the next one.
         //may need a singleton "GameState" to save the results from one game to another.
         GameEndingManager.instance.onPlayerVictory();
@@ -87,6 +62,7 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void TimeOut()
     {
+        GetGameState().status = GameStatus.Ended;
         //todo implementation of going to the next level, computing the impacts of this level to the next one.
         //may need a singleton "GameState" to save the results from one game to another.
         GameEndingManager.instance.onPlayerDeath(GameEndingManager.GameOverState.TimeEnd);
@@ -99,9 +75,10 @@ public class GameController : MonoBehaviour
     public void GetCaught()
     {
         // Vérifiez si l'instance de GameEndingManager existe avant d'y accéder
+        GetGameState().status = GameStatus.Ended;
         if (GameEndingManager.instance != null)
         {
-            AudioManager.instance.playClip(_CaughtBell, transform.position);
+            AudioManager.GetInstance().playClip(_CaughtBell, transform.position);
             GameEndingManager.instance.onPlayerDeath(GameEndingManager.GameOverState.Caught);
         }
         else
@@ -137,7 +114,7 @@ public class GameController : MonoBehaviour
     /// Subscribe to Game Mode's Game Progression State Event
     /// </summary>
     /// <param name="observer"></param>
-    public void SubscribeToGameProgressionEvent(IEventObserver<GameProgressionState> observer)
+    public void SubscribeToGameProgressionEvent(IEventObserver<TimeProgression> observer)
     {
         _gameProgressionEventDispatcher.Subscribe(observer);
     }
@@ -146,7 +123,7 @@ public class GameController : MonoBehaviour
     /// Unsubscribe from Game Mode's Game Progression State Event
     /// </summary>
     /// <param name="observer"></param>
-    public void UnsubscribeToGameProgressionEvent(IEventObserver<GameProgressionState> observer)
+    public void UnsubscribeToGameProgressionEvent(IEventObserver<TimeProgression> observer)
     {
         _gameProgressionEventDispatcher.Unsubscribe(observer);
     }
@@ -171,7 +148,7 @@ public class GameController : MonoBehaviour
 
     private void HideOtherMaps()
     {
-        rooms.Where(obj => obj.name != PlayerStateController.GetInstance().currentRoom.name).ToList().ForEach(obj =>
+        rooms.Where(obj => obj.name != PlayerState.GetInstance().currentRoom.name).ToList().ForEach(obj =>
         {
             var renderers = obj.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)
@@ -188,21 +165,21 @@ public class GameController : MonoBehaviour
         if (_eventTime < gameEventTickTime)
             return;
         
-        AudioManager.instance.playClip(_TimeBell, transform.position);
+        AudioManager.GetInstance().playClip(_TimeBell, transform.position);
         
         _gameEventDispatcher.BroadcastEvent(_eventCount);
         if (_eventCount < gameEventTickCount)
         {
             if(_eventCount == 0)
-                _gameProgressionEventDispatcher.BroadcastEvent(GameProgressionState.Begin);
+                _gameProgressionEventDispatcher.BroadcastEvent(TimeProgression.Begin);
             else if (_eventCount == gameEventTickCount/2)
-                _gameProgressionEventDispatcher.BroadcastEvent(GameProgressionState.Middle);
+                _gameProgressionEventDispatcher.BroadcastEvent(TimeProgression.Middle);
             else if (_eventCount == gameEventTickCount - 1)
-                _gameProgressionEventDispatcher.BroadcastEvent(GameProgressionState.Last);
+                _gameProgressionEventDispatcher.BroadcastEvent(TimeProgression.Last);
         }
         else
         {
-            _gameProgressionEventDispatcher.BroadcastEvent(GameProgressionState.End);
+            _gameProgressionEventDispatcher.BroadcastEvent(TimeProgression.End);
             TimeOut();
         }
         
