@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
 using Interfaces;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -42,6 +43,7 @@ public class GameController : Singleton<GameController>
 
     private readonly EventDispatcher<int> _gameEventDispatcher = new ();
     private readonly EventDispatcher<TimeProgression> _gameProgressionEventDispatcher = new ();
+    private readonly EventDispatcher<UserMessageData> _gameUserMessageEventDispatcher = new ();
 
 
     /// <summary>
@@ -126,6 +128,72 @@ public class GameController : Singleton<GameController>
     public void UnsubscribeToGameProgressionEvent(IEventObserver<TimeProgression> observer)
     {
         _gameProgressionEventDispatcher.Unsubscribe(observer);
+    }
+    
+    public struct UserMessageData
+    {
+        public UserMessageData(MessageToUserSenderType sender, string message, MessageToUserScheduleType priority = MessageToUserScheduleType.Regular)
+        {
+            Sender = sender;
+            Priority = priority;
+            Message = message;
+        }
+
+        /// <summary>
+        /// describes who is sending the message
+        /// </summary>
+        public enum MessageToUserSenderType
+        {
+            Player,
+            Guard
+        }//todo | extension : add other sender type if needed
+        
+        /// <summary>
+        /// describe the priority of the message
+        /// </summary>
+        public enum MessageToUserScheduleType
+        {
+            /// <summary>
+            /// Message will be placed last on the message queue.
+            /// </summary>
+            Regular,
+            /// <summary>
+            /// Message will be placed as first on message queue (behind a ImportanceOnTiming message)
+            /// </summary>
+            ImportanceOnReadability,
+            /// <summary>
+            /// Message will interrupt Current Message as it is required for the user to see fast. These
+            /// messages are not enqueued so if it gets interrupted, it wont be recovered after this.
+            /// </summary>
+            ImportanceOnTiming
+        }//todo | extension : add other sender type if needed
+
+        private MessageToUserSenderType Sender { get;}
+        private MessageToUserScheduleType Priority { get;}
+        private string Message { get; }
+    }
+    
+    public void MessageToUser(UserMessageData message)
+    {
+        _gameUserMessageEventDispatcher.BroadcastEvent(message);
+    }
+    
+    /// <summary>
+    /// Subscribe to Game Mode's Game User Message events
+    /// </summary>
+    /// <param name="observer"></param>
+    public void SubscribeToGameUserMessageEvent(IEventObserver<UserMessageData> observer)
+    {
+        _gameUserMessageEventDispatcher.Subscribe(observer);
+    }
+    
+    /// <summary>
+    /// Unsubscribe from Game Mode's Game User Message events
+    /// </summary>
+    /// <param name="observer"></param>
+    public void UnsubscribeToGameUserMessageEvent(IEventObserver<UserMessageData> observer)
+    {
+        _gameUserMessageEventDispatcher.Unsubscribe(observer);
     }
     
     //private class TestEventReceiver : IEventObserver<int>
