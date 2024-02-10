@@ -45,6 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52eabb2b81dbd5f4caf3b94ed3fd7126, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status: 0
+  timeStatus: 0
+  timeEventID: 0
+  objectives: []
 --- !u!114 &7433975258528184725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,6 +63,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameEventTickTime: 10
   gameEventTickCount: 12
-  rooms: []
-  _TimeBell: {fileID: 0}
-  _CaughtBell: {fileID: 0}
+  rooms:
+  - {fileID: 0}
+  - {fileID: 0}
+  timeBell: {fileID: 8300000, guid: e4fae1baabc2dc440a0113b2830f3b83, type: 3}
+  caughtBell: {fileID: 8300000, guid: d10610c5cc10b1b43b578250baab23d6, type: 3}

@@ -14,12 +14,12 @@ using UnityEngine.Serialization;
 public class GameController : Singleton<GameController>
 {
     /// <returns>Game Mode Controller.</returns>
-    /// 
     public static GameController GetGameMode()
     {
         return GetInstance();
     }
-
+    
+    /// <returns>Game State</returns>
     public static GameState GetGameState()
     {
         return GameState.GetInstance();
@@ -34,14 +34,14 @@ public class GameController : Singleton<GameController>
     [Header("Rooms")]
     public List<GameObject> rooms;
 
-    public AudioClip _TimeBell;
-    public AudioClip _CaughtBell;
+    [FormerlySerializedAs("TimeBell")] public AudioClip timeBell;
+    [FormerlySerializedAs("CaughtBell")] public AudioClip caughtBell;
     
     private int _eventCount = 0;
     private float _eventTime = 0.0f;
 
-    private EventDispatcher<int> _gameEventDispatcher = new ();
-    private EventDispatcher<TimeProgression> _gameProgressionEventDispatcher = new ();
+    private readonly EventDispatcher<int> _gameEventDispatcher = new ();
+    private readonly EventDispatcher<TimeProgression> _gameProgressionEventDispatcher = new ();
 
 
     /// <summary>
@@ -78,7 +78,7 @@ public class GameController : Singleton<GameController>
         GetGameState().status = GameStatus.Ended;
         if (GameEndingManager.instance != null)
         {
-            AudioManager.GetInstance().playClip(_CaughtBell, transform.position);
+            AudioManager.GetInstance().playClip(caughtBell, transform.position);
             GameEndingManager.instance.onPlayerDeath(GameEndingManager.GameOverState.Caught);
         }
         else
@@ -165,7 +165,7 @@ public class GameController : Singleton<GameController>
         if (_eventTime < gameEventTickTime)
             return;
         
-        AudioManager.GetInstance().playClip(_TimeBell, transform.position);
+        AudioManager.GetInstance().playClip(timeBell, transform.position);
         
         _gameEventDispatcher.BroadcastEvent(_eventCount);
         if (_eventCount < gameEventTickCount)
