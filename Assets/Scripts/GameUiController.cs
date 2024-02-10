@@ -24,12 +24,21 @@ public class GameUiController : MonoBehaviour,
     private GameObject _healthBarPanel;
     private GameObject _eyeballBarPanel;
 
+    private struct MessageQueueElement
+    {
+        private GameController.UserMessageData _messageData;
+        private float _currentTime;
+    }
+
+    private LinkedList<MessageQueueElement> _messageQueue;
+
     // Start is called before the first frame update
     void Start()
     {
         GameController.GetGameMode().SubscribeToGameProgressionEvent(this);
         GameController.GetGameMode().SubscribeToGameUserMessageEvent(this);
         PlayerController.GetPlayer().GetComponent<AbilitySystemComponent>().SubscribeToStatChanges(this);
+        
         
         foreach (Transform child in transform)
         {
@@ -43,8 +52,7 @@ public class GameUiController : MonoBehaviour,
             {
                 _eyeballBarPanel = childGameObject;
             }
-        }
-
+        }//todo switch to public values set in the prefab
     }
 
     // Update is called once per frame

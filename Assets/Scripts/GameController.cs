@@ -132,11 +132,12 @@ public class GameController : Singleton<GameController>
     
     public struct UserMessageData
     {
-        public UserMessageData(MessageToUserSenderType sender, string message, MessageToUserScheduleType priority = MessageToUserScheduleType.Regular)
+        public UserMessageData(MessageToUserSenderType sender, string message,  float duration = 2.0f, MessageToUserScheduleType priority = MessageToUserScheduleType.Regular)
         {
             Sender = sender;
             Priority = priority;
             Message = message;
+            Duration = duration;
         }
 
         /// <summary>
@@ -171,6 +172,7 @@ public class GameController : Singleton<GameController>
         public MessageToUserSenderType Sender { get;}
         public MessageToUserScheduleType Priority { get;}
         public string Message { get; }
+        public float Duration { get; }
     }
     
     public void MessageToUser(UserMessageData message)
