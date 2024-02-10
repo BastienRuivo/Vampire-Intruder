@@ -28,6 +28,7 @@ public class GameUiController : MonoBehaviour,
     void Start()
     {
         GameController.GetGameMode().SubscribeToGameProgressionEvent(this);
+        GameController.GetGameMode().SubscribeToGameUserMessageEvent(this);
         PlayerController.GetPlayer().GetComponent<AbilitySystemComponent>().SubscribeToStatChanges(this);
         
         foreach (Transform child in transform)
