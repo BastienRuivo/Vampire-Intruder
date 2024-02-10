@@ -160,7 +160,7 @@ public class GameController : Singleton<GameController>
         });
     }
 
-    void needSong(){
+    private void UpdateGameStatus(){
         _eventTime += Time.deltaTime;
         if (_eventTime < gameEventTickTime)
             return;
@@ -190,6 +190,6 @@ public class GameController : Singleton<GameController>
     // Update is called once per frame
     void Update()
     {
-        needSong();
+        UpdateGameStatus();
     }
 }
