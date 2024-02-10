@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace;
 using Interfaces;
+using JetBrains.Annotations;
 using Systems.Ability;
 using TMPro;
 using UnityEngine;
@@ -12,8 +13,6 @@ using UnityEngine.UI;
 public class GameUiController : MonoBehaviour, 
     IEventObserver<TimeProgression>, IEventObserver<GameObject>, IEventObserver<GameController.UserMessageData>
 {
-    public float dialogLineDuration = 4.0f;
-
     [FormerlySerializedAs("JessikaBeginQuote")] [Header("Jessika's Quotes")] public string jessikaBeginQuote;
     [FormerlySerializedAs("JessikaMiddleQuote")] [Header("Jessika's Quotes")] public string jessikaMiddleQuote;
     [FormerlySerializedAs("JessikaFinalQuote")] [Header("Jessika's Quotes")] public string jessikaFinalQuote;
@@ -26,11 +25,25 @@ public class GameUiController : MonoBehaviour,
 
     private struct MessageQueueElement
     {
-        private GameController.UserMessageData _messageData;
-        private float _currentTime;
+        private readonly GameController.UserMessageData _messageData;
+        private float _remainingTime;
+
+        public MessageQueueElement(GameController.UserMessageData message)
+        {
+            _messageData = message;
+            _remainingTime = message.Duration;
+        }
+        
+        public GameController.UserMessageData GetMessage() {return _messageData;}
+        
+        public float GetRemainingTime() {return _remainingTime;}
+        
+        public void AdvanceTime(float t) {_remainingTime-=t;}
     }
 
-    private LinkedList<MessageQueueElement> _messageQueue;
+    private readonly LinkedList<MessageQueueElement> _messageQueue = new ();
+    [CanBeNull] private IEnumerator _currentDialogRoutine = null;
+    private MessageQueueElement _currentDialog;
 
     // Start is called before the first frame update
     void Start()
@@ -60,6 +73,81 @@ public class GameUiController : MonoBehaviour,
     {
         _healthBarPanel.GetComponent<Image>().material.SetFloat("_Progression",_playerBloodStatSmooth.UpdateGetValue());
         _eyeballBarPanel.GetComponent<Image>().material.SetFloat("_Damage",_playerBloodStatEyeEffectSmooth.UpdateGetValue());
+
+        HandleMessageUpdate();
+    }
+
+    private void HandleMessageUpdate()
+    {
+        if (_currentDialogRoutine != null)
+        {
+            _currentDialog.AdvanceTime(Time.deltaTime);
+            if (_currentDialog.GetRemainingTime() <= 0)
+            {
+                _currentDialogRoutine = null;
+            }
+        }
+        
+        //next dialog
+        if(_messageQueue.Count == 0 || _currentDialogRoutine != null) return;
+        NextDialog();
+    }
+
+    private void NextDialog()
+    {
+        _currentDialog = _messageQueue.First.Value;
+        _messageQueue.RemoveFirst();
+
+        string sender = "";
+        Color color = Color.blue;
+        switch (_currentDialog.GetMessage().Sender)
+        {
+            case GameController.UserMessageData.MessageToUserSenderType.Player:
+                sender = "Jessika";
+                break;
+            case GameController.UserMessageData.MessageToUserSenderType.Guard:
+                sender = "Guard";
+                color = Color.red;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        _currentDialogRoutine = DialogRoutine($"{sender} : {_currentDialog.GetMessage().Message}", color, _currentDialog.GetRemainingTime());
+        StartCoroutine(_currentDialogRoutine);
+    }
+
+    private void EnqueueMessage(GameController.UserMessageData message)
+    {
+        switch (message.Priority)
+        {
+            case GameController.UserMessageData.MessageToUserScheduleType.Regular:
+                _messageQueue.AddLast(new MessageQueueElement(message));
+                break;
+            case GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnReadability:
+                _messageQueue.AddFirst(new MessageQueueElement(message));
+                break;
+            case GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming:
+                if (_currentDialogRoutine != null)
+                {
+                    _messageQueue.AddFirst(_currentDialog);
+                    StartCoroutine(_currentDialogRoutine);
+                    _currentDialogRoutine = null;
+                }
+                _messageQueue.AddFirst(new MessageQueueElement(message));
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    
+    private IEnumerator DialogRoutine(string text, Color color, float dialogLineDuration = 5.0f)
+    {
+        GetComponentInChildren<TextMeshProUGUI>().SetText(text);
+        GetComponentInChildren<TextMeshProUGUI>().color = color;
+        GetComponentInChildren<Animator>().SetBool("ShowDialog", true);
+        yield return new WaitForSeconds(dialogLineDuration);
+        GetComponentInChildren<Animator>().SetBool("ShowDialog", false);
     }
 
     public void OnEvent(TimeProgression context)
@@ -67,28 +155,34 @@ public class GameUiController : MonoBehaviour,
         switch (context)
         {
             case TimeProgression.Begin:
-                StartCoroutine(DialogRoutine($"Jessika : \"{jessikaBeginQuote}\""));
+                EnqueueMessage(new GameController.UserMessageData(
+                    GameController.UserMessageData.MessageToUserSenderType.Player,
+                    $"Jessika : \"{jessikaBeginQuote}\"",
+                    5.0f
+                    ));
+                //StartCoroutine(DialogRoutine($"Jessika : \"{jessikaBeginQuote}\"", new Color(1,1,1)));
                 break;
             case TimeProgression.Middle:
-                StartCoroutine(DialogRoutine($"Jessika : \"{jessikaMiddleQuote}\""));
+                EnqueueMessage(new GameController.UserMessageData(
+                    GameController.UserMessageData.MessageToUserSenderType.Player,
+                    $"Jessika : \"{jessikaMiddleQuote}\"",
+                    5.0f
+                ));
+                //StartCoroutine(DialogRoutine($"Jessika : \"{jessikaMiddleQuote}\"", new Color(1,1,1)));
                 break;
             case TimeProgression.Last:
-                StartCoroutine(DialogRoutine($"Jessika : \"{jessikaFinalQuote}\""));
+                EnqueueMessage(new GameController.UserMessageData(
+                    GameController.UserMessageData.MessageToUserSenderType.Player,
+                    $"Jessika : \"{jessikaFinalQuote}\"",
+                    5.0f
+                ));
+                //StartCoroutine(DialogRoutine($"Jessika : \"{jessikaFinalQuote}\"", new Color(1,1,1)));
                 break;
             case TimeProgression.End:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(context), context, null);
         }
-    }
-
-    private IEnumerator DialogRoutine(string text)
-    {
-        GetComponentInChildren<TextMeshProUGUI>().SetText(text);
-        GetComponentInChildren<Animator>().SetBool("ShowDialog", true);
-        yield return new WaitForSeconds(dialogLineDuration);
-        GetComponentInChildren<Animator>().SetBool("ShowDialog", false);
-
     }
 
     public void OnEvent(GameObject context)
@@ -106,16 +200,6 @@ public class GameUiController : MonoBehaviour,
 
     public void OnEvent(GameController.UserMessageData context)
     {
-        switch (context.Sender)
-        {
-            case GameController.UserMessageData.MessageToUserSenderType.Player:
-                Debug.Log($"Jessika : {context.Message}");
-                break;
-            case GameController.UserMessageData.MessageToUserSenderType.Guard:
-                Debug.Log($"Guard : {context.Message}");
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+        EnqueueMessage(context);
     }
 }
