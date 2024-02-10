@@ -168,9 +168,9 @@ public class GameController : Singleton<GameController>
             ImportanceOnTiming
         }//todo | extension : add other sender type if needed
 
-        private MessageToUserSenderType Sender { get;}
-        private MessageToUserScheduleType Priority { get;}
-        private string Message { get; }
+        public MessageToUserSenderType Sender { get;}
+        public MessageToUserScheduleType Priority { get;}
+        public string Message { get; }
     }
     
     public void MessageToUser(UserMessageData message)

@@ -9,7 +9,8 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class GameUiController : MonoBehaviour, IEventObserver<TimeProgression>, IEventObserver<GameObject>
+public class GameUiController : MonoBehaviour, 
+    IEventObserver<TimeProgression>, IEventObserver<GameObject>, IEventObserver<GameController.UserMessageData>
 {
     public float dialogLineDuration = 4.0f;
 
@@ -92,5 +93,20 @@ public class GameUiController : MonoBehaviour, IEventObserver<TimeProgression>, 
         
         _playerBloodStatSmooth.RetargetValue(bloodRatio);
         _playerBloodStatEyeEffectSmooth.RetargetValue(bloodRatio * 4 > 1 ? 0.0f : 1 - (bloodRatio * 4.0f));
+    }
+
+    public void OnEvent(GameController.UserMessageData context)
+    {
+        switch (context.Sender)
+        {
+            case GameController.UserMessageData.MessageToUserSenderType.Player:
+                Debug.Log($"Jessika : {context.Message}");
+                break;
+            case GameController.UserMessageData.MessageToUserSenderType.Guard:
+                Debug.Log($"Guard : {context.Message}");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }
