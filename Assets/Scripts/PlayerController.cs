@@ -5,17 +5,7 @@ using Systems.Ability.Abilities;
 using Systems.Ability.tests;
 using UnityEngine;
 
-public enum Direction
-{
-    Back,
-    BackRight,
-    Left,
-    UpRight,
-    Up,
-    UpLeft,
-    Right,
-    BackLeft
-}
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -90,44 +80,14 @@ public class PlayerController : MonoBehaviour
             hAxis = Input.GetAxis("Horizontal");
             vAxis = Input.GetAxis("Vertical");
         }
-        
-        if(hAxis != 0 && vAxis != 0) 
-        {
-            if(hAxis > 0 && vAxis == 0)
-            {
-                directionPerso = Direction.Left;
-            }
-            if(hAxis > 0 && vAxis > 0)
-            {
-                directionPerso = Direction.UpRight;
-            }
-            if(hAxis == 0 && vAxis > 0)
-            {
-                directionPerso = Direction.Up;
-            }
-            if(hAxis < 0 && vAxis > 0)
-            {
-                directionPerso = Direction.UpLeft;
-            }
-            if(hAxis < 0 && vAxis == 0)
-            {
-                directionPerso = Direction.Right;
-            }
-            if(hAxis < 0 && vAxis < 0)
-            {
-                directionPerso = Direction.BackLeft;
-            }
-            if(hAxis == 0 && vAxis < 0)
-            {
-                directionPerso = Direction.Back;
-            }
-            if(hAxis > 0 && vAxis < 0)
-            {
-                directionPerso = Direction.BackRight;
-            }
-        }
 
         Vector3 direction = new Vector3(hAxis, vAxis, 0).normalized;
+
+        if (hAxis != 0 && vAxis != 0) 
+        {
+            directionPerso = DirectionHelper.FromVector(direction);
+        }
+
         rigidBody.velocity = direction * speed * Time.deltaTime;
 
         if(rigidBody.velocity.magnitude > 0)

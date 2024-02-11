@@ -9,6 +9,8 @@ public class Node : MonoBehaviour
     public GameObject previous;
     public bool isPathEnd;
 
+    public List<Direction> directionsToLook;
+
     public GameObject NextTarget(bool isReversed)
     {
         return isReversed? previous : next;
