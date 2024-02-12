@@ -6938,6 +6938,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6790622339952153203}
     m_Modifications:
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: reference
+      value: _GetCaisse
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: objectivePhrase
+      value: Ramasser la caisse
+      objectReference: {fileID: 0}
     - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.9798957

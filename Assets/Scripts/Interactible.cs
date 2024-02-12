@@ -71,13 +71,19 @@ public class Interactible : MonoBehaviour
     public void StartCollision()
     {
         _isColliding= true;
-        DisplayTooltips(true);
+        if (_isActive)
+        {
+            DisplayTooltips(true);
+            if(reference.Length > 0) GameController.GetInstance().UpdateObjective(reference, GameController.ObjectiveEvent.IN_RANGE);
+        }
     }
 
     public void EndCollision()
     {
         _isColliding= false;
         DisplayTooltips(false);
+        if (_isActive)
+            if (reference.Length > 0) GameController.GetInstance().UpdateObjective(reference, GameController.ObjectiveEvent.OUT_RANGE);
     }
 
     public void DisplayTooltips(bool showTooltips)
@@ -147,6 +153,8 @@ public class Interactible : MonoBehaviour
         PlayerState.GetInstance().UnlockInput();
         _isActive = false;
         _spriteRenderer.material.SetFloat("_t", 0f);
+        DisplayTooltips(false);
+        if (reference.Length > 0) GameController.GetInstance().UpdateObjective(reference, GameController.ObjectiveEvent.COMPLETE);
         switch (afterUse)
         {
             case AfterUse.REPLACE_SPRITE:

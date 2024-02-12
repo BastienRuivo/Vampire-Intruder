@@ -15,6 +15,8 @@ public class GameEndingManager : MonoBehaviour
     public GameObject gameOverUI;
     public AudioClip _bell;
     public Text text;
+    public string successMessage = "Mission réussite";
+    public string failureMessage = "Mission échouée \n Lord Jasper est déçu de vous";
     
     
     public static GameEndingManager instance;
@@ -27,7 +29,19 @@ public class GameEndingManager : MonoBehaviour
         instance = this;
     }
 
-    public void onPlayerVictory(){
+    public void onPlayerExtraction(){
+        var main = GameController.GetInstance().objectivesToComplete.Find(o => o.isMain);
+        var textObj = victoryUI.GetComponentInChildren<Text>();
+        if (main.state == GameController.ObjectiveState.DONE)
+        {
+            textObj.text = successMessage;
+            textObj.color = Color.green;
+        }
+        else
+        {
+            textObj.text = failureMessage;
+            textObj.color = Color.red;
+        }
         victoryUI.SetActive(true);
         Time.timeScale = 0;
         AudioManager.GetInstance().playClip(_bell, transform.position);

@@ -13,6 +13,8 @@ TagManager:
   - GameUIHealthBar
   - EnemyVisionDecal
   - Node
+  - WallChanger
+  - Exit
   layers:
   - Default
   - TransparentFX

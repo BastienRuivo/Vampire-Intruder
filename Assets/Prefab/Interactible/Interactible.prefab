@@ -401,8 +401,8 @@ MonoBehaviour:
   type: 0
   afterUse: 0
   replacementSprite: {fileID: 0}
-  reference: 
-  objectivePhrase: 
+  reference: _Null
+  objectivePhrase: "Caisse pars d\xE9faut, elle est Null."
   isMainObjective: 0
   glowColor: {r: 1, g: 0.9184297, b: 0, a: 1}
   startColor: {r: 1, g: 0.15299131, b: 0, a: 1}
