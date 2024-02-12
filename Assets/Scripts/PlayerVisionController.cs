@@ -11,7 +11,7 @@ public class PlayerVisionController : MonoBehaviour
 
     private void Awake() {
         playerController = GetComponent<PlayerController>();
-        vision = transform.GetChild(1); // Récupérer le transform de la vision //TODO recuperer autrement
+        vision = transform.GetChild(0); // Récupérer le transform de la vision //TODO recuperer autrement
     }
 
     private void Update() {
