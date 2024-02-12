@@ -22,6 +22,7 @@ public enum AlertStage
 
 public class GuardManager : MonoBehaviour
 {
+    public CameraShake cameraShake;
     public LayerMask visionMask;
     public GameObject currentRoom;
     public GameObject player;
@@ -337,6 +338,7 @@ public class GuardManager : MonoBehaviour
             {
                 // If alerted, changer target to player and lock camera
                 case AlertStage.Alerted:
+                    cameraShake.Shake(0.2f);
                     _speed = spotSpeed;
                     PlayerState.GetInstance().LockInput();
                     AudioManager.GetInstance().playClip(_spotSound, transform.position);
@@ -351,6 +353,7 @@ public class GuardManager : MonoBehaviour
                 // If very sus, check the player position
                 case AlertStage.Suspicious:
                     // create Node at 25% between guard and player
+                    cameraShake.Shake(0.05f);
                     GameObject nodeGO = Instantiate(nodePrefab);
                     nodeGO.transform.position = Vector3.Lerp(_body.position, player.transform.position, distancePercentageSuspicious);
                     _currentWaitingTimer = 0;
