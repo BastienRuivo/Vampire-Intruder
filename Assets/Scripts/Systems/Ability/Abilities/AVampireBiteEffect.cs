@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class AVampireBite : Ability
+    public class AVampireBiteEffect : Ability
     {
-        public AVampireBite()
+        public AVampireBiteEffect()
         {
             //Add the ability stat costs here.
             AbilityCosts.Add("Blood", -25.0f); //todo balance
@@ -16,6 +16,8 @@ namespace Systems.Ability.Abilities
             Debug.Log("Vampire is draining blood...");
             
             //todo play animation
+            
+            //todo lock inputs
             
             //wait for a period of time;
             yield return new WaitForSeconds(5);
