@@ -223,9 +223,12 @@ public class GameController : Singleton<GameController>
             var renderers = obj.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)
             {
-                Color c = r.material.color;
-                c.a = 0f;
-                r.material.color = c;
+                if(r.material.HasColor("_Color"))
+                {
+                    Color c = r.material.color;
+                    c.a = 0f;
+                    r.material.color = c;
+                }
             }
         });
     }

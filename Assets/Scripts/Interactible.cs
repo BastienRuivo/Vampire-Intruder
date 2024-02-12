@@ -18,7 +18,8 @@ public class Interactible : MonoBehaviour
     {
         NOTHING,
         REPLACE_SPRITE,
-        DISAPPEAR
+        DISAPPEAR,
+        END_LVL
     };
 
     [Header("Interactible")]
@@ -29,93 +30,109 @@ public class Interactible : MonoBehaviour
     public string objectivePhrase;
     public bool isMainObjective;
     public Color glowColor;
-    public GameObject clock;
+    public Color startColor;
+    public Color endColor;
+
+    private SpriteRenderer _clock;
+    private SpriteRenderer _keyTooltip;
+    private SpriteRenderer _icon;
 
     [Header("Timer")]
     public float duration;
     [SerializeField]
-    private float currentTime;
+    private float _currentTime;
     [SerializeField]
-    private bool isActive;
+    private bool _isActive;
 
     [Header("TagList")]
     public List<TagAttribute> tags;
 
-    [SerializeField]
-    private bool isColliding = false;
-    [SerializeField]
-    private bool interacted = false;
+    private bool _isColliding = false;
+    private bool _interacted = false;
 
-    private SpriteRenderer spriteRenderer;
+    private SpriteRenderer _spriteRenderer;
 
     private void Start()
     {
-        currentTime = duration;
-        isActive = true;
+        _currentTime = duration;
+        _isActive = true;
 
-        spriteRenderer= GetComponent<SpriteRenderer>();
-        spriteRenderer.material.SetColor("_Color", glowColor);
-        clock.GetComponent<SpriteRenderer>().enabled = false;
+        _spriteRenderer= GetComponent<SpriteRenderer>();
+        _spriteRenderer.material.SetColor("_Color", glowColor);
+        _clock = transform.Find("Clock").GetComponent<SpriteRenderer>();
+        _keyTooltip = transform.Find("Key").GetComponent<SpriteRenderer>();
+        _icon = transform.Find("Icon").GetComponent<SpriteRenderer>();
+
+        _clock.material.SetColor("_Start_Color", startColor);
+        _clock.material.SetColor("_End_Color", endColor);
+        _isColliding = false;
     }
 
     public void StartCollision()
     {
-        isColliding= true;
-        clock.GetComponent<SpriteRenderer>().enabled = true;
+        _isColliding= true;
+        DisplayTooltips(true);
     }
 
     public void EndCollision()
     {
-        isColliding= false;
-        clock.GetComponent<SpriteRenderer>().enabled = false;
+        _isColliding= false;
+        DisplayTooltips(false);
+    }
+
+    public void DisplayTooltips(bool showTooltips)
+    {
+        _clock.enabled = showTooltips;
+        _keyTooltip.enabled = showTooltips;
+        _icon.enabled = showTooltips;
     }
 
     private void Update()
     {
-        if (!isActive) return;
+        if (!_isActive) return;
         var axis = Input.GetAxis("Interact");
 
-        if(isColliding)
+        if(_isColliding)
         {
             float t = Mathf.PingPong(Time.time, 0.5f);
-            spriteRenderer.material.SetFloat("_t", t);
+            _spriteRenderer.material.SetFloat("_t", t);
         }
         else
         {
-            spriteRenderer.material.SetFloat("_t", 0f);
+            _spriteRenderer.material.SetFloat("_t", 0f);
         }
 
         if (type == InteractibleType.TIMER_LOCKED)
         {
-            if (!interacted)
+            if (!_interacted)
             {
-                interacted = axis == 1f && isColliding;
+                _interacted = axis == 1f && _isColliding;
             }
         }
         else
         {
-            bool v = axis == 1f && isColliding;
-            if (v != interacted)
+            bool v = axis == 1f && _isColliding;
+            if (v != _interacted)
             {
-                interacted = v;
-                if(interacted) PlayerState.GetInstance().LockInput();
+                _interacted = v;
+                if(_interacted) PlayerState.GetInstance().LockInput();
                 else PlayerState.GetInstance().UnlockInput();
             }
         }
 
-        if(currentTime > 0f)
+        if(_currentTime > 0f)
         {
-            if (isColliding && interacted)
+            if (_isColliding && _interacted)
             {
-                currentTime -= Time.deltaTime;
+                _currentTime -= Time.deltaTime;
             }
             else if (type == InteractibleType.TIMER_RESET)
             {
-                currentTime = duration;
+                _currentTime = duration;
             }
-            if(clock != null)
+            if(_clock != null)
             {
-                clock.GetComponent<SpriteRenderer>().material.SetFloat("_t", 1f - currentTime / duration);
+                _clock.GetComponent<SpriteRenderer>().material.SetFloat("_t", 1f - _currentTime / duration);
             }
         }
         else
@@ -128,8 +145,8 @@ public class Interactible : MonoBehaviour
     private void OnEnd()
     {
         PlayerState.GetInstance().UnlockInput();
-        isActive = false;
-        spriteRenderer.material.SetFloat("_t", 0f);
+        _isActive = false;
+        _spriteRenderer.material.SetFloat("_t", 0f);
         switch (afterUse)
         {
             case AfterUse.REPLACE_SPRITE:
@@ -138,6 +155,10 @@ public class Interactible : MonoBehaviour
 
             case AfterUse.DISAPPEAR:
                 Destroy(gameObject);
+                break;
+
+            case AfterUse.END_LVL:
+                GameController.GetInstance().LeaveLevel();
                 break;
 
             default: break;
