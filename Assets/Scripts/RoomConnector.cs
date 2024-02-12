@@ -76,6 +76,10 @@ public class RoomConnector : MonoBehaviour
     {
         foreach (Renderer renderer in roomRoot.GetComponentsInChildren<Renderer>())
         {
+            if (!renderer.material.HasColor("_Color"))
+            {
+                continue;
+            }
             Color c = renderer.material.color;
             if(renderer.material.name.Contains(defaultMtl.name))
             {

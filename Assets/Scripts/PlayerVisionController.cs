@@ -40,7 +40,8 @@ public class PlayerVisionController : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().color = Color.red;
             Debug.Log("I see the enemy");
-            other.gameObject.GetComponent<Animator>().SetBool("enemyVisible", true);
+            var manager = other.GetComponent<GuardManager>();
+            manager.EnterPlayerSigth();
         }
     }
 
@@ -54,7 +55,8 @@ public class PlayerVisionController : MonoBehaviour
             else
             {
                 GetComponent<SpriteRenderer>().color = Color.white;
-                other.gameObject.GetComponent<Animator>().SetBool("enemyVisible", false);
+                var manager = other.GetComponent<GuardManager>();
+                manager.ExitPlayerSight();
             }
         }
     }

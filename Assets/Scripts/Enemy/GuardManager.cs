@@ -38,6 +38,12 @@ public class GuardManager : MonoBehaviour
     public float alertTimer;
     private float _currentAlert;
     [Range(1, 5)] public float viewDistance = 3.5f;
+    // Speed when appearing in player sight
+    [Range(0.1f, 10f)] 
+    public float inSight = 1.5f;
+    // Speed when disappearing of player sight
+    [Range(0.1f, 10f)] 
+    public float outSight = 1.0f;
 
     [Header("Pathfinding")]
     // Speed when travaelling normally
@@ -98,8 +104,13 @@ public class GuardManager : MonoBehaviour
     private List<Direction> _directions;
     // Path update coroutine
     private IEnumerator _updatePathCoroutine;
+    // Alpha update coroutine
+    private IEnumerator _updateAlphaCoroutine;
+    // Renderer
+    private SpriteRenderer _guardRenderer;
     [FormerlySerializedAs("TraceResolution")] 
     public uint traceResolution = 128;
+    
     
     private float _foVThetaMin;
     private float _foVThetaMax;
@@ -110,6 +121,7 @@ public class GuardManager : MonoBehaviour
 
     //Cone trace
     private GameObject _visionCone;
+    private SpriteRenderer _visionRenderer;
     private Texture2D _linearShadowMap;
     private Color[] _shadowMapData;
     private Vector2 _firstDir;
@@ -152,6 +164,10 @@ public class GuardManager : MonoBehaviour
 
         _visionAnchor = transform.GetChild(0).gameObject;
         _animator = GetComponent<Animator>();
+
+
+        _visionRenderer = _visionCone.GetComponent<SpriteRenderer>();
+        _guardRenderer = GetComponent<SpriteRenderer>();
     }
     private void Update()
     {
@@ -222,11 +238,10 @@ public class GuardManager : MonoBehaviour
         //handle range
         UpdateFieldOfView(player.transform.position);
         UpdateShadowMap();
-        SpriteRenderer coneSprite = _visionCone.GetComponent<SpriteRenderer>();
-        coneSprite.material.SetVector("_ObserverPosition", transform.position);
-        coneSprite.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
-        coneSprite.material.SetFloat("_ObserverViewDistance", viewDistance);
-        coneSprite.material.SetFloat("_ObserverFieldOfView", _coneAngle);
+        _visionRenderer.material.SetVector("_ObserverPosition", transform.position);
+        _visionRenderer.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
+        _visionRenderer.material.SetFloat("_ObserverViewDistance", viewDistance);
+        _visionRenderer.material.SetFloat("_ObserverFieldOfView", _coneAngle);
 
 
 
@@ -251,6 +266,25 @@ public class GuardManager : MonoBehaviour
     private void FixedUpdate()
     {
         FollowPath();
+    }
+
+    public void EnterPlayerSigth()
+    {
+        if(_updateAlphaCoroutine != null)
+        {
+            StopCoroutine(_updateAlphaCoroutine);
+        }
+        _updateAlphaCoroutine = AlphaIncrement();
+        StartCoroutine(_updateAlphaCoroutine);
+    }
+    public void ExitPlayerSight()
+    {
+        if (_updateAlphaCoroutine != null)
+        {
+            StopCoroutine(_updateAlphaCoroutine);
+        }
+        _updateAlphaCoroutine = AlphaDecrement();
+        StartCoroutine(_updateAlphaCoroutine);
     }
     private void OnTriggerEnter2D(Collider2D other) {
         //if(other.CompareTag("Player") && NoWallBetweenPlayerAndEnemy(other.gameObject.transform.position))
@@ -337,7 +371,7 @@ public class GuardManager : MonoBehaviour
     private void DebugStageAlert(float alertRatio)
     {
         //Debug.Log($"{_playerInRange} {_playerInFOV}");
-        gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.green, Color.red, alertRatio);
+        _guardRenderer.color = Color.Lerp(Color.green, Color.red, alertRatio);
     }//todo replace with real animation.
 
     /** 
@@ -556,7 +590,7 @@ public class GuardManager : MonoBehaviour
         {
             newAlertStage = AlertStage.Alerted;
         }
-        else if (alertRatio > 5f)
+        else if (alertRatio > 0.5f)
         {
             newAlertStage = AlertStage.Suspicious;
         }
@@ -649,6 +683,31 @@ public class GuardManager : MonoBehaviour
         float newY = vector.x * sinTheta + vector.y * cosTheta;
 
         return new Vector2(newX, newY);
+    }
+
+    public void SetAlpha(float alpha)
+    {
+        var color = _guardRenderer.color;
+        color.a = alpha;
+        _guardRenderer.color = color;
+    }
+
+    public IEnumerator AlphaIncrement()
+    {
+        for(float alpha = _guardRenderer.color.a; alpha < 1.0f; alpha += Time.deltaTime * inSight)
+        {
+            SetAlpha(alpha);
+            yield return null;
+        }
+    }
+
+    public IEnumerator AlphaDecrement()
+    {
+        for(float alpha = _guardRenderer.color.a; alpha > 0.0f; alpha += Time.deltaTime * outSight)
+        {
+            SetAlpha(alpha);
+            yield return null;
+        }
     }
 }
 // CONE VISION
