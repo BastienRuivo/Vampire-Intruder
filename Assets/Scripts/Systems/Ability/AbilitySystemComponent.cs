@@ -18,7 +18,7 @@ namespace Systems.Ability
         /// <returns>a game object instanced from asset path.</returns>
         public GameObject InstanceGameObject(Ability ability,string path)
         {
-            return Instantiate(Resources.Load(path, typeof(GameObject))) as GameObject;
+            return Instantiate(Resources.Load<GameObject>(path));
         }
         
         /// <summary>
@@ -28,6 +28,8 @@ namespace Systems.Ability
         /// <param name="gameObject">the game object to destroy</param>
         public void DestroyGameObject(Ability ability, GameObject gameObject)
         {
+            if(gameObject == null)
+                return;
             GameObject.Destroy(gameObject);
         }
         
@@ -164,9 +166,12 @@ namespace Systems.Ability
                 Debug.LogError($"Unable to bind unknown ability \"{name}\".");
                 return; //todo throw error
             }
-            
-            if(_keyBindings.TryAdd(code, name))
+
+            if (_keyBindings.TryAdd(code, name))
+            {
+                _abilities[name].Bind(code);
                 return;
+            }
             
             //handle unbinding of previous ability
             _abilities[_keyBindings[code]].Bind(KeyCode.None);

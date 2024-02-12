@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DefaultNamespace;
+﻿using DefaultNamespace;
 using JetBrains.Annotations;
 using UnityEngine;
 
