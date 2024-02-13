@@ -20,8 +20,20 @@ public class GameUiController : MonoBehaviour,
     private readonly SmoothScalarValue _playerBloodStatSmooth = new SmoothScalarValue(1);
     private readonly SmoothScalarValue _playerBloodStatEyeEffectSmooth =  new SmoothScalarValue(0, 5f);
 
-    private GameObject _healthBarPanel;
-    private GameObject _eyeballBarPanel;
+    public GameObject healthBarPanel;
+    public GameObject eyeballBarPanel;
+    public GameObject objectivesPanel;
+
+    [Header("Objectives")]
+    public float upSpeed;
+    public float downSpeed;
+    [Range(0f, 1f)]
+    public float objectivesHeightOnScreen;
+
+    private float _objectiveDownY;
+    private float _objectiveUpY;
+    private bool _isObjectiveDisplayed;
+    private IEnumerator _objectiveDisplayCoroutine;
 
     private struct MessageQueueElement
     {
@@ -51,30 +63,50 @@ public class GameUiController : MonoBehaviour,
         GameController.GetGameMode().SubscribeToGameProgressionEvent(this);
         GameController.GetGameMode().SubscribeToGameUserMessageEvent(this);
         PlayerController.GetPlayer().GetComponent<AbilitySystemComponent>().SubscribeToStatChanges(this);
-        
-        
-        foreach (Transform child in transform)
-        {
-            GameObject childGameObject = child.gameObject;
-            if (childGameObject.CompareTag("GameUIHealthBar"))
-            {
-                _healthBarPanel = childGameObject;
-            }
-            
-            if (childGameObject.CompareTag("GameUIEyeBall"))
-            {
-                _eyeballBarPanel = childGameObject;
-            }
-        }//todo switch to public values set in the prefab
+        _objectiveDownY = objectivesPanel.transform.localPosition.y;
+        _objectiveUpY = _objectiveDownY * objectivesHeightOnScreen;
+        _isObjectiveDisplayed = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        _healthBarPanel.GetComponent<Image>().material.SetFloat("_Progression",_playerBloodStatSmooth.UpdateGetValue());
-        _eyeballBarPanel.GetComponent<Image>().material.SetFloat("_Damage",_playerBloodStatEyeEffectSmooth.UpdateGetValue());
+        healthBarPanel.GetComponent<Image>().material.SetFloat("_Progression",_playerBloodStatSmooth.UpdateGetValue());
+        eyeballBarPanel.GetComponent<Image>().material.SetFloat("_Damage",_playerBloodStatEyeEffectSmooth.UpdateGetValue());
 
+        _objectiveUpY = _objectiveDownY * objectivesHeightOnScreen;
         HandleMessageUpdate();
+
+        if(Input.GetKeyDown(KeyCode.O))
+        {
+            _isObjectiveDisplayed = !_isObjectiveDisplayed;
+            if (_objectiveDisplayCoroutine != null) 
+                StopCoroutine(_objectiveDisplayCoroutine);
+            _objectiveDisplayCoroutine = _isObjectiveDisplayed ? DisplayObjective() : HideObjective();
+            StartCoroutine(_objectiveDisplayCoroutine);
+        }
+    }
+
+    IEnumerator DisplayObjective()
+    {
+        while(objectivesPanel.transform.localPosition.y < _objectiveUpY)
+        {
+            var pos = objectivesPanel.transform.localPosition;
+            pos.y = Mathf.Lerp(objectivesPanel.transform.localPosition.y, _objectiveUpY, Time.deltaTime * upSpeed);
+            objectivesPanel.transform.localPosition = pos;
+            yield return null;
+        }
+    }
+
+    IEnumerator HideObjective()
+    {
+        while (objectivesPanel.transform.localPosition.y > _objectiveDownY)
+        {
+            var pos = objectivesPanel.transform.localPosition;
+            pos.y = Mathf.Lerp(objectivesPanel.transform.localPosition.y, _objectiveDownY, Time.deltaTime * downSpeed);
+            objectivesPanel.transform.localPosition = pos;
+            yield return null;
+        }
     }
 
     private void HandleMessageUpdate()
