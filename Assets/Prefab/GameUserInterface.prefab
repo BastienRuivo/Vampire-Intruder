@@ -418,9 +418,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6584938855459847236}
+  - {fileID: 3566486573396230255}
   - {fileID: 1213378312484885871}
   - {fileID: 1702195791005567877}
-  - {fileID: 3566486573396230255}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -520,6 +520,9 @@ MonoBehaviour:
   healthBarPanel: {fileID: 398114792036721106}
   eyeballBarPanel: {fileID: 5220202566593642546}
   objectivesPanel: {fileID: 6790341244887352448}
+  upSpeed: 0
+  downSpeed: 0
+  objectivesHeightOnScreen: 0
 --- !u!1 &5220202566593642546
 GameObject:
   m_ObjectHideFlags: 0
@@ -742,14 +745,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e04b069c843e14fb2c9715cbebf275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uknownPos: {r: 1, g: 1, b: 1, a: 1}
-  unknownPosMain: {r: 1, g: 1, b: 1, a: 1}
-  discovered: {r: 0.7075472, g: 1, b: 0.98279685, a: 0}
-  discoveredMain: {r: 0.7058824, g: 1, b: 0.9843137, a: 0}
-  playerAt: {r: 0, g: 0.5537987, b: 1, a: 0}
-  playerAtMain: {r: 0, g: 0.5529412, b: 1, a: 0}
-  done: {r: 0, g: 1, b: 0.062745094, a: 0}
-  doneMain: {r: 0, g: 1, b: 0.0627451, a: 0}
 --- !u!1 &6057866948439094268
 GameObject:
   m_ObjectHideFlags: 0
