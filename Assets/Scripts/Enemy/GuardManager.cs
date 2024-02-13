@@ -37,6 +37,7 @@ public class GuardManager : MonoBehaviour
     [Header("Alert")]
     public AlertStage alertStage;
     public float alertTimer;
+    private float _alertRatio;
     private float _currentAlert;
     [Range(1, 5)] public float viewDistance = 3.5f;
     // Speed when appearing in player sight
@@ -243,10 +244,10 @@ public class GuardManager : MonoBehaviour
         _visionRenderer.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
         _visionRenderer.material.SetFloat("_ObserverViewDistance", viewDistance);
         _visionRenderer.material.SetFloat("_ObserverFieldOfView", _coneAngle);
+        _visionRenderer.material.SetFloat("_AlertRatio", _alertRatio);
 
 
-
-
+        
         if (!_playerInFOV) { UpdateAlertStage(false); return; }
 
         //handle direct line trace
@@ -329,8 +330,8 @@ public class GuardManager : MonoBehaviour
             _currentAlert = Mathf.Max(_currentAlert - Time.deltaTime, 0f);
         }
 
-        float alertRatio = 1f - _currentAlert / alertTimer;
-        AlertStage newAlertStage = ComputeAlertStage(alertRatio);
+        _alertRatio = 1f - _currentAlert / alertTimer;
+        AlertStage newAlertStage = ComputeAlertStage(_alertRatio);
         // If the alert level is increasing, perform...
         if(newAlertStage > alertStage)
         {
@@ -370,7 +371,7 @@ public class GuardManager : MonoBehaviour
         }
 
         alertStage = newAlertStage;
-        DebugStageAlert(alertRatio);
+        DebugStageAlert(_alertRatio);
     }
     private void DebugStageAlert(float alertRatio)
     {
