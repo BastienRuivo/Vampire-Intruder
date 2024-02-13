@@ -2,22 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.Experimental.Rendering;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
 using Pathfinding;
-using Unity.Burst.CompilerServices;
-using Unity.VisualScripting;
-using UnityEngine.UIElements;
-using static UnityEngine.GraphicsBuffer;
 
 public enum AlertStage
 {
-    Idle,
-    SeenSomething,
-    Suspicious,
-    Alerted
+    Idle = 0,
+    SeenSomething = 1,
+    Suspicious = 2,
+    Alerted = 3
 }
 
 public class GuardManager : MonoBehaviour
@@ -36,6 +29,7 @@ public class GuardManager : MonoBehaviour
 
     [Header("Alert")]
     public AlertStage alertStage;
+    private AlertStage _previousAlertStage;
     public float alertTimer;
     private float _alertRatio;
     private float _currentAlert;
@@ -46,6 +40,13 @@ public class GuardManager : MonoBehaviour
     // Speed when disappearing of player sight
     [Range(0.1f, 10f)] 
     public float outSight = 1.0f;
+
+    [Header("Guard dialogs")] 
+    public string idleToSeenSomethingQuote;
+    public string seenSomethingToSuspiciousQuote;
+    public string suspiciousToAlertedQuote;
+    public string suspiciousToSeenSomethingQuote;
+    public string seenSomethingToIdleQuote;
 
     [Header("Pathfinding")]
     // Speed when travaelling normally
@@ -134,6 +135,7 @@ public class GuardManager : MonoBehaviour
     
     private void Awake() {
         alertStage = AlertStage.Idle;
+        _previousAlertStage = alertStage;
         _currentAlert = alertTimer;
     }
     private void Start()
@@ -248,16 +250,18 @@ public class GuardManager : MonoBehaviour
 
 
         
-        if (!_playerInFOV) { UpdateAlertStage(false); return; }
+        if (!_playerInFOV) { UpdateAlertStage(false); HandleDialogs(); return; }
 
         //handle direct line trace
         if (!NoWallToTarget(player))
         {
             UpdateAlertStage(false);
+            HandleDialogs();
             return;
         }
 
         UpdateAlertStage(true);
+        HandleDialogs();
 
         if (_playerInFOV && alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
         {
@@ -373,6 +377,77 @@ public class GuardManager : MonoBehaviour
         alertStage = newAlertStage;
         DebugStageAlert(_alertRatio);
     }
+
+    private void HandleDialogs()
+    {
+        if (alertStage != _previousAlertStage) return;
+
+        if (alertStage > _previousAlertStage)
+        {
+            switch (alertStage)
+            {
+                case AlertStage.Idle:
+                    break;
+                case AlertStage.SeenSomething:
+                    GameController.GetGameMode().MessageToUser(
+                        new GameController.UserMessageData(
+                            GameController.UserMessageData.MessageToUserSenderType.Guard,
+                            idleToSeenSomethingQuote,
+                            priority:GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming)
+                        );
+                    break;
+                case AlertStage.Suspicious:
+                    GameController.GetGameMode().MessageToUser(
+                        new GameController.UserMessageData(
+                            GameController.UserMessageData.MessageToUserSenderType.Guard,
+                            seenSomethingToSuspiciousQuote,
+                            priority:GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming)
+                    );
+                    break;
+                case AlertStage.Alerted:
+                    GameController.GetGameMode().MessageToUser(
+                        new GameController.UserMessageData(
+                            GameController.UserMessageData.MessageToUserSenderType.Guard,
+                            suspiciousToAlertedQuote,
+                            priority:GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming)
+                    );
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        else
+        {
+            switch (alertStage)
+            {
+                case AlertStage.Idle:
+                    GameController.GetGameMode().MessageToUser(
+                        new GameController.UserMessageData(
+                            GameController.UserMessageData.MessageToUserSenderType.Guard,
+                            seenSomethingToIdleQuote,
+                            priority:GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming)
+                    );
+                    break;
+                case AlertStage.SeenSomething:
+                    GameController.GetGameMode().MessageToUser(
+                        new GameController.UserMessageData(
+                            GameController.UserMessageData.MessageToUserSenderType.Guard,
+                            suspiciousToSeenSomethingQuote,
+                            priority:GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming)
+                    );
+                    break;
+                case AlertStage.Suspicious:
+                    break;
+                case AlertStage.Alerted:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        _previousAlertStage = alertStage;
+    }
+    
     private void DebugStageAlert(float alertRatio)
     {
         //Debug.Log($"{_playerInRange} {_playerInFOV}");

@@ -99,7 +99,7 @@ public class GameUiController : MonoBehaviour,
         _messageQueue.RemoveFirst();
 
         string sender = "";
-        Color color = Color.blue;
+        Color color = new Color(1,1,1);
         switch (_currentDialog.GetMessage().Sender)
         {
             case GameController.UserMessageData.MessageToUserSenderType.Player:
@@ -107,7 +107,7 @@ public class GameUiController : MonoBehaviour,
                 break;
             case GameController.UserMessageData.MessageToUserSenderType.Guard:
                 sender = "Guard";
-                color = Color.red;
+                color = new Color(1,0.9f,0.8f);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

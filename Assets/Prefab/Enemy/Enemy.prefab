@@ -140,6 +140,14 @@ MonoBehaviour:
   viewDistance: 3.5
   inSight: 1.5
   outSight: 1
+  idleToSeenSomethingQuote: Mmh ? J'ai cru voir quelque chose...
+  seenSomethingToSuspiciousQuote: "Il y a vraiment quelqu'un, non ?! Par tous les
+    Saints, il faut que je prot\xE8ge la maisonn\xE9e !"
+  suspiciousToAlertedQuote: "Alerte ! Stop ! Arr\xEAte-toi, manant !"
+  suspiciousToSeenSomethingQuote: "Bon, il n'y a rien... \xC7a devait \xEAtre un
+    rat... Ou une chauve-souris ?..."
+  seenSomethingToIdleQuote: "Bon, j'ai r\xEAv\xE9... J'ai vraiment besoin de dormir,
+    moi... Je travaille trop !"
   defaultSpeed: 500
   nextPointDistance: 0.25
   timerRefresh: 2
