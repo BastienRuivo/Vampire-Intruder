@@ -107,7 +107,7 @@ public class GameUiController : MonoBehaviour,
                 break;
             case GameController.UserMessageData.MessageToUserSenderType.Guard:
                 sender = "Guard";
-                color = new Color(1,0.9f,0.8f);
+                color = new Color(0.87f,0.87f,0.87f);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -130,8 +130,9 @@ public class GameUiController : MonoBehaviour,
             case GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming:
                 if (_currentDialogRoutine != null)
                 {
-                    _messageQueue.AddFirst(_currentDialog);
-                    StartCoroutine(_currentDialogRoutine);
+                    if(_currentDialog.GetMessage().Priority != GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming)
+                        _messageQueue.AddFirst(_currentDialog);
+                    StopCoroutine(_currentDialogRoutine);
                     _currentDialogRoutine = null;
                 }
                 _messageQueue.AddFirst(new MessageQueueElement(message));

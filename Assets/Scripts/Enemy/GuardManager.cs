@@ -380,7 +380,7 @@ public class GuardManager : MonoBehaviour
 
     private void HandleDialogs()
     {
-        if (alertStage != _previousAlertStage) return;
+        if (alertStage == _previousAlertStage) return;
 
         if (alertStage > _previousAlertStage)
         {
