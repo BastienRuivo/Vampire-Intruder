@@ -10,10 +10,38 @@ using UnityEngine.Serialization;
 
 
 
-
-
 public class GameController : Singleton<GameController>
 {
+    public enum ObjectiveState
+    {
+        UKNOWN_POS,
+        DISCOVERED,
+        PLAYER_AT,
+        DONE
+    }
+
+    public enum ObjectiveEvent
+    {
+        IN_RANGE,
+        OUT_RANGE,
+        COMPLETE
+    }
+
+    public class Objective
+    {
+        public bool isMain;
+        public ObjectiveState state;
+        public string reference;
+        public string phrase;
+        public Objective(bool isMain, string reference, string phrase, ObjectiveState state)
+        {
+            this.isMain = isMain;
+            this.reference = reference;
+            this.phrase = phrase;
+            this.state = state;
+        }
+    }
+
     /// <returns>Game Mode Controller.</returns>
     public static GameController GetGameMode()
     {
@@ -37,6 +65,8 @@ public class GameController : Singleton<GameController>
 
     [FormerlySerializedAs("TimeBell")] public AudioClip timeBell;
     [FormerlySerializedAs("CaughtBell")] public AudioClip caughtBell;
+
+    public List<Objective> objectivesToComplete = new List<Objective>();
     
     private int _eventCount = 0;
     private float _eventTime = 0.0f;
@@ -55,10 +85,28 @@ public class GameController : Singleton<GameController>
 
         //todo implementation of going to the next level, computing the impacts of this level to the next one.
         //may need a singleton "GameState" to save the results from one game to another.
-        GameEndingManager.instance.onPlayerVictory();
+        GameEndingManager.instance.onPlayerExtraction();
         Debug.Log("Level Completed.");
     }
     
+    public void GetAllObjective()
+    {
+        var objectives = GameObject.FindGameObjectsWithTag("Interactible").Select(x => x.GetComponent<Interactible>()).ToList();
+        Debug.Log(objectives.Count);
+        objectives.ForEach(o =>
+        {
+            Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
+            Debug.Log(obj.phrase);
+            objectivesToComplete.Add(obj);
+        });
+        objectives.Sort((a, b) =>
+        {
+            if (a.isMainObjective) return 1;
+            else if(b.isMainObjective) return -1;
+            else return a.reference.CompareTo(b.reference);
+        });
+    }
+
     /// <summary>
     /// End the level on player missing time.
     /// </summary>
@@ -212,6 +260,7 @@ public class GameController : Singleton<GameController>
         
         //SubscribeToGameEvent(new TestEventReceiver());
         HideOtherMaps();
+        GetAllObjective();
         
     }
 
@@ -258,6 +307,17 @@ public class GameController : Singleton<GameController>
         
         _eventTime -= gameEventTickTime;
         _eventCount++;
+    }
+
+    public void UpdateObjective(string reference, ObjectiveEvent ev)
+    {
+        var obj = objectivesToComplete.First(x => x.reference == reference);
+        switch(ev)
+        {
+            case ObjectiveEvent.IN_RANGE: obj.state = ObjectiveState.PLAYER_AT; break;
+            case ObjectiveEvent.OUT_RANGE: obj.state = ObjectiveState.DISCOVERED; break;
+            case ObjectiveEvent.COMPLETE: obj.state = ObjectiveState.DONE; break;
+        }
     }
 
     // Update is called once per frame

@@ -7,6 +7,11 @@ using UnityEngine;
 public class PlayerColliderController : MonoBehaviour
 {
     private int exitLock = 0;
+
+    public static bool IsInteractibleTag(string tag)
+    {
+        return tag == "Interactible" || tag == "Exit";
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //Debug.Log("Enter tag " + collision.gameObject.tag);
@@ -25,7 +30,7 @@ public class PlayerColliderController : MonoBehaviour
             exitLock++;
         }
 
-        if (collision.gameObject.tag == "Interactible")
+        if (IsInteractibleTag(collision.gameObject.tag))
         {
             collision.gameObject.GetComponent<Interactible>().StartCollision();
         }
@@ -47,7 +52,7 @@ public class PlayerColliderController : MonoBehaviour
             exitLock--;
         }
 
-        if (collision.gameObject.tag == "Interactible")
+        if (IsInteractibleTag(collision.gameObject.tag))
         {
             collision.gameObject.GetComponent<Interactible>().EndCollision();
         }

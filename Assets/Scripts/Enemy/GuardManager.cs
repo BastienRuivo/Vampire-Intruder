@@ -361,6 +361,7 @@ public class GuardManager : MonoBehaviour
                     SetTemporaryTarget(nodeGO);
                     Node node = nodeGO.GetComponent<Node>();
                     Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, player);
+                    node.directionsToLook.Add(dir);
                     node.directionsToLook.Add(DirectionHelper.Previous(dir));
                     node.directionsToLook.Add(dir);
                     node.directionsToLook.Add(DirectionHelper.Next(dir));

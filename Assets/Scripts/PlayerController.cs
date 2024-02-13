@@ -52,12 +52,13 @@ public class PlayerController : MonoBehaviour
         _ascRef.DefineStat("BloodMax", baseValue:100.0f, lowerRange:1.0f);
         
         //Grant ability. For consumable ones this will just increment the available charge count if the ability has already been granted.
-        _ascRef.GrantAbility<AVampireBite>("Bite");
+        _ascRef.GrantAbility<AVampireBiteEffect>("Bite");
+        _ascRef.GrantAbility<AVampireTryBite>("TryBite");
         _ascRef.GrantAbility<TestAbility>("Test");
         _ascRef.GrantAbility<AVampireThirst>("Thirst");
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
-        _ascRef.BindAbility("Bite", KeyCode.Q);
+        _ascRef.BindAbility("TryBite", KeyCode.Q);
         _ascRef.BindAbility("Test", KeyCode.E);
     }
 

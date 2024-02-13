@@ -11,6 +11,29 @@ namespace Systems.Ability
     public class AbilitySystemComponent : MonoBehaviour
     {
         /// <summary>
+        /// Instance an object and returns it. This is to allow ability system to instance object
+        /// </summary>
+        /// <param name="ability">The ability spawning the actor.</param>
+        /// <param name="path">The Asset path of the object to load</param>
+        /// <returns>a game object instanced from asset path.</returns>
+        public GameObject InstanceGameObject(Ability ability,string path)
+        {
+            return Instantiate(Resources.Load<GameObject>(path));
+        }
+        
+        /// <summary>
+        /// Destroy a game object form an ability
+        /// </summary>
+        /// <param name="ability">The ability trying to destroy the actor.</param>
+        /// <param name="gameObject">the game object to destroy</param>
+        public void DestroyGameObject(Ability ability, GameObject gameObject)
+        {
+            if(gameObject == null)
+                return;
+            GameObject.Destroy(gameObject);
+        }
+        
+        /// <summary>
         /// Define a name/tag and float value pair that will be used and modified by the ability system.
         /// </summary>
         /// <param name="name">a name/tag</param>
@@ -143,9 +166,12 @@ namespace Systems.Ability
                 Debug.LogError($"Unable to bind unknown ability \"{name}\".");
                 return; //todo throw error
             }
-            
-            if(_keyBindings.TryAdd(code, name))
+
+            if (_keyBindings.TryAdd(code, name))
+            {
+                _abilities[name].Bind(code);
                 return;
+            }
             
             //handle unbinding of previous ability
             _abilities[_keyBindings[code]].Bind(KeyCode.None);
