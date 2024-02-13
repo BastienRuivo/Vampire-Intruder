@@ -22,8 +22,8 @@ TagManager:
   - Player
   - Water
   - UI
-  - Wall
-  - 
+  - BlockingWalls
+  - TinyWalls
   - 
   - 
   - 

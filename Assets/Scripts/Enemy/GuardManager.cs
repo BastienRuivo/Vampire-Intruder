@@ -341,7 +341,7 @@ public class GuardManager : MonoBehaviour
                 case AlertStage.Alerted:
                     cameraShake.Shake(0.2f);
                     _speed = spotSpeed;
-                    PlayerState.GetInstance().LockInput();
+                    //PlayerState.GetInstance().LockInput();
                     AudioManager.GetInstance().playClip(_spotSound, transform.position);
                     _cameraPos = player.transform.Find("Camera");
                     _speed = spotSpeed;
@@ -494,6 +494,7 @@ public class GuardManager : MonoBehaviour
         LookAt(angle + 90f);
 
         Vector2 force = dir * _speed * Time.deltaTime;
+        force.y *= 0.5f;
         if (_body.velocity.magnitude > 0)
         {
             _animator.SetFloat("xSpeed", _body.velocity.x);
