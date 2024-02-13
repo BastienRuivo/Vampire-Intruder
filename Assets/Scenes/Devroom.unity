@@ -752,10 +752,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameUserInterface
       objectReference: {fileID: 0}
-    - target: {fileID: 3566486573396230255, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8556890416395162510, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_Camera
       value: 
@@ -1128,7 +1124,7 @@ MonoBehaviour:
   gameOverUI: {fileID: 2073608060}
   _bell: {fileID: 8300000, guid: e4fae1baabc2dc440a0113b2830f3b83, type: 3}
   text: {fileID: 1254037408}
-  successMessage: "Mission r\xE9ussite"
+  successMessage: "Mission r\xE9ussie"
   failureMessage: "Mission \xE9chou\xE9e \n Lord Jasper est d\xE9\xE7u de vous"
 --- !u!1 &919537964
 GameObject:
