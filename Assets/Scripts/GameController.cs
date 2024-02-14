@@ -261,7 +261,10 @@ public class GameController : Singleton<GameController>
         //SubscribeToGameEvent(new TestEventReceiver());
         HideOtherMaps();
         GetAllObjective();
-        
+
+        AstarPath.active.Scan();
+
+
     }
 
 

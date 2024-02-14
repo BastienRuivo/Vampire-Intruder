@@ -523,7 +523,7 @@ public class GuardManager : MonoBehaviour
             Vector3 direction = new Vector3(dir2D.x, dir2D.y, 0.0f);
             RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, viewDistance, visionMask);
             //Debug.DrawRay(transform.position, direction, hit.collider == null? Color.red : Color.green, 0.1f);
-
+            
             //Store depth
             if (hit.collider == null)
             {

@@ -332,11 +332,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181057816}
   m_CullTransparentMesh: 1
---- !u!1 &323266517 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8011900841120379802, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-  m_PrefabInstance: {fileID: 1732702746}
-  m_PrefabAsset: {fileID: 0}
 --- !u!20 &519420031 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 3994904919503741029, guid: a6bd6e18aa995fa44903c60c320958e8, type: 3}
@@ -1325,7 +1320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   data:
-    dataString: UEsDBBQAAAgIAAAIIewKZ9tjlwIAAFUFAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFlVE1z2jAQ/SuMzsUjG/zVW+sQkkMSprSTCxdhr7EGI3kkOUAy/PeuZINdygX57e7bt29lfxEudAO5kWqpePEiCyDfJ+RZywMYxXMLkm+TIesJTmwnxZp/wjX5nRemsknM5fxihkvEfVt25fkhdrVNjqhH7W+WYLQVvJTqsCh2kEltNMZLVmvAkJLG0giEvibkhH/TeYj4GU9BTPH0iaeUTi54zEEYUEPq3IvnaRrGYdRX+N4MkSTqy6aBFwZJnASzeDGlseNoRV6zQwOFnWyg8qmXRpTeWgdemtA4dCUC5++zqefHURzbtFzWNde9dGLOjfMoY41u0QFMKDhDT5xe37MVFfBdZSz7uPytLDVY1A6r2PmBKzS34yU/Zef4gel9J/aD1a3t5KeBE9eRvvwXn/ouXCp5eLr29antYSqe73+xc860GW1iDD+MpDvPjqzes20N7xWIV7lUshUFBo1qbWmrIXgYHm+jZRXk+wHvpN6BbTMsgfbuX9duZ7i46U9ZzQ/bXg4+rmvp/E5tKihc0DPKdTdJ9wSIWg1/NPxmu/GV6wOPXGmDoZ5UWHFb2SqbShbOMTtLazKpBDi4l9yAYLU5r5DG3C/wLjZqexd5ZPYt65v3sevLc1fi4CGf0rvQSh5vq9KVPL6Art5aU3MBg2gbeEWfMilEd7/GnlzL1q0qWT4q27W8+PdikTKItywJ83gWRdGWzqdFWG5L30+S2TaapfOYuJvHBc7J6lUntLcHtyYGcoG3zDLaj89kqVjj7nqh2HHJPw9yZDkXpVznCkC8dQw34aCwCb6cxaLgaNAajOHC7Zt8bUgt8z0UmxvRxk26OBnFNgPLhjT8QxqLbEjmPjIbYuHbTV4p+OBwtM2vZBdy+QtQSwMEFAAACAgAAAgh7HybGoptAAAAeAAAAAkAJABtZXRhLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQGrVipLLSrOzM9TslIw0TPSMzTXUVBKL0osyCgGihiCOKWZKSB2tFKakXlSooVpsrmxmZlZkoGJboppWlKaoaGFhXGSmbGliblSLFB9SWVBql9ibipET0BiSUZaZl5KZl66nntRZoo7yGil2FoAUEsBAi0AFAAACAgAAAgh7Apn22OXAgAAVQUAAAsAJAAAAAAAAAAAAAAAAAAAAGdyYXBoMC5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsBAi0AFAAACAgAAAgh7HybGoptAAAAeAAAAAkAJAAAAAAAAAAAAAAA5AIAAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAVBLBQYAAAAAAgACALgAAACcAwAAAAA=
+    dataString: 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
     upgradeData: 
     file_cachedStartup: {fileID: 0}
     data_cachedStartup: 
@@ -2338,57 +2333,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 929298953668229185, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: targetRoom
-      value: 
-      objectReference: {fileID: 1061530747}
-    - target: {fileID: 929298953668229185, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: currentRoom
-      value: 
-      objectReference: {fileID: 910032900}
-    - target: {fileID: 929298953668229185, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: targetWalls
-      value: 
-      objectReference: {fileID: 1534495522}
-    - target: {fileID: 929298953668229185, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: currentWalls
-      value: 
-      objectReference: {fileID: 1423221213}
-    - target: {fileID: 929298953668229185, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: targetCollider
-      value: 
-      objectReference: {fileID: 323266517}
-    - target: {fileID: 1151330594198785292, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3547382804671287370, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4029405559872618862, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: m_Name
       value: First
-      objectReference: {fileID: 0}
-    - target: {fileID: 4391186676419126213, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5681956551644854027, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5904062513856835292, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6642366546345256426, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6666540255549548458, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6790622339952153203, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2428,18 +2375,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6790622339952153203, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7080999762196937452, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7361285052252297972, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8011900841120379802, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
-      propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
