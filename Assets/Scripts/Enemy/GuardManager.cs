@@ -11,6 +11,7 @@ using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
+using Tools = DefaultNamespace.Tools;
 
 public enum AlertStage
 {
@@ -240,7 +241,7 @@ public class GuardManager : MonoBehaviour
         //handle range
         UpdateFieldOfView(player.transform.position);
         UpdateShadowMap();
-        _visionRenderer.material.SetVector("_ObserverPosition", transform.position);
+        _visionRenderer.material.SetVector("_ObserverPosition", Tools.WorldToGridCoordinates(transform.position));
         _visionRenderer.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
         _visionRenderer.material.SetFloat("_ObserverViewDistance", viewDistance);
         _visionRenderer.material.SetFloat("_ObserverFieldOfView", _coneAngle);
@@ -413,7 +414,9 @@ public class GuardManager : MonoBehaviour
             _coneAngle = theta;
             _firstDir.Normalize();
 
-            float playerAngle = ComputeAngle(origin, playerPosition);
+            Vector3 guardWordPosition = Tools.GridToWorldCoordinates(transform.position);
+            Vector3 targetWorldPosition = Tools.GridToWorldCoordinates(playerPosition);
+            float playerAngle = ComputeAngle(guardWordPosition, targetWorldPosition);
             float dThetaMax = _foVThetaMax - playerAngle;
             float dThetaMix = _foVThetaMin - playerAngle;
             _playerInFOV = ((dThetaMax >= 0 && dThetaMax < theta) || (dThetaMix <= 0 && dThetaMix > -1 * theta));
@@ -514,14 +517,18 @@ public class GuardManager : MonoBehaviour
     {
         float step = _coneAngle / (float)(traceResolution - 1.0f);
         float angle = 0.0f;
+        Vector3 guardGridPosition = Tools.WorldToGridCoordinates(transform.position);
 
         //Ray casting
         for (uint i = 0; i < traceResolution; i++)
         {
             Vector2 dir2D = RotateVector(_firstDir, -angle);
-            Vector3 direction = new Vector3(dir2D.x, dir2D.y, 0.0f);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, viewDistance, visionMask);
-            //Debug.DrawRay(transform.position, direction, hit.collider == null? Color.red : Color.green, 0.1f);
+            dir2D.Normalize();
+            Vector3 direction = Tools.WorldToGridCoordinates(new Vector3(dir2D.x, dir2D.y, 0.0f));
+            dir2D *= viewDistance;
+            Vector2 localDirDist2D = Tools.WorldToGridCoordinates(dir2D);
+            float localDist = localDirDist2D.magnitude;
+            RaycastHit2D hit = Physics2D.Raycast(guardGridPosition, direction, localDist, visionMask);
 
             //Store depth
             if (hit.collider == null)
@@ -532,9 +539,9 @@ public class GuardManager : MonoBehaviour
             }
             else
             {
-                _shadowMapData[i].r = hit.distance / viewDistance;
-                _shadowMapData[i].b = hit.distance / viewDistance;
-                _shadowMapData[i].g = hit.distance / viewDistance;
+                _shadowMapData[i].r = hit.distance / localDist;
+                _shadowMapData[i].b = hit.distance / localDist;
+                _shadowMapData[i].g = hit.distance / localDist;
             }
 
             angle += step;
@@ -616,8 +623,9 @@ public class GuardManager : MonoBehaviour
     */
     private void UpdateRange(Vector3 playerPosition)
     {
-        Vector3 origin = transform.position;
-        _playerInRange = (Vector3.Distance(origin, playerPosition) < viewDistance);
+        Vector3 guardWordPosition = Tools.GridToWorldCoordinates(transform.position);
+        Vector3 targetWorldPosition = Tools.GridToWorldCoordinates(playerPosition);
+        _playerInRange = (Vector3.Distance(guardWordPosition, targetWorldPosition) < viewDistance);
     }
 
     /**
@@ -633,6 +641,15 @@ public class GuardManager : MonoBehaviour
         // Debug.DrawRay(transform.position, direction, Color.red);
 
         return hit.collider == null;
+        
+        /*
+        Vector3 guardGridPosition = Tools.WorldToGridCoordinates(transform.position);
+        Vector3 targetGridPosition = Tools.WorldToGridCoordinates(target.transform.position);
+        Vector3 direction = targetGridPosition - guardGridPosition;
+        float distance = Vector3.Distance(targetGridPosition, guardGridPosition);
+
+        RaycastHit2D hit = Physics2D.Raycast(guardGridPosition, direction, distance, visionMask);
+        */
     }
 
     /**
