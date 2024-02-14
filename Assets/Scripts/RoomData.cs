@@ -26,16 +26,17 @@ public class RoomData : MonoBehaviour
     private float _nodeSize = 0.176775f;
     private float _obstacleSize = 1.5f;
 
-    private void Awake()
+    public GridGraph BuildGraph(Vector3 pos)
     {
         GridGraph gg = AstarPath.active.data.AddGraph(typeof(GridGraph)) as GridGraph;
         gg.SetGridShape(InspectorGridMode.IsometricGrid);
         gg.isometricAngle = 60f;
         gg.rotation = new Vector3(-45f, 270f, 90f);
-        gg.center = transform.position + localGraphPosition;
+        gg.center = localGraphPosition;
         gg.SetDimensions(width, height, _nodeSize);
         gg.collision.use2D = true;
         gg.collision.diameter = _obstacleSize;
         gg.collision.mask = layers;
+        return gg;
     }
 }
