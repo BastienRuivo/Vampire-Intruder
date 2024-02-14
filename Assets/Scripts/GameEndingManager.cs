@@ -8,15 +8,14 @@ public class GameEndingManager : MonoBehaviour
         Caught,
         Dead,
         TimeEnd,
-        ObjectifFailled
     }
 
     public GameObject victoryUI;
     public GameObject gameOverUI;
     public AudioClip _bell;
     public Text text;
-    public string successMessage = "Mission réussite";
-    public string failureMessage = "Mission échouée \n Lord Jasper est déçu de vous";
+    public string successMessage = "Mission rï¿½ussite";
+    public string failureMessage = "Mission ï¿½chouï¿½e \n Lord Jasper est dï¿½ï¿½u de vous";
     
     
     public static GameEndingManager instance;
@@ -31,6 +30,10 @@ public class GameEndingManager : MonoBehaviour
 
     public void onPlayerExtraction(){
         var main = GameController.GetInstance().objectivesToComplete.Find(o => o.isMain);
+        if(main == null){
+            Debug.LogError("No main objective found");
+            return;
+        }
         var textObj = victoryUI.GetComponentInChildren<Text>();
         if (main.state == GameController.ObjectiveState.DONE)
         {
@@ -41,6 +44,7 @@ public class GameEndingManager : MonoBehaviour
         {
             textObj.text = failureMessage;
             textObj.color = Color.red;
+            AppState.GetInstance().nbObjectifSkip++;
         }
         victoryUI.SetActive(true);
         Time.timeScale = 0;
@@ -54,12 +58,18 @@ public class GameEndingManager : MonoBehaviour
             text.text = "You are dead!";
         } else if(gameOverState == GameOverState.TimeEnd){
             text.text = "Time is over!";
-        } else if(gameOverState == GameOverState.ObjectifFailled){
-            text.text = "You failed your objective!";
         }
+
         gameOverUI.SetActive(true);
         Time.timeScale = 0;
         AppState.GetInstance().vie--;
+    }
+
+    public void nextLevelButton(){
+        victoryUI.SetActive(false);
+        Time.timeScale = 1;
+        Debug.Log("Not implemented yet. a modifier dans GameEndingManager.cs ligne 68");
+        //SceneManager.LoadScene("Nom de la scene suivante");
     }
 
     public void retryButtonGO(){
