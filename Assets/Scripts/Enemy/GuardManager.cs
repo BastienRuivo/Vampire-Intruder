@@ -35,6 +35,7 @@ public class GuardManager : MonoBehaviour
     }
 
     [Header("Alert")]
+    public Animator feedbackAnimator;
     public AlertStage alertStage;
     public float alertTimer;
     private float _alertRatio;
@@ -354,7 +355,7 @@ public class GuardManager : MonoBehaviour
                 // If very sus, check the player position
                 case AlertStage.Suspicious:
                     // create Node at 25% between guard and player
-                    cameraShake.Shake(0.05f);
+                    cameraShake.Shake(0.02f);
                     GameObject nodeGO = Instantiate(nodePrefab);
                     nodeGO.transform.position = Vector3.Lerp(_body.position, player.transform.position, distancePercentageSuspicious);
                     _currentWaitingTimer = 0;
@@ -594,18 +595,22 @@ public class GuardManager : MonoBehaviour
         AlertStage newAlertStage;
         if (alertRatio >= 1f)
         {
+            feedbackAnimator.SetTrigger("DetectAlert");
             newAlertStage = AlertStage.Alerted;
         }
         else if (alertRatio > 0.5f)
         {
+            feedbackAnimator.SetTrigger("DetectStay");
             newAlertStage = AlertStage.Suspicious;
         }
         else if (alertRatio > 0f)
         {
+            feedbackAnimator.SetBool("Dectect", true);
             newAlertStage = AlertStage.SeenSomething;
         }
         else
         {
+            feedbackAnimator.SetBool("Dectect", false);
             newAlertStage = AlertStage.Idle;
         }
         return newAlertStage;
