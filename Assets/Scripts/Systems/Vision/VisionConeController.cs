@@ -51,7 +51,7 @@ namespace Systems.Vision
         {
             _coneAngle = fov * Mathf.Deg2Rad;
             _coneAngleMin = 3 * Mathf.PI / 2 + ((gameObject.transform.rotation.eulerAngles.z % 360)  *  Mathf.Deg2Rad) - _coneAngle / 2;
-            _firstDir = Tools.RotateVector(new Vector2(0,1), _coneAngleMin - _coneAngle / 2);
+            _firstDir = Tools.RotateVector(new Vector2(1,0), _coneAngleMin + _coneAngle);
         }
         
         private void UpdateShadowMap()
@@ -80,7 +80,7 @@ namespace Systems.Vision
                 Vector2 localDirDist2D = Tools.WorldToGridCoordinates(dir2D);
                 float localDist = localDirDist2D.magnitude;
                 RaycastHit2D hit = Physics2D.Raycast(guardGridPosition, localDirDist2D, localDist, visionCollisionLayerMask);
-                Debug.DrawLine(guardGridPosition, guardGridPosition + new Vector3(localDirDist2D.x, localDirDist2D.y, 0.0f), hit == null? Color.red : Color.blue);
+                //Debug.DrawLine(guardGridPosition, guardGridPosition + new Vector3(localDirDist2D.x, localDirDist2D.y, 0.0f), i == 0? Color.red : Color.blue);
                 
                 //Store depth
                 if (hit.collider == null)
