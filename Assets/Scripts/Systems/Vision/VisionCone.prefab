@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 7015659164972719840}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
-  m_LocalScale: {x: 3, y: 2, z: 1}
+  m_LocalPosition: {x: 0, y: -2.5, z: 0}
+  m_LocalScale: {x: 6, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4696016522635719752}
@@ -52,7 +52,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 16601e7f8766a9c429590b9379ca74da, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -97,12 +97,24 @@ PrefabInstance:
       value: VisionCone
       objectReference: {fileID: 0}
     - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
+      propertyPath: fov
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
+      propertyPath: traceCount
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
       propertyPath: visionDecal
       value: 
       objectReference: {fileID: 7015659164972719840}
     - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
       propertyPath: viewDistance
-      value: 5.5
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
+      propertyPath: refreshDistanceDistance
+      value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
       propertyPath: visionCollisionLayerMask.m_Bits

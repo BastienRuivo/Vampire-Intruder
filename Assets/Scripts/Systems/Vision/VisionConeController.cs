@@ -9,13 +9,49 @@ namespace Systems.Vision
     {
         public bool HasVisibility(Vector3 target)
         {
+            Vector3 conePosition = transform.position;
+            Vector3 direction = target - conePosition;
+            Vector3 directionGridSpace = Tools.GridToWorldCoordinates(direction);
+
+            if (directionGridSpace.magnitude > viewDistance)
+                return false;
+            
+            
             return false;
         }
 
         public bool HasRefreshability(Vector3 target)
         {
-            return false;
+            Vector3 conePosition = transform.position;
+            Vector3 direction = target - conePosition;
+            Vector3 directionGridSpace = Tools.GridToWorldCoordinates(direction);
+
+            if (directionGridSpace.magnitude > refreshDistance)
+                return false;
             
+            RaycastHit2D hit = Physics2D.Raycast(conePosition, direction, Vector3.Distance(target, conePosition), visionCollisionLayerMask);
+            
+            return hit != false;
+            return false;
+        }
+
+        public void Enable()
+        {
+            if(enabled) return;
+            enabled = true;
+            isEnabledMaterial.RetargetValue(1.0f);
+        }
+
+        public void Disable()
+        {
+            if(! enabled) return;
+            enabled = false;
+            isEnabledMaterial.RetargetValue(0.0f);
+        }
+
+        public bool isEnabled()
+        {
+            return enabled;
         }
     
         // Start is called before the first frame update
@@ -38,13 +74,17 @@ namespace Systems.Vision
         // Update is called once per frame
         void Update()
         {
-            ComputeAngles();
-            UpdateShadowMap();
+            if (enabled)
+            {
+                ComputeAngles();
+                UpdateShadowMap();
+            }
             _visionDecalMaterial.SetVector(ObserverPosition, transform.position);
             _visionDecalMaterial.SetFloat(ObserverMinAngle, _coneAngleMin);
             _visionDecalMaterial.SetFloat(ObserverViewDistance, viewDistance);
             _visionDecalMaterial.SetFloat(ObserverFieldOfView, _coneAngle);
             _visionDecalMaterial.SetFloat(AlertRatio, 0.0f);
+            _visionDecalMaterial.SetFloat("_Visibility", isEnabledMaterial.UpdateGetValue());
         }
 
         private void ComputeAngles()
@@ -59,17 +99,6 @@ namespace Systems.Vision
             float step = _coneAngle / (float)(traceCount - 1.0f);
             float angle = 0.0f;
             Vector3 guardGridPosition = transform.position;
-
-            //for (float a = 0; a < 2* Mathf.PI; a+=step)
-            //{
-            //    Vector2 dir2D = Tools.RotateVector(_firstDir, a);
-            //    dir2D.Normalize();
-            //    dir2D *= viewDistance;
-            //    Vector2 localDirDist2D = Tools.WorldToGridCoordinates(dir2D);
-            //    //Debug.DrawLine(guardGridPosition, guardGridPosition + localDirDist, Color.green);
-            //    
-            //    float localDist = localDirDist2D.magnitude;
-            //}
 
             //Ray casting
             for (uint i = 0; i < traceCount; i++)
@@ -103,21 +132,28 @@ namespace Systems.Vision
             _linearDepthMap.SetPixels(_depthMapData);
             _linearDepthMap.Apply();
         }
-        
-        [Header("Cone settings")]
+
+        [FormerlySerializedAs("Enabled")] 
+        [Header("Cone settings")] public new bool enabled = true;
         [FormerlySerializedAs("FOV")]
         [Range(1,360)] public float fov = 90;
         public float viewDistance = 3.5f;
         public LayerMask visionCollisionLayerMask;
         [Header("Performance settings")] 
         [Range(1,128)] public uint traceCount = 64;
-        public float refreshDistanceDistance = 3.5f;
+        public float refreshDistance = 3.5f;
         [Header("Cone visual")]
         public GameObject visionDecal;
 
         private Material _visionDecalMaterial;
         private Texture2D _linearDepthMap;
         private Color[] _depthMapData;
+        
+        private float _coneAngleMin;
+        private float _coneAngle;
+        private Vector2 _firstDir;
+
+        private SmoothScalarValue isEnabledMaterial = new SmoothScalarValue(1);
         
         //Material cached property IDs
         private static readonly int ObserverPosition = Shader.PropertyToID("_ObserverPosition");
@@ -126,8 +162,5 @@ namespace Systems.Vision
         private static readonly int ObserverFieldOfView = Shader.PropertyToID("_ObserverFieldOfView");
         private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
         private static readonly int ShadowMap = Shader.PropertyToID("_ShadowMap");
-        private float _coneAngleMin;
-        private float _coneAngle;
-        private Vector2 _firstDir;
     }
 }
