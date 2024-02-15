@@ -14,7 +14,7 @@ public class PlayerColliderController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Debug.Log("Enter tag " + collision.gameObject.tag);
+        Debug.Log("Enter tag " + collision.gameObject.tag);
         if(collision.gameObject.tag == "EnterArea")
         {
             Debug.Log("Entered a start zone !");
@@ -25,7 +25,7 @@ public class PlayerColliderController : MonoBehaviour
             // Get Tilemap of collision
             if(exitLock == 0)
             {
-                collision.gameObject.GetComponent<RoomConnector>().Enter();
+                collision.gameObject.GetComponentInParent<RoomConnector>().Enter();
             }
             exitLock++;
         }
@@ -38,17 +38,17 @@ public class PlayerColliderController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        //Debug.Log("Left tag " + collision.gameObject.tag);
+        Debug.Log("Left tag " + collision.gameObject.tag);
         if (collision.gameObject.tag == "EnterArea")
         {
             Debug.Log("Left a start zone !");
         }
         else if (collision.gameObject.tag == "RoomChanger")
         {
-            //Debug.Log("Entered a wall changer zone");
+            Debug.Log("Exit a wall changer zone");
             // Get Tilemap of collision
             if(exitLock == 1)
-                collision.gameObject.GetComponent<RoomConnector>().Exit();
+                collision.gameObject.GetComponentInParent<RoomConnector>().Exit();
             exitLock--;
         }
 

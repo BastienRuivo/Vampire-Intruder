@@ -15,59 +15,67 @@ public class RoomConnector : MonoBehaviour
     [Header("Connected Room")]
     public GameObject targetRoom;
     public GameObject targetWalls;
-    public GameObject targetCollider;
+    public RoomConnector targetRoomConnector;
+
+    [Header("Inner data")]
+    public Direction dir;
+    public Vector3Int coordOnGrid;
+    public RoomData.Type[] allowedBranch;
+    /// <summary>
+    /// Int to tell at wich number it's this connector 
+    /// </summary>
+    public int[] branchPercentage;
 
     [Header("Materials")]
     public Material transparentMtl;
     public Material defaultMtl;
+    public bool isFilled = false;
 
-    private IEnumerator roomFadeAway = null;
-    public bool fade = false;
+    private IEnumerator _roomFadeAway = null;
+    private bool _fade = false;
+
+    /// <summary>
+    /// Get an allowed branch from a number between 0 and 100
+    /// </summary>
+    /// <param name="roll"></param>
+    /// <returns>An allowed data type</returns>
+    public RoomData.Type GetFromDice(int roll)
+    {
+        for (int i = 0; i < allowedBranch.Length; ++i)
+        {
+            if (roll < branchPercentage[i])
+            {
+                return allowedBranch[i];
+            }
+        }
+
+        Debug.Log("How did we get here ? RoomConnector.GetFromDice");
+        return RoomData.Type.NOONE;
+    }
 
     public void Enter()
     {
-
-        //SetRoomVisibility(currentRoom, 1.0f);
-        //SetRoomVisibility(targetRoom, 1.0f);
         SetRoomVisibility(targetRoom, 1f);
         targetWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
         currentWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
-
-
-    }
-
-    void ResetMaterial(GameObject obj)
-    {
-        if (obj == null) return;
-        if (obj.GetComponent<Renderer>().material.name.Contains(defaultMtl.name))
-        {
-            obj.GetComponent<Renderer>().material.color = defaultMtl.color;
-        }
-        else
-        {
-            obj.GetComponent<Renderer>().material.color = transparentMtl.color;
-        }
     }
 
     public void Exit()
     {
         SetRoomVisibility(currentRoom, 1f);
-        //SetRoomVisibility(targetRoom, 0f);
-        //ResetMaterial(targetWalls);
-        //ResetMaterial(currentWalls);
 
         //// Start coroutine
-        RoomConnector rm = targetCollider.GetComponent<RoomConnector>();
         // Disable Coroutine if one is already started
-        if (rm.roomFadeAway != null)
+        if (targetRoomConnector._roomFadeAway != null)
         {
-            rm.fade = false;
-            StopCoroutine(rm.roomFadeAway);
+            targetRoomConnector._fade = false;
+            StopCoroutine(targetRoomConnector._roomFadeAway);
             SetRoomVisibility(currentRoom, 1f);
         }
-        roomFadeAway = DisableRoom(targetRoom);
-        fade = true;
-        StartCoroutine(roomFadeAway);
+        
+        _roomFadeAway = DisableRoom(targetRoom);
+        _fade = true;
+        StartCoroutine(_roomFadeAway);
 
         PlayerState.GetInstance().currentRoom = currentRoom;
     }
@@ -97,7 +105,7 @@ public class RoomConnector : MonoBehaviour
     {
         for (float alpha = 1f; alpha > 0f; alpha -= Time.deltaTime)
         {
-            if (!fade) break;
+            if (!_fade) break;
             SetRoomVisibility(roomRoot, alpha);
             yield return null;
         }

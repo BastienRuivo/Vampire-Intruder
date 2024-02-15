@@ -22,4 +22,9 @@ public class PlayerState : Singleton<PlayerState>
     {
         return !inputLocked;
     }
+
+    public GameObject GetPlayer()
+    {
+        return gameObject;
+    }
 }

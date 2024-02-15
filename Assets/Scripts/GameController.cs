@@ -7,8 +7,7 @@ using Interfaces;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Serialization;
-
-
+using UnityEngine.Tilemaps;
 
 public class GameController : Singleton<GameController>
 {
@@ -62,6 +61,7 @@ public class GameController : Singleton<GameController>
 
     [Header("Rooms")]
     public List<GameObject> rooms;
+    public bool shouldGenerateLvl = true;
 
     [FormerlySerializedAs("TimeBell")] public AudioClip timeBell;
     [FormerlySerializedAs("CaughtBell")] public AudioClip caughtBell;
@@ -257,11 +257,28 @@ public class GameController : Singleton<GameController>
     void Start()
     {
         _eventTime = gameEventTickTime;
-        
+
         //SubscribeToGameEvent(new TestEventReceiver());
-        HideOtherMaps();
-        GetAllObjective();
+        // Generate map
+        if(shouldGenerateLvl)
+        {
+            rooms = LevelGenerator.GetInstance().Generate();
+            PlayerState.GetInstance().currentRoom = rooms[0];
+            var start = rooms[0].transform.Find("CustomPivot/Start");
+            var f = rooms[0].transform.Find("CustomPivot/Props/Floor");
+            Debug.Log(f.name.ToString());
+            PlayerState.GetInstance().GetPlayer().transform.position = start.transform.position;
+        }
+
+        
+        
+
+
+
+        // Init maps, hide it, and pick up objectives
         GenerateAStarGraph();
+        //HideOtherMaps();
+        GetAllObjective();
 
 
     }
@@ -270,7 +287,6 @@ public class GameController : Singleton<GameController>
     {
         rooms.ForEach(room =>
         {
-            Debug.Log(room.name);
             room.GetComponent<RoomData>().BuildGraph(room.transform.position);
         });
         AstarPath.active.Scan();
