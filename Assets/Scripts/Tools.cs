@@ -30,6 +30,34 @@ namespace DefaultNamespace
         {
             return new Vector2(worldSpace.x, worldSpace.y / 2);
         }
+
+        public static float WorldToGridSpaceAngle(float thetaWorldSpace)
+        {
+            return ComputeAngle(new Vector2(0,0),
+                GridToWorldCoordinates(RotateVector(new Vector2(1,0), thetaWorldSpace))
+            );
+        }
+
+        public static float GridToWorldSpaceAngle(float thetaGridSpace)
+        {
+            return ComputeAngle(new Vector2(0, 0),
+                WorldToGridCoordinates(RotateVector(new Vector2(1, 0), thetaGridSpace))
+            );
+        }
+
+        public static float WorldToGridSpaceDistance(float distanceWorldSpace, float thetaGridSpace)
+        {
+            return WorldToGridCoordinates(
+                RotateVector(new Vector2(1,0) * distanceWorldSpace, thetaGridSpace + 2*Mathf.PI)
+                ).magnitude;    
+        }
+        
+        public static float GridToWorldSpaceDistance(float distanceGridSpace, float thetaWorldSpace)
+        {
+            return GridToWorldCoordinates(
+                RotateVector(new Vector2(1,0) * distanceGridSpace, thetaWorldSpace + 2*Mathf.PI)
+            ).magnitude;    
+        }
         
         /// <param name="gridSpace">Coordinates in grid space</param>
         /// <returns>Coordinates in world space</returns>
