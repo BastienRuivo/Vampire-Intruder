@@ -538,9 +538,9 @@ public class GuardManager : MonoBehaviour
             }
             else
             {
-                _shadowMapData[i].r = hit.distance / localDist;
-                _shadowMapData[i].b = hit.distance / localDist;
-                _shadowMapData[i].g = hit.distance / localDist;
+                _shadowMapData[i].r = hit.distance / viewDistance;
+                _shadowMapData[i].b = hit.distance / viewDistance;
+                _shadowMapData[i].g = hit.distance / viewDistance;
             }
 
             angle += step;
