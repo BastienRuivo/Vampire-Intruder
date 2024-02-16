@@ -16,6 +16,39 @@ namespace Systems.Ability
 
         protected float Cooldown = -1.0f;
 
+        /// <summary>
+        /// Create a game object instance of a prefab from resource path as a resource of this ability.
+        /// Resources will be automatically cleanup up by the ability system at the end of this ability
+        /// </summary>
+        /// <param name="avatar">actor spawning the object</param>
+        /// <param name="resourcePath">resource path</param>
+        /// <returns>Instanced game object</returns>
+        protected GameObject InstanceResource(GameObject avatar, string resourcePath)
+        {
+            return GetAbilitySystemComponent(avatar).InstanceGameObject(this, resourcePath);
+        }
+
+        /// <summary>
+        /// Destroy an actor previously instanced as a resource of this ability
+        /// </summary>
+        /// <param name="avatar">actor calling the destruction of the object</param>
+        /// <param name="gameObject">resource to destroy</param>
+        protected void DestroyResource(GameObject avatar, GameObject gameObject)
+        {
+            GetAbilitySystemComponent(avatar).DestroyGameObject(this, gameObject);
+        }
+        
+        /// <summary>
+        /// Destroy an actor.
+        /// </summary>
+        /// <remarks>For an actor spawned from this ability, you may call DestroyResource instead.</remarks>
+        /// <param name="avatar">actor calling the destruction of the object</param>
+        /// <param name="gameObject">resource to destroy</param>
+        protected void DestroyObject(GameObject avatar, GameObject gameObject)
+        {
+            GetAbilitySystemComponent(avatar).DestroyGameObject(this, gameObject, false);
+        }
+
         public Dictionary<string, float> GetAbilityCosts()
         {
             return AbilityCosts;
