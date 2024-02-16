@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class AVampireBiteEffect : Ability
+    public class AEffectVampireBite : Ability
     {
-        public AVampireBiteEffect()
+        public AEffectVampireBite()
         {
             //Add the ability stat costs here.
             AbilityCosts.Add("Blood", -25.0f); //todo balance
