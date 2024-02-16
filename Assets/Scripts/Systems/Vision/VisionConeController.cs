@@ -7,53 +7,119 @@ namespace Systems.Vision
 {
     public class VisionConeController : MonoBehaviour
     {
+        /// <remarks>Must validate the target with HasRefreshability first.</remarks>
+        /// <param name="target">a target position.</param>
+        /// <returns>True if the cone target is visible to the cone</returns>
         public bool HasVisibility(Vector3 target)
         {
             Vector3 conePosition = transform.position;
-            Vector3 direction = target - conePosition;
-            Vector3 directionGridSpace = Tools.GridToWorldCoordinates(direction);
-
-            if (directionGridSpace.magnitude > viewDistance)
-                return false;
+            Vector3 delta = target - conePosition;
             
+            //Compute target angle world space
+            float angleWP = Tools.ComputeAngle(conePosition, target);
+
+            //Transform target angle to grid space
+            Vector2 angleWPVec = Tools.RotateVector(new Vector2(1,0), angleWP);
+            Vector2 angleLocalVec = Tools.GridToWorldCoordinates(angleWPVec);
+            float angle = Tools.ComputeAngle(new Vector2(0,0), angleLocalVec);
+            
+            //Compute a viewDistance vector transformed in grid space.
+            Vector2 distVec = Tools.RotateVector(new Vector2(1,0) * viewDistance, angle + 2*Mathf.PI);
+            Vector2 localViewDistanceDir = Tools.WorldToGridCoordinates(distVec);
+            
+            //Target distance check
+            if (delta.magnitude > localViewDistanceDir.magnitude)
+                return false;
+
+            //Compute cone definition angle in world space
+            float coneAngleMinLocal = Tools.ComputeAngle(new Vector2(0,0),
+                Tools.WorldToGridCoordinates(Tools.RotateVector(new Vector2(1,0), _coneAngleMin))
+                );
+            float coneAngleMaxLocal = Tools.ComputeAngle(new Vector2(0,0),
+                Tools.WorldToGridCoordinates(Tools.RotateVector(new Vector2(1,0), _coneAngleMin + _coneAngle))
+            );
+
+            //Cone angle inclusion check (taking modulo operator in account).
+            if (coneAngleMinLocal > coneAngleMaxLocal && angleWP >= coneAngleMinLocal - 2*Mathf.PI && angleWP <= coneAngleMaxLocal) return true;
+            if (angleWP >= coneAngleMinLocal && angleWP <= coneAngleMaxLocal) return true;
+            if (coneAngleMinLocal > coneAngleMaxLocal && angleWP >= coneAngleMinLocal && angleWP <= coneAngleMaxLocal + 2*Mathf.PI) return true;
             
             return false;
         }
 
+        /// <summary>
+        /// Check if it is worth refreshing the visibility cone.
+        /// </summary>
+        /// <param name="target">a target position</param>
+        /// <returns>true if it is worth refreshing the cone.</returns>
         public bool HasRefreshability(Vector3 target)
         {
             Vector3 conePosition = transform.position;
             Vector3 direction = target - conePosition;
-            Vector3 directionGridSpace = Tools.GridToWorldCoordinates(direction);
+            
+            //Compute target angle world space
+            float angleWP = Tools.ComputeAngle(conePosition, target);
 
-            if (directionGridSpace.magnitude > refreshDistance)
+            //Transform target angle to grid space
+            Vector2 angleWPVec = Tools.RotateVector(new Vector2(1,0), angleWP);
+            Vector2 angleLocalVec = Tools.GridToWorldCoordinates(angleWPVec);
+            float angle = Tools.ComputeAngle(new Vector2(0,0), angleLocalVec);
+            
+            //Compute a refreshDistance vector transformed in grid space.
+            Vector2 distVec = Tools.RotateVector(new Vector2(1,0) * refreshDistance, angle + 2*Mathf.PI);
+            Vector2 localRefreshDistanceDir = Tools.WorldToGridCoordinates(distVec);
+            
+            //Target distance check
+            if (direction.magnitude > localRefreshDistanceDir.magnitude)
                 return false;
             
-            RaycastHit2D hit = Physics2D.Raycast(conePosition, direction, Vector3.Distance(target, conePosition), visionCollisionLayerMask);
+            //Direct visibility check
+            float traceDistance = Vector3.Distance(target, conePosition);
+            RaycastHit2D hit = Physics2D.Raycast(conePosition, direction, traceDistance, visionCollisionLayerMask);
             
-            return hit != false;
-            return false;
+            return hit.collider == null;
         }
 
+        /// <summary>
+        /// Notify the cone that it should be enabled.
+        /// </summary>
         public void Enable()
         {
             if(enabled) return;
             enabled = true;
-            isEnabledMaterial.RetargetValue(1.0f);
+            _isEnabledMaterialSetting.RetargetValue(1.0f);
         }
 
+        /// <summary>
+        /// Notify the cone that it should be disabled.
+        /// </summary>
         public void Disable()
         {
             if(! enabled) return;
             enabled = false;
-            isEnabledMaterial.RetargetValue(0.0f);
+            _isEnabledMaterialSetting.RetargetValue(0.0f);
         }
-
-        public bool isEnabled()
+        
+        /// <returns>true is the cone is currently enabled.</returns>
+        public bool IsEnabled()
         {
             return enabled;
         }
-    
+        
+        /// <summary>
+        /// Expose the sprite material of this cone so that you can change settings in.
+        /// </summary>
+        /// <returns>Sprite material reference.</returns>
+        public Material GetMaterial()
+        {
+            return _visionDecalMaterial;
+        }
+
+        private void Awake()
+        {
+            _isEnabledMaterialSetting = new SmoothScalarValue(enabled ? 1.0f : 0.0f, 0.25f);
+        }
+
         // Start is called before the first frame update
         void Start()
         {
@@ -68,7 +134,6 @@ namespace Systems.Vision
             _linearDepthMap.SetPixels(_depthMapData);
             _linearDepthMap.Apply();
             _visionDecalMaterial.SetTexture(ShadowMap, _linearDepthMap);
-
         }
 
         // Update is called once per frame
@@ -83,10 +148,12 @@ namespace Systems.Vision
             _visionDecalMaterial.SetFloat(ObserverMinAngle, _coneAngleMin);
             _visionDecalMaterial.SetFloat(ObserverViewDistance, viewDistance);
             _visionDecalMaterial.SetFloat(ObserverFieldOfView, _coneAngle);
-            _visionDecalMaterial.SetFloat(AlertRatio, 0.0f);
-            _visionDecalMaterial.SetFloat("_Visibility", isEnabledMaterial.UpdateGetValue());
+            _visionDecalMaterial.SetFloat(Visibility, _isEnabledMaterialSetting.UpdateGetValue());
         }
 
+        /// <summary>
+        /// Refresh the angles that defines the cone in world space.
+        /// </summary>
         private void ComputeAngles()
         {
             _coneAngle = fov * Mathf.Deg2Rad;
@@ -94,6 +161,9 @@ namespace Systems.Vision
             _firstDir = Tools.RotateVector(new Vector2(1,0), _coneAngleMin + _coneAngle);
         }
         
+        /// <summary>
+        /// Update the shadow/depth map of the visibility cone.
+        /// </summary>
         private void UpdateShadowMap()
         {
             float step = _coneAngle / (float)(traceCount - 1.0f);
@@ -109,11 +179,11 @@ namespace Systems.Vision
                 Vector2 localDirDist2D = Tools.WorldToGridCoordinates(dir2D);
                 float localDist = localDirDist2D.magnitude;
                 RaycastHit2D hit = Physics2D.Raycast(guardGridPosition, localDirDist2D, localDist, visionCollisionLayerMask);
-                //Debug.DrawLine(guardGridPosition, guardGridPosition + new Vector3(localDirDist2D.x, localDirDist2D.y, 0.0f), i == 0? Color.red : Color.blue);
-                
+               
                 //Store depth
                 if (hit.collider == null)
                 {
+                    //depth max
                     _depthMapData[i].r = 1.0f;
                     _depthMapData[i].b = 1.0f;
                     _depthMapData[i].g = 1.0f;
@@ -153,14 +223,14 @@ namespace Systems.Vision
         private float _coneAngle;
         private Vector2 _firstDir;
 
-        private SmoothScalarValue isEnabledMaterial = new SmoothScalarValue(1);
+        private SmoothScalarValue _isEnabledMaterialSetting;
         
         //Material cached property IDs
         private static readonly int ObserverPosition = Shader.PropertyToID("_ObserverPosition");
         private static readonly int ObserverMinAngle = Shader.PropertyToID("_ObserverMinAngle");
         private static readonly int ObserverViewDistance = Shader.PropertyToID("_ObserverViewDistance");
         private static readonly int ObserverFieldOfView = Shader.PropertyToID("_ObserverFieldOfView");
-        private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
         private static readonly int ShadowMap = Shader.PropertyToID("_ShadowMap");
+        private static readonly int Visibility = Shader.PropertyToID("_Visibility");
     }
 }

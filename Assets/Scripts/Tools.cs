@@ -5,6 +5,11 @@ namespace DefaultNamespace
 {
     public class Tools
     {
+        public static Vector3 Lerp(Vector3 a, Vector3 b, float alpha)
+        {
+            return b * alpha + a * (1 - alpha);
+        }
+        
         /// <param name="worldSpace">Coordinates in world space</param>
         /// <returns>Coordinates in grid space</returns>
         public static Vector3 WorldToGridCoordinates(Vector3 worldSpace)

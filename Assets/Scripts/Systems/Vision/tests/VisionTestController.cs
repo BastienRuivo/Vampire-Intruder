@@ -15,12 +15,26 @@ public class VisionTestController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void Update() 
     {
-        //if(_cone.HasRefreshability(Player.transform.position))
-        //    _cone.Enable();
-        //else
-        //    _cone.Disable();
+        if (_cone.HasRefreshability(Player.transform.position))
+        {
+            _cone.Enable();
+            if (_cone.HasVisibility(Player.transform.position))
+            {
+                _cone.GetMaterial().SetFloat(AlertRatio, 1.0f);
+            }
+            else
+            {
+                _cone.GetMaterial().SetFloat(AlertRatio, 0.0f);
+            }
+            
+            //_AlertRatio
+        }
+        else
+            _cone.Disable();
         
     }
+    
+    private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
 }
