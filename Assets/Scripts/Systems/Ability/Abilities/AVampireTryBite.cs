@@ -9,17 +9,14 @@ namespace Systems.Ability.Abilities
 {
     public class AVampireTryBite : Ability
     {
-        [CanBeNull] public GameObject cursor = null;
         public AVampireTryBite()
         {
             Cooldown = 0.5f;
-            //cursor = Resources.Load("Prefabs/myPrefab")
-            
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
-            cursor = InstanceResource(avatar, "Abilities/Aiming/MouseAimLock");
+            GameObject cursor = InstanceResource(avatar, "Abilities/Aiming/MouseAimLock");
             GameObject target = null;
             if (cursor != null)
             {
