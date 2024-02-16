@@ -1,17 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using Systems.Vision;
 using UnityEngine;
 
 
 public class PlayerVisionController : MonoBehaviour
 {   
     public LayerMask visionMask;
+    public GameObject visionCone;
+    private VisionConeController _visionConeController;
     PlayerController playerController;
     Transform vision;
 
     private void Awake() {
         playerController = GetComponent<PlayerController>();
         vision = transform.GetChild(0); // Récupérer le transform de la vision //TODO recuperer autrement
+        _visionConeController = visionCone.GetComponent<VisionConeController>();
+        _visionConeController.Enable();
     }
 
     private void Update() {
@@ -22,16 +27,17 @@ public class PlayerVisionController : MonoBehaviour
             mousePosition.z = 0f;
             Vector3 direction = mousePosition - characterPosition;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            vision.localRotation = Quaternion.Euler(0,0, angle + 90);
+            visionCone.transform.localRotation = Quaternion.Euler(0,0, angle + 90);
         }
         else
         {
-            vision.localRotation = Quaternion.Euler(0,0,(int)playerController.directionPerso * 45);
+            visionCone.transform.localRotation = Quaternion.Euler(0,0,(int)playerController.directionPerso * 45);
         }
         
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
+        return;
         if(other.gameObject.tag == "object")
         {
             Debug.Log("I see the object" + other.gameObject.name);
@@ -46,6 +52,7 @@ public class PlayerVisionController : MonoBehaviour
     }
 
     private void OnTriggerStay2D(Collider2D other) {
+        return;
         if(other.gameObject.tag == "Enemy")
         {
             if(noWallBetweenPlayerAndEnemy(other.gameObject.transform.position)){
@@ -62,6 +69,7 @@ public class PlayerVisionController : MonoBehaviour
     }
 
     private void OnTriggerExit2D(Collider2D other) {
+        return;
         if(other.gameObject.tag == "Enemy")
         {
             other.gameObject.GetComponent<Animator>().SetBool("enemyVisible", false);

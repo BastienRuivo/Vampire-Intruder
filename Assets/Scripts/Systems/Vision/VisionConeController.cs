@@ -2,6 +2,7 @@ using System;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Systems.Vision
 {
@@ -123,7 +124,10 @@ namespace Systems.Vision
         // Start is called before the first frame update
         void Start()
         {
-            _visionDecalMaterial = visionDecal.GetComponent<SpriteRenderer>().material;
+            if(visionDecal.GetComponent<SpriteRenderer>() != null)
+                _visionDecalMaterial = visionDecal.GetComponent<SpriteRenderer>().material;
+            if(visionDecal.GetComponent<Image>() != null)
+                _visionDecalMaterial = visionDecal.GetComponent<Image>().material;
             
             _linearDepthMap = new Texture2D((int)traceCount, 1, TextureFormat.RFloat, false);
             _depthMapData = new Color[traceCount] ;

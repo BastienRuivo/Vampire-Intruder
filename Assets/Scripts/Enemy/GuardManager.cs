@@ -7,6 +7,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Pathfinding;
+using Systems.Vision;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
@@ -78,6 +79,10 @@ public class GuardManager : MonoBehaviour
     // Sound to play when guard spot player
     public AudioClip _spotSound;
 
+    [Header("Vision")] 
+    public GameObject visionCone;
+    private VisionConeController _visionConeController;
+
     // Game object representing the guard vision
     private GameObject _visionAnchor;
     // Target of pathfinding
@@ -133,10 +138,12 @@ public class GuardManager : MonoBehaviour
     private float _coneAngleMin;
     private Animator _animator;
     private Transform _cameraPos;
-    
+    private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
+
     private void Awake() {
         alertStage = AlertStage.Idle;
         _currentAlert = alertTimer;
+        _visionConeController = visionCone.GetComponent<VisionConeController>();
     }
     private void Start()
     {
@@ -235,35 +242,29 @@ public class GuardManager : MonoBehaviour
     */
     private void HandleVision()
     {
-        //handle distance
-        UpdateRange(player.transform.position);
-        if (!_playerInRange) { UpdateAlertStage(false); return; }
-
-        //handle range
-        UpdateFieldOfView(player.transform.position);
-        UpdateShadowMap();
-        _visionRenderer.material.SetVector("_ObserverPosition", Tools.WorldToGridCoordinates(transform.position));
-        _visionRenderer.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
-        _visionRenderer.material.SetFloat("_ObserverViewDistance", viewDistance);
-        _visionRenderer.material.SetFloat("_ObserverFieldOfView", _coneAngle);
-        _visionRenderer.material.SetFloat("_AlertRatio", _alertRatio);
-
-
-        
-        if (!_playerInFOV) { UpdateAlertStage(false); return; }
-
-        //handle direct line trace
-        if (!NoWallToTarget(player))
+        if (_visionConeController.HasRefreshability(player.transform.position))
         {
-            UpdateAlertStage(false);
-            return;
+            _visionConeController.Enable();
+            _visionConeController.GetMaterial().SetFloat(AlertRatio, _alertRatio);
+            if (_visionConeController.HasVisibility(player.transform.position))
+            {
+                UpdateAlertStage(true);
+                if (alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
+                {
+                    GameController.GetGameMode().GetCaught();
+                }
+            }
+            else
+            {
+                UpdateAlertStage(false);
+            }
+            
+            //_AlertRatio
         }
-
-        UpdateAlertStage(true);
-
-        if (_playerInFOV && alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
+        else
         {
-            GameController.GetGameMode().GetCaught();
+            _visionConeController.Disable();
+            UpdateAlertStage(false);
         }
     }
     
