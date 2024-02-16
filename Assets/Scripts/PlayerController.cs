@@ -112,6 +112,14 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_ascRef.GetInputLock().IsOpened())
+        {
+            PlayerState.GetInstance().UnlockInput();
+        }
+        else
+        {
+            PlayerState.GetInstance().LockInput();
+        }
         Move();
     }
 }

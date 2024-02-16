@@ -19,7 +19,6 @@ namespace Systems.Ability.Abilities
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
-            //GameObject instance = Instantiate(Resources.Load("enemy", typeof(GameObject))) as GameObject;
             cursor = InstanceResource(avatar, "Abilities/Aiming/MouseAimLock");
             GameObject target = null;
             if (cursor != null)
@@ -65,10 +64,10 @@ namespace Systems.Ability.Abilities
                     }
                 }
             }
-
-            DestroyResource(avatar, cursor);
+            
             if (target != null)
             {
+                avatar.transform.position = target.transform.position;
                 DestroyObject(avatar, target);
                 GetAbilitySystemComponent(avatar).TriggerAbility("Bite");
             }

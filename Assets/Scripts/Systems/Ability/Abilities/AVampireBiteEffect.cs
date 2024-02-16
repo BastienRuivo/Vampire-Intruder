@@ -17,10 +17,11 @@ namespace Systems.Ability.Abilities
             
             //todo play animation
             
-            //todo lock inputs
+            //Lock Input
+            LockInput(avatar);
             
             //wait for a period of time;
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(4);
             
             Debug.Log("Vampire is done drinking...");
 
