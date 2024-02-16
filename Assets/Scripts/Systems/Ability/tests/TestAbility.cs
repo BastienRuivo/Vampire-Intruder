@@ -24,6 +24,10 @@ namespace Systems.Ability.tests
             
             //Add the ability stat costs here.
             AbilityCosts.Add("Blood", 12.5f);
+
+            //Specify if costs should automatically applied by the ability when triggered
+            //ApplyCostsOnTrigger = false;  //true by default, abilities costs will be apply at the end instead,
+                                            //or manually using the CommitAbility() function.
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
