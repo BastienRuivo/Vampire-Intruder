@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
+using DefaultNamespace.Templates;
 using Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -18,6 +19,8 @@ namespace Systems.Ability
         /// <returns>a game object instanced from asset path.</returns>
         public GameObject InstanceGameObject(Ability ability, string path)
         {
+            if(ability == null)
+                return null;
             GameObject instance = Instantiate(Resources.Load<GameObject>(path));
             GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
             grantedAbility.Resources.AddFirst(instance);
@@ -32,7 +35,7 @@ namespace Systems.Ability
         /// <param name="asResource">if the object was instanced from this ability as a resource</param>
         public void DestroyGameObject(Ability ability, GameObject gameObject, bool asResource = true)
         {
-            if(gameObject == null)
+            if(gameObject == null || ability == null)
                 return;
             if (asResource)
             {
@@ -40,6 +43,31 @@ namespace Systems.Ability
                 grantedAbility.Resources.Remove(gameObject);
             }
             Destroy(gameObject);
+        }
+
+        public void RequestInputLock(Ability ability, bool status)
+        {
+            if(ability == null)
+                return;
+            
+            GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+
+            if (status)
+            {
+                if(!grantedAbility.HasInputLock())
+                    _inputLock.Take();
+            }
+            else
+            {
+                if(grantedAbility.HasInputLock())
+                    _inputLock.Release();
+            }
+            grantedAbility.SetInputLock(status);
+        }
+
+        public Lock GetInputLock()
+        {
+            return _inputLock;
         }
         
         /// <summary>
@@ -279,7 +307,14 @@ namespace Systems.Ability
             //mark ability as complete
             _runningAbilities[name] = null;
             
-            //Cleanup resources left behind
+            //release potential input lock
+            if (_abilities[name].HasInputLock())
+            {
+                _abilities[name].SetInputLock(false);
+                _inputLock.Release();
+            }
+            
+            //cleanup resources left behind
             foreach (GameObject resource in _abilities[name].Resources)
                 Destroy(resource);
             _abilities[name].Resources.Clear();
@@ -307,6 +342,13 @@ namespace Systems.Ability
             
             StopCoroutine(_runningAbilities[name]);
             _runningAbilities[name] = null;
+            
+            //release potential input lock
+            if (_abilities[name].HasInputLock())
+            {
+                _abilities[name].SetInputLock(false);
+                _inputLock.Release();
+            }
             
             //Cleanup in use resources
             foreach (GameObject resource in _abilities[name].Resources)
@@ -368,13 +410,14 @@ namespace Systems.Ability
             }
             
             //Auto trigger abilities bound to input keys
-            foreach (KeyValuePair<KeyCode,string> binding in _keyBindings)
-            {
-                if (Input.GetKeyDown(binding.Key))
+            if(_inputLock.IsOpened())
+                foreach (KeyValuePair<KeyCode,string> binding in _keyBindings)
                 {
-                    TriggerAbility(binding.Value);
+                    if (Input.GetKeyDown(binding.Key))
+                    {
+                        TriggerAbility(binding.Value);
+                    }
                 }
-            }
         }
         
         private class GrantedAbility
@@ -384,6 +427,7 @@ namespace Systems.Ability
             private float _currentCooldown;
             private bool _inCooldown = false;
             public readonly LinkedList<GameObject> Resources = new LinkedList<GameObject>();
+            private bool _hasInputLock = false;
 
             private KeyCode _binding = KeyCode.None;
             
@@ -467,6 +511,16 @@ namespace Systems.Ability
             {
                 return _binding;
             }
+
+            public void SetInputLock(bool status)
+            {
+                _hasInputLock = status;
+            }
+
+            public bool HasInputLock()
+            {
+                return _hasInputLock;
+            }
         }
 
         private class Attribute
@@ -533,6 +587,8 @@ namespace Systems.Ability
         [ItemCanBeNull] private readonly Dictionary<string, IEnumerator> _runningAbilities = new ();
 
         private readonly EventDispatcher<GameObject> _statChangeEventDispatcher = new ();
+
+        private readonly Lock _inputLock = new Lock();
 
         //todo add a way to affect stats of ASC from an ability.
     }

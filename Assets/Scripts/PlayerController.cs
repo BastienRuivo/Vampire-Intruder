@@ -154,6 +154,14 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 
     private void FixedUpdate()
     {
+        if (_ascRef.GetInputLock().IsOpened())
+        {
+            PlayerState.GetInstance().UnlockInput();
+        }
+        else
+        {
+            PlayerState.GetInstance().LockInput();
+        }
         Move();
     }
 

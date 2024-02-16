@@ -49,6 +49,16 @@ namespace Systems.Ability
             GetAbilitySystemComponent(avatar).DestroyGameObject(this, gameObject, false);
         }
 
+        protected void LockInput(GameObject avatar)
+        {
+            GetAbilitySystemComponent(avatar).RequestInputLock(this, true);
+        }
+
+        protected void UnlockInput(GameObject avatar)
+        {
+            GetAbilitySystemComponent(avatar).RequestInputLock(this, false);
+        }
+
         public Dictionary<string, float> GetAbilityCosts()
         {
             return AbilityCosts;
