@@ -21,8 +21,10 @@ namespace Systems.Ability
         {
             if(ability == null)
                 return null;
-            GameObject instance = Instantiate(Resources.Load<GameObject>(path));
             GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+            if (grantedAbility == null)
+                return null;
+            GameObject instance = Instantiate(Resources.Load<GameObject>(path));
             grantedAbility.Resources.AddFirst(instance);
             return instance;
         }
@@ -51,6 +53,8 @@ namespace Systems.Ability
                 return;
             
             GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+            if (grantedAbility == null)
+                return;
 
             if (status)
             {
@@ -68,6 +72,51 @@ namespace Systems.Ability
         public Lock GetInputLock()
         {
             return _inputLock;
+        }
+
+        public void ApplyAbilityCosts(Ability ability)
+        {
+            if(ability == null)
+                return;
+            
+            GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+            if (grantedAbility == null)
+                return;
+            ApplyAbilityCosts(grantedAbility);
+        }
+        
+        public void CancelAbility(Ability ability)
+        {
+            if(ability == null)
+                return;
+            
+            var grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability);
+            if (grantedAbility.Value == null)
+                return;
+            CancelAbility(grantedAbility.Key);
+        }
+
+        public void ApplyEffect(Ability ability, params KeyValuePair<string, float>[] effectStats)
+        {
+            if(effectStats.Length == 0)
+                return;
+            
+            if(ability == null)
+                return;
+            
+            GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+            if (grantedAbility == null)
+                return;
+            
+            foreach (var (attribute, value) in effectStats)
+            {
+                if (_stats.TryGetValue(attribute, out var stat))
+                {
+                    stat += value;
+                }
+            }
+            
+            _statChangeEventDispatcher.BroadcastEvent(gameObject);
         }
         
         /// <summary>
@@ -292,20 +341,21 @@ namespace Systems.Ability
 
             if (!isAbilityValid) yield break;
             
-            //solve ability costs
-            foreach (KeyValuePair<string,float> cost in costs)
-            {
-                _stats[cost.Key] -= cost.Value;
-            }
-            
-            if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
+            thisAbility.SetHasAppliedCosts(false);
+            if(thisAbility.GetAbility().DoApplyCostsOnTrigger())
+                ApplyAbilityCosts(thisAbility);
             
             //start ability
             _runningAbilities[name] = thisAbility.GetAbility().OnAbilityTriggered(gameObject);
             yield return StartCoroutine(_runningAbilities[name]); //wait for ability to complete
-           
+            if(_runningAbilities[name] == null)
+                yield break;
+            
             //mark ability as complete
             _runningAbilities[name] = null;
+            
+            //apply costs in case ability did not applied them
+            ApplyAbilityCosts(thisAbility);
             
             //release potential input lock
             if (_abilities[name].HasInputLock())
@@ -359,12 +409,15 @@ namespace Systems.Ability
                 return;
             
             //Manage ability refunds;
-            var costs = _abilities[name].GetAbility().GetAbilityCosts();
-            foreach (KeyValuePair<string,float> cost in costs)
+            if (_abilities[name].HasAppliedCosts())
             {
-                _stats[cost.Key] += cost.Value;
+                var costs = _abilities[name].GetAbility().GetAbilityCosts();
+                foreach (KeyValuePair<string,float> cost in costs)
+                {
+                    _stats[cost.Key] += cost.Value;
+                }
+                if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
             }
-            if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
         }
 
         /// <summary>
@@ -378,11 +431,22 @@ namespace Systems.Ability
                 CancelAbility(ability);
             }
         }
-        
-        // Start is called before the first frame update
-        void Start()
+
+        private void ApplyAbilityCosts(GrantedAbility ability)
         {
+            if(ability.HasAppliedCosts()) return;
             
+            var costs = ability.GetAbility().GetAbilityCosts();
+            
+            //solve ability costs
+            foreach (KeyValuePair<string,float> cost in costs)
+            {
+                _stats[cost.Key] -= cost.Value;
+            }
+            
+            ability.SetHasAppliedCosts(true);
+            
+            if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
         }
 
         // Update is called once per frame
@@ -428,6 +492,7 @@ namespace Systems.Ability
             private bool _inCooldown = false;
             public readonly LinkedList<GameObject> Resources = new LinkedList<GameObject>();
             private bool _hasInputLock = false;
+            private bool _hasAppliedCosts = false;
 
             private KeyCode _binding = KeyCode.None;
             
@@ -520,6 +585,16 @@ namespace Systems.Ability
             public bool HasInputLock()
             {
                 return _hasInputLock;
+            }
+
+            public void SetHasAppliedCosts(bool status)
+            {
+                _hasAppliedCosts = status;
+            }
+
+            public bool HasAppliedCosts()
+            {
+                return _hasAppliedCosts;
             }
         }
 

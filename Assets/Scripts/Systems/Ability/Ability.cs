@@ -12,6 +12,8 @@ namespace Systems.Ability
 
         protected bool SelfTriggeringAbility = false;
         
+        protected bool ApplyCostsOnTrigger = true;
+        
         protected bool RefundOnCancel = true;
 
         protected float Cooldown = -1.0f;
@@ -59,6 +61,16 @@ namespace Systems.Ability
             GetAbilitySystemComponent(avatar).RequestInputLock(this, false);
         }
 
+        protected void CommitAbility(GameObject avatar)
+        {
+            GetAbilitySystemComponent(avatar).ApplyAbilityCosts(this);
+        }
+
+        protected void CancelAbility(GameObject avatar)
+        {
+            GetAbilitySystemComponent(avatar).CancelAbility(this);
+        }
+
         public Dictionary<string, float> GetAbilityCosts()
         {
             return AbilityCosts;
@@ -74,6 +86,11 @@ namespace Systems.Ability
         public bool IsSelfTriggeringAbility()
         {
             return SelfTriggeringAbility;
+        }
+
+        public bool DoApplyCostsOnTrigger()
+        {
+            return ApplyCostsOnTrigger;
         }
         
         /// <returns>true if the ability canceling the ability will refund the owner.</returns>

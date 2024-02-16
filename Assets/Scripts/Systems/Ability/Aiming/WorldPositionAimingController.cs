@@ -11,10 +11,13 @@ namespace Systems.Ability.Aiming
         [Header("Collisions")] 
         public bool collide = false;
         public LayerMask visionMask;
+        public float collisionRadius = 0.25f;
 
         [Header("Visual")] 
         public GameObject worldReferenceParticle;
         public GameObject cursorParticle;
+
+        public RaycastHit2D hit;
         
         private Camera _camera;
         private bool _isCameraNotNull;
@@ -40,15 +43,17 @@ namespace Systems.Ability.Aiming
             if (delta.magnitude > aimDistance)
                 delta = deltaNormalized * aimDistance;
 
-            if (collide)
+            if(!collide)
+                hit = Physics2D.CircleCast(owner.transform.position + delta, collisionRadius, Vector2.zero, 0,visionMask);
+
+            if (collide || hit.collider != null)
             {
-                RaycastHit2D hit = Physics2D.Raycast(owner.transform.position, deltaNormalized, delta.magnitude, visionMask);
+                hit = Physics2D.Raycast(owner.transform.position, deltaNormalized, delta.magnitude, visionMask);
                 if (hit.collider != null)
                 {
                     delta = deltaNormalized * hit.distance;
                 }
             }
-            Debug.DrawLine(owner.transform.position, mousePositionWS, Color.red);
 
             currentTarget = owner.transform.position + delta;
             transform.position = currentTarget;
