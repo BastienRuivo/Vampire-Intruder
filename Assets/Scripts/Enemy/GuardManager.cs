@@ -11,6 +11,7 @@ using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
+using Tools = DefaultNamespace.Tools;
 
 public enum AlertStage
 {
@@ -241,7 +242,7 @@ public class GuardManager : MonoBehaviour
         //handle range
         UpdateFieldOfView(player.transform.position);
         UpdateShadowMap();
-        _visionRenderer.material.SetVector("_ObserverPosition", transform.position);
+        _visionRenderer.material.SetVector("_ObserverPosition", Tools.WorldToGridCoordinates(transform.position));
         _visionRenderer.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
         _visionRenderer.material.SetFloat("_ObserverViewDistance", viewDistance);
         _visionRenderer.material.SetFloat("_ObserverFieldOfView", _coneAngle);
@@ -414,7 +415,9 @@ public class GuardManager : MonoBehaviour
             _coneAngle = theta;
             _firstDir.Normalize();
 
-            float playerAngle = ComputeAngle(origin, playerPosition);
+            Vector3 guardWordPosition = Tools.GridToWorldCoordinates(transform.position);
+            Vector3 targetWorldPosition = Tools.GridToWorldCoordinates(playerPosition);
+            float playerAngle = ComputeAngle(guardWordPosition, targetWorldPosition);
             float dThetaMax = _foVThetaMax - playerAngle;
             float dThetaMix = _foVThetaMin - playerAngle;
             _playerInFOV = ((dThetaMax >= 0 && dThetaMax < theta) || (dThetaMix <= 0 && dThetaMix > -1 * theta));
@@ -516,6 +519,7 @@ public class GuardManager : MonoBehaviour
     {
         float step = _coneAngle / (float)(traceResolution - 1.0f);
         float angle = 0.0f;
+        Vector3 guardGridPosition = Tools.WorldToGridCoordinates(transform.position);
 
         //Ray casting
         for (uint i = 0; i < traceResolution; i++)
@@ -622,8 +626,9 @@ public class GuardManager : MonoBehaviour
     */
     private void UpdateRange(Vector3 playerPosition)
     {
-        Vector3 origin = transform.position;
-        _playerInRange = (Vector3.Distance(origin, playerPosition) < viewDistance);
+        Vector3 guardWordPosition = Tools.GridToWorldCoordinates(transform.position);
+        Vector3 targetWorldPosition = Tools.GridToWorldCoordinates(playerPosition);
+        _playerInRange = (Vector3.Distance(guardWordPosition, targetWorldPosition) < viewDistance);
     }
 
     /**
@@ -639,6 +644,15 @@ public class GuardManager : MonoBehaviour
         // Debug.DrawRay(transform.position, direction, Color.red);
 
         return hit.collider == null;
+        
+        /*
+        Vector3 guardGridPosition = Tools.WorldToGridCoordinates(transform.position);
+        Vector3 targetGridPosition = Tools.WorldToGridCoordinates(target.transform.position);
+        Vector3 direction = targetGridPosition - guardGridPosition;
+        float distance = Vector3.Distance(targetGridPosition, guardGridPosition);
+
+        RaycastHit2D hit = Physics2D.Raycast(guardGridPosition, direction, distance, visionMask);
+        */
     }
 
     /**
