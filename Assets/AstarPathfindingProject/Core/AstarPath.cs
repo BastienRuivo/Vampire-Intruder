@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Pathfinding;
 #if UNITY_5_5_OR_NEWER
 using UnityEngine.Profiling;
+using System.Linq;
 #endif
 
 #if NETFX_CORE
@@ -1222,7 +1223,10 @@ public class AstarPath : VersionedMonoBehaviour {
 		// Very important to set this. Ensures the singleton pattern holds
 		active = this;
 
-		if (FindObjectsOfType(typeof(AstarPath)).Length > 1) {
+		AstarPath[] Astars = FindObjectsOfType(typeof(AstarPath)) as AstarPath[];
+		var enableds = Astars.Where(a => a.isActiveAndEnabled).ToList();
+
+        if (enableds.Count > 1) {
 			Debug.LogError("You should NOT have more than one AstarPath component in the scene at any time.\n" +
 				"This can cause serious errors since the AstarPath component builds around a singleton pattern.");
 		}

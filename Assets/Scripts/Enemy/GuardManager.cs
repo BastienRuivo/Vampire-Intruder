@@ -36,6 +36,7 @@ public class GuardManager : MonoBehaviour
     }
 
     [Header("Alert")]
+    public Animator feedbackAnimator;
     public AlertStage alertStage;
     public float alertTimer;
     private float _alertRatio;
@@ -342,7 +343,7 @@ public class GuardManager : MonoBehaviour
                 case AlertStage.Alerted:
                     cameraShake.Shake(0.2f);
                     _speed = spotSpeed;
-                    PlayerState.GetInstance().LockInput();
+                    //PlayerState.GetInstance().LockInput();
                     AudioManager.GetInstance().playClip(_spotSound, transform.position);
                     _cameraPos = player.transform.Find("Camera");
                     _speed = spotSpeed;
@@ -355,7 +356,7 @@ public class GuardManager : MonoBehaviour
                 // If very sus, check the player position
                 case AlertStage.Suspicious:
                     // create Node at 25% between guard and player
-                    cameraShake.Shake(0.05f);
+                    cameraShake.Shake(0.02f);
                     GameObject nodeGO = Instantiate(nodePrefab);
                     nodeGO.transform.position = Vector3.Lerp(_body.position, player.transform.position, distancePercentageSuspicious);
                     _currentWaitingTimer = 0;
@@ -497,6 +498,7 @@ public class GuardManager : MonoBehaviour
         LookAt(angle + 90f);
 
         Vector2 force = dir * _speed * Time.deltaTime;
+        force.y *= 0.5f;
         if (_body.velocity.magnitude > 0)
         {
             _animator.SetFloat("xSpeed", _body.velocity.x);
@@ -523,13 +525,10 @@ public class GuardManager : MonoBehaviour
         for (uint i = 0; i < traceResolution; i++)
         {
             Vector2 dir2D = RotateVector(_firstDir, -angle);
-            dir2D.Normalize();
-            Vector3 direction = Tools.WorldToGridCoordinates(new Vector3(dir2D.x, dir2D.y, 0.0f));
-            dir2D *= viewDistance;
-            Vector2 localDirDist2D = Tools.WorldToGridCoordinates(dir2D);
-            float localDist = localDirDist2D.magnitude;
-            RaycastHit2D hit = Physics2D.Raycast(guardGridPosition, direction, localDist, visionMask);
-
+            Vector3 direction = new Vector3(dir2D.x, dir2D.y, 0.0f);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, viewDistance, visionMask);
+            //Debug.DrawRay(transform.position, direction, hit.collider == null? Color.red : Color.green, 0.1f);
+            
             //Store depth
             if (hit.collider == null)
             {
@@ -600,18 +599,22 @@ public class GuardManager : MonoBehaviour
         AlertStage newAlertStage;
         if (alertRatio >= 1f)
         {
+            feedbackAnimator.SetTrigger("DetectAlert");
             newAlertStage = AlertStage.Alerted;
         }
         else if (alertRatio > 0.5f)
         {
+            feedbackAnimator.SetTrigger("DetectStay");
             newAlertStage = AlertStage.Suspicious;
         }
         else if (alertRatio > 0f)
         {
+            feedbackAnimator.SetBool("Dectect", true);
             newAlertStage = AlertStage.SeenSomething;
         }
         else
         {
+            feedbackAnimator.SetBool("Dectect", false);
             newAlertStage = AlertStage.Idle;
         }
         return newAlertStage;

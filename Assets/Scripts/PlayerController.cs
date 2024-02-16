@@ -83,6 +83,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector3 direction = new Vector3(hAxis, vAxis, 0).normalized;
+        direction.y *= 0.5f;
 
         if (hAxis != 0 && vAxis != 0) 
         {
