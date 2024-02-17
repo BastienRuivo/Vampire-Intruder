@@ -74,7 +74,7 @@ Material:
     - _MaxGlow: 0.358
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _canTarget: 0.32740328
+    - _canTarget: 0.6416605
     - _hasTarget: 1
     m_Colors:
     - _CanTarget: {r: 0.25098038, g: 1, b: 0.25098038, a: 1}
