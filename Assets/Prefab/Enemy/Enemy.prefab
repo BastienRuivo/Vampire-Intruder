@@ -550,8 +550,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 6463680674939606716}
     m_Modifications:
     - target: {fileID: 3000714032349069863, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
+      propertyPath: viewDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3000714032349069863, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: refreshDistance
-      value: 6.5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3662001191948676101, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: m_Name
@@ -559,15 +563,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4085431743850968581, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4085431743850968581, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4085431743850968581, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 4696016522635719752, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: m_LocalPosition.x
