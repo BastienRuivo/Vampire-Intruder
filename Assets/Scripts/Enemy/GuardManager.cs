@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Pathfinding;
+using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
+using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
+using Tools = DefaultNamespace.Tools;
 
 public enum AlertStage
 {
@@ -28,6 +33,7 @@ public class GuardManager : MonoBehaviour
     }
 
     [Header("Alert")]
+    public Animator feedbackAnimator;
     public AlertStage alertStage;
     private AlertStage _previousAlertStage;
     public float alertTimer;
@@ -242,7 +248,7 @@ public class GuardManager : MonoBehaviour
         //handle range
         UpdateFieldOfView(player.transform.position);
         UpdateShadowMap();
-        _visionRenderer.material.SetVector("_ObserverPosition", transform.position);
+        _visionRenderer.material.SetVector("_ObserverPosition", Tools.WorldToGridCoordinates(transform.position));
         _visionRenderer.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
         _visionRenderer.material.SetFloat("_ObserverViewDistance", viewDistance);
         _visionRenderer.material.SetFloat("_ObserverFieldOfView", _coneAngle);
@@ -345,7 +351,7 @@ public class GuardManager : MonoBehaviour
                 case AlertStage.Alerted:
                     cameraShake.Shake(0.2f);
                     _speed = spotSpeed;
-                    PlayerState.GetInstance().LockInput();
+                    //PlayerState.GetInstance().LockInput();
                     AudioManager.GetInstance().playClip(_spotSound, transform.position);
                     _cameraPos = player.transform.Find("Camera");
                     _speed = spotSpeed;
@@ -358,7 +364,7 @@ public class GuardManager : MonoBehaviour
                 // If very sus, check the player position
                 case AlertStage.Suspicious:
                     // create Node at 25% between guard and player
-                    cameraShake.Shake(0.05f);
+                    cameraShake.Shake(0.02f);
                     GameObject nodeGO = Instantiate(nodePrefab);
                     nodeGO.transform.position = Vector3.Lerp(_body.position, player.transform.position, distancePercentageSuspicious);
                     _currentWaitingTimer = 0;
@@ -488,7 +494,9 @@ public class GuardManager : MonoBehaviour
             _coneAngle = theta;
             _firstDir.Normalize();
 
-            float playerAngle = ComputeAngle(origin, playerPosition);
+            Vector3 guardWordPosition = Tools.GridToWorldCoordinates(transform.position);
+            Vector3 targetWorldPosition = Tools.GridToWorldCoordinates(playerPosition);
+            float playerAngle = ComputeAngle(guardWordPosition, targetWorldPosition);
             float dThetaMax = _foVThetaMax - playerAngle;
             float dThetaMix = _foVThetaMin - playerAngle;
             _playerInFOV = ((dThetaMax >= 0 && dThetaMax < theta) || (dThetaMix <= 0 && dThetaMix > -1 * theta));
@@ -569,6 +577,7 @@ public class GuardManager : MonoBehaviour
         LookAt(angle + 90f);
 
         Vector2 force = dir * _speed * Time.deltaTime;
+        force.y *= 0.5f;
         if (_body.velocity.magnitude > 0)
         {
             _animator.SetFloat("xSpeed", _body.velocity.x);
@@ -589,6 +598,7 @@ public class GuardManager : MonoBehaviour
     {
         float step = _coneAngle / (float)(traceResolution - 1.0f);
         float angle = 0.0f;
+        Vector3 guardGridPosition = Tools.WorldToGridCoordinates(transform.position);
 
         //Ray casting
         for (uint i = 0; i < traceResolution; i++)
@@ -597,7 +607,7 @@ public class GuardManager : MonoBehaviour
             Vector3 direction = new Vector3(dir2D.x, dir2D.y, 0.0f);
             RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, viewDistance, visionMask);
             //Debug.DrawRay(transform.position, direction, hit.collider == null? Color.red : Color.green, 0.1f);
-
+            
             //Store depth
             if (hit.collider == null)
             {
@@ -668,18 +678,22 @@ public class GuardManager : MonoBehaviour
         AlertStage newAlertStage;
         if (alertRatio >= 1f)
         {
+            feedbackAnimator.SetTrigger("DetectAlert");
             newAlertStage = AlertStage.Alerted;
         }
         else if (alertRatio > 0.5f)
         {
+            feedbackAnimator.SetTrigger("DetectStay");
             newAlertStage = AlertStage.Suspicious;
         }
         else if (alertRatio > 0f)
         {
+            feedbackAnimator.SetBool("Dectect", true);
             newAlertStage = AlertStage.SeenSomething;
         }
         else
         {
+            feedbackAnimator.SetBool("Dectect", false);
             newAlertStage = AlertStage.Idle;
         }
         return newAlertStage;
@@ -691,8 +705,9 @@ public class GuardManager : MonoBehaviour
     */
     private void UpdateRange(Vector3 playerPosition)
     {
-        Vector3 origin = transform.position;
-        _playerInRange = (Vector3.Distance(origin, playerPosition) < viewDistance);
+        Vector3 guardWordPosition = Tools.GridToWorldCoordinates(transform.position);
+        Vector3 targetWorldPosition = Tools.GridToWorldCoordinates(playerPosition);
+        _playerInRange = (Vector3.Distance(guardWordPosition, targetWorldPosition) < viewDistance);
     }
 
     /**
@@ -708,6 +723,15 @@ public class GuardManager : MonoBehaviour
         // Debug.DrawRay(transform.position, direction, Color.red);
 
         return hit.collider == null;
+        
+        /*
+        Vector3 guardGridPosition = Tools.WorldToGridCoordinates(transform.position);
+        Vector3 targetGridPosition = Tools.WorldToGridCoordinates(target.transform.position);
+        Vector3 direction = targetGridPosition - guardGridPosition;
+        float distance = Vector3.Distance(targetGridPosition, guardGridPosition);
+
+        RaycastHit2D hit = Physics2D.Raycast(guardGridPosition, direction, distance, visionMask);
+        */
     }
 
     /**

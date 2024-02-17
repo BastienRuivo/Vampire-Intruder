@@ -261,7 +261,19 @@ public class GameController : Singleton<GameController>
         //SubscribeToGameEvent(new TestEventReceiver());
         HideOtherMaps();
         GetAllObjective();
-        
+        GenerateAStarGraph();
+
+
+    }
+
+    private void GenerateAStarGraph()
+    {
+        rooms.ForEach(room =>
+        {
+            Debug.Log(room.name);
+            room.GetComponent<RoomData>().BuildGraph(room.transform.position);
+        });
+        AstarPath.active.Scan();
     }
 
 
