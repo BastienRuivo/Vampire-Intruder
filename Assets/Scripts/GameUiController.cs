@@ -167,8 +167,9 @@ public class GameUiController : MonoBehaviour,
             case GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming:
                 if (_currentDialogRoutine != null)
                 {
-                    _messageQueue.AddFirst(_currentDialog);
-                    StartCoroutine(_currentDialogRoutine);
+                    if(_currentDialog.GetMessage().Priority != GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming)
+                        _messageQueue.AddFirst(_currentDialog);
+                    StopCoroutine(_currentDialogRoutine);
                     _currentDialogRoutine = null;
                 }
                 _messageQueue.AddFirst(new MessageQueueElement(message));
