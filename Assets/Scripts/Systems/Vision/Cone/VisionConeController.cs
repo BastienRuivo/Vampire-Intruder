@@ -1,17 +1,13 @@
-using System;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace Systems.Vision
+namespace Systems.Vision.Cone
 {
-    public class VisionConeController : MonoBehaviour
+    public class VisionConeController : VisionShapeController
     {
-        /// <remarks>Must validate the target with HasRefreshability first.</remarks>
-        /// <param name="target">a target position.</param>
-        /// <returns>True if the cone target is visible to the cone</returns>
-        public bool HasVisibility(Vector3 target)
+        public override bool HasVisibility(Vector3 target)
         {
             Vector3 conePosition = transform.position;
             Vector3 delta = target - conePosition;
@@ -47,13 +43,8 @@ namespace Systems.Vision
             
             return false;
         }
-
-        /// <summary>
-        /// Check if it is worth refreshing the visibility cone.
-        /// </summary>
-        /// <param name="target">a target position</param>
-        /// <returns>true if it is worth refreshing the cone.</returns>
-        public bool HasRefreshability(Vector3 target)
+        
+        public override bool HasRefreshability(Vector3 target)
         {
             Vector3 conePosition = transform.position;
             Vector3 direction = target - conePosition;
@@ -80,29 +71,22 @@ namespace Systems.Vision
             
             return hit.collider == null;
         }
-
-        /// <summary>
-        /// Notify the cone that it should be enabled.
-        /// </summary>
-        public void Enable()
+        
+        public override void Enable()
         {
             if(enabled) return;
             enabled = true;
             _isEnabledMaterialSetting.RetargetValue(1.0f);
         }
-
-        /// <summary>
-        /// Notify the cone that it should be disabled.
-        /// </summary>
-        public void Disable()
+        
+        public override void Disable()
         {
             if(! enabled) return;
             enabled = false;
             _isEnabledMaterialSetting.RetargetValue(0.0f);
         }
         
-        /// <returns>true is the cone is currently enabled.</returns>
-        public bool IsEnabled()
+        public override bool IsEnabled()
         {
             return enabled;
         }

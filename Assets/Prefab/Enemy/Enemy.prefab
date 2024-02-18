@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6446200479537799780}
   - component: {fileID: 6123221713736057825}
   - component: {fileID: 6001719633282345185}
+  - component: {fileID: 2047177989503012280}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -213,6 +214,41 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!58 &2047177989503012280
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2671610580363259081}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.2
 --- !u!1 &5541329228386690723
 GameObject:
   m_ObjectHideFlags: 0
@@ -422,6 +458,14 @@ PrefabInstance:
     - target: {fileID: 4696016522635719752, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5462318061661815336, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
+      propertyPath: refreshDistance
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5462318061661815336, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
+      propertyPath: targetEntityTag
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

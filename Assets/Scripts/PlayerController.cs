@@ -1,14 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
+using Interfaces;
 using Systems.Ability;
 using Systems.Ability.Abilities;
 using Systems.Ability.tests;
+using Systems.Vision;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>
 {
+    public GameObject visionObject;
+    
     [Header("Speed")]
     public float speed = 20f;
 
@@ -21,8 +24,10 @@ public class PlayerController : MonoBehaviour
     // private variables
     private Animator animator;
     private Rigidbody2D rigidBody;
-    public Direction directionPerso;
+    public Direction directionPerso;//todo cleanup this trash
+    
     private AbilitySystemComponent _ascRef;
+    private InputToVisionSystemBehavior[] _coneBehaviors;
 
     private enum State
     {
@@ -37,6 +42,18 @@ public class PlayerController : MonoBehaviour
             return candidates[0];
         Debug.LogError("Player not found in this scene.");
         return null;
+    } //todo remove
+
+    public void BindVisionToMouse()
+    {
+        _coneBehaviors[0].enabled = false;
+        _coneBehaviors[1].enabled = true;
+    }
+    
+    public void UnbindVisionFromMouse()
+    {
+        _coneBehaviors[0].enabled = true;
+        _coneBehaviors[1].enabled = false;
     }
 
     // Start is called before the first frame update
@@ -60,6 +77,10 @@ public class PlayerController : MonoBehaviour
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
         _ascRef.BindAbility("Test", KeyCode.E);
+
+        _coneBehaviors = GetComponents<InputToVisionSystemBehavior>();
+        
+        visionObject.GetComponent<VisionSystemController>().OnOverlapChanged.Subscribe(this);
     }
 
     private void ZoomCamera()
@@ -85,7 +106,7 @@ public class PlayerController : MonoBehaviour
         Vector3 direction = new Vector3(hAxis, vAxis, 0).normalized;
         direction.y *= 0.5f;
 
-        if (hAxis != 0 && vAxis != 0) 
+        if (hAxis != 0 || vAxis != 0) 
         {
             directionPerso = DirectionHelper.FromVector(direction);
         }
@@ -107,11 +128,32 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ZoomCamera();        
+        ZoomCamera();
+        if (Input.GetMouseButtonDown((int)MouseButton.Right))
+        {
+            BindVisionToMouse();
+        }
+
+        if (Input.GetMouseButtonUp((int)MouseButton.Right))
+        {
+            UnbindVisionFromMouse();
+        }
     }
 
     private void FixedUpdate()
     {
         Move();
+    }
+
+    public void OnEvent(VisionSystemController.OverlapData context)
+    {
+        if (context.BeginOverlap)
+        {
+            context.Target.GetComponent<GuardManager>().EnterPlayerSigth();
+        }
+        else
+        {
+            context.Target.GetComponent<GuardManager>().ExitPlayerSight();
+        }
     }
 }

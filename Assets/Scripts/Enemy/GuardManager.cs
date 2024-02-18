@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Pathfinding;
 using Systems.Vision;
+using Systems.Vision.Cone;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
@@ -217,38 +218,32 @@ public class GuardManager : MonoBehaviour
     */
     private void HandleVision()
     {
-        //handle distance
-        UpdateRange(player.transform.position);
-        if (!_playerInRange) { UpdateAlertStage(false); return; }
-
-        //handle range
-        UpdateFieldOfView(player.transform.position);
-        UpdateShadowMap();
-        _visionRenderer.material.SetVector("_ObserverPosition", Tools.WorldToGridCoordinates(transform.position));
-        _visionRenderer.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
-        _visionRenderer.material.SetFloat("_ObserverViewDistance", viewDistance);
-        _visionRenderer.material.SetFloat("_ObserverFieldOfView", _coneAngle);
-        _visionRenderer.material.SetFloat("_AlertRatio", _alertRatio);
-
-
-        
-        if (!_playerInFOV) { UpdateAlertStage(false); HandleDialogs(); return; }
-
-        //handle direct line trace
-        if (!NoWallToTarget(player))
+        if (_visionConeController.HasRefreshability(player.transform.position))
         {
-            UpdateAlertStage(false);
-            HandleDialogs();
-            return;
+            _visionConeController.Enable();
+            _visionConeController.GetMaterial().SetFloat(AlertRatio, _alertRatio);
+            if (_visionConeController.HasVisibility(player.transform.position))
+            {
+                UpdateAlertStage(true);
+                HandleDialogs();
+                if (alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
+                {
+                    GameController.GetGameMode().GetCaught();
+                }
+            }
+            else
+            {
+                UpdateAlertStage(false);
+                HandleDialogs();
+            }
+            
+            //_AlertRatio
         }
-
-        UpdateAlertStage(true);
-        HandleDialogs();
-
-        if (_playerInFOV && alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
+        else
         {
             _visionConeController.Disable();
             UpdateAlertStage(false);
+            HandleDialogs();
         }
     }
     
