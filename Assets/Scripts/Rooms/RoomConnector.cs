@@ -103,9 +103,10 @@ public class RoomConnector : MonoBehaviour
 
     public IEnumerator DisableRoom(GameObject roomRoot)
     {
-        for (float alpha = 1f; alpha > 0f; alpha -= Time.deltaTime)
+        for (float alpha = 1f; alpha > 0.02f; alpha -= Time.deltaTime)
         {
             if (!_fade) break;
+            alpha = Mathf.Max(alpha, 0.02f);
             SetRoomVisibility(roomRoot, alpha);
             yield return null;
         }

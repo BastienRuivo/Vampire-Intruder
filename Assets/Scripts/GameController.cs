@@ -71,6 +71,9 @@ public class GameController : Singleton<GameController>
     private int _eventCount = 0;
     private float _eventTime = 0.0f;
 
+    public string mainObjectiveReference;
+    public int nbObjectives;
+
     private readonly EventDispatcher<int> _gameEventDispatcher = new ();
     private readonly EventDispatcher<TimeProgression> _gameProgressionEventDispatcher = new ();
     private readonly EventDispatcher<UserMessageData> _gameUserMessageEventDispatcher = new ();
@@ -89,16 +92,58 @@ public class GameController : Singleton<GameController>
         Debug.Log("Level Completed.");
     }
     
-    public void GetAllObjective()
+    public void SetObjectives()
     {
         var objectives = GameObject.FindGameObjectsWithTag("Interactible").Select(x => x.GetComponent<Interactible>()).ToList();
         Debug.Log(objectives.Count);
+        List<string> chosenRefs = new List<string>();
+        List<Interactible> rejected = new List<Interactible>();
         objectives.ForEach(o =>
         {
-            Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
-            Debug.Log(obj.phrase);
-            objectivesToComplete.Add(obj);
+
+            bool isMain = mainObjectiveReference.Equals(o.reference);
+            if (chosenRefs.Contains(o.reference))
+            {
+                o.SetInactive();
+            }
+            else if (isMain || (nbObjectives > 0 && UnityEngine.Random.Range(0, 100) > 75))
+            {
+                o.isMainObjective= isMain;
+                Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
+                objectivesToComplete.Add(obj);
+                chosenRefs.Add(o.reference);
+                nbObjectives--;
+            }
+            else if(!isMain)
+            {
+                rejected.Add(o);
+                o.SetInactive();
+            }
+            
         });
+
+        while(nbObjectives > 0 && rejected.Count > 0)
+        {
+            int r = UnityEngine.Random.Range(0, rejected.Count);
+            Interactible o = rejected.ElementAt(r);
+            rejected.RemoveAt(r);
+            if (chosenRefs.Contains(o.reference))
+            {
+                continue;
+            }
+
+            Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
+            objectivesToComplete.Add(obj);
+            chosenRefs.Add(o.reference);
+            nbObjectives--;
+        }
+
+        if(nbObjectives > 0)
+        {
+            Debug.Log("Can't add enough objectives");
+        }
+
+        Debug.Log("There is " + objectivesToComplete.Count + " Objectives");
         objectives.Sort((a, b) =>
         {
             if (a.isMainObjective) return 1;
@@ -269,18 +314,6 @@ public class GameController : Singleton<GameController>
             Debug.Log(f.name.ToString());
             PlayerState.GetInstance().GetPlayer().transform.position = start.transform.position;
         }
-
-        
-        
-
-
-
-        // Init maps, hide it, and pick up objectives
-        GenerateAStarGraph();
-        //HideOtherMaps();
-        GetAllObjective();
-
-
     }
 
     private void GenerateAStarGraph()
@@ -306,8 +339,19 @@ public class GameController : Singleton<GameController>
                     c.a = 0f;
                     r.material.color = c;
                 }
+                else
+                {
+                    Debug.Log(r.gameObject.name);
+                }
             }
         });
+    }
+
+    public void OnLevelLoadComplete()
+    {
+        GenerateAStarGraph();
+        HideOtherMaps();
+        SetObjectives();
     }
 
     private void UpdateGameStatus(){

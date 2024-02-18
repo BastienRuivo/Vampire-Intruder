@@ -81,13 +81,13 @@ public class LevelGenerator : Singleton<LevelGenerator>
         RoomData roomData = room.GetComponent<RoomData>();
         roomData.energy += addEnergy;
 
-        Debug.Log("Fill " + room.name + " with energy " + roomData.energy);
+        //Debug.Log("Fill " + room.name + " with energy " + roomData.energy);
         // If energy is neg, then it's over
         if (roomData.energy <= 0f) return;
         // For all connectors of the room, try to place somtheing
         connectors.Where(c => !c.isFilled).ToList().ForEach(c =>
         {
-            Debug.Log("Filling connector " + c.name);
+            //Debug.Log("Filling connector " + c.name);
             Vector3Int directionOffset = DirectionHelper.DirectionOffsetGrid(c.dir) + new Vector3Int(1, 1, 0);
             Vector3 cPos = grid.CellToWorld(c.coordOnGrid + directionOffset);
 
@@ -101,7 +101,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
             RoomData.Type roomType = PickRoomType(c, typeTested);
 
-            Debug.Log("First type picked = " + roomType.ToString());
+            //Debug.Log("First type picked = " + roomType.ToString());
             bool generated = false;
 
             // Try all room type allowed till something can be spawned
@@ -111,7 +111,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 List<GameObject> roomTested = new List<GameObject>();
                 GameObject instance = PickRoomToPlace(c, roomType, roomTested);
 
-                Debug.Log("Testin' type " + roomType.ToString());
+                //Debug.Log("Testin' type " + roomType.ToString());
 
                 // Try all room prefab of this type till something can be spawner
                 while(instance != null && !generated )
@@ -125,7 +125,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                     if (instConnectors.Length <= 0)
                     {
                         // Usually when you put a wrong direction in one of the rooms prefab
-                        Debug.Log("Room " + instance.name + " is bugging for orientation " + invDir.ToString());
+                        //Debug.Log("Room " + instance.name + " is bugging for orientation " + invDir.ToString());
                         return;
                     }
                     // Place the instance in the scene, false if it can't be placed
@@ -160,8 +160,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
             if(!generated)
             {
                 // TODO : CAN'T FILL THE INSTERSECTION WITH A ROOM, MASK IT
-                Debug.Log("I Can't fill this intersection batman");
-                Destroy(c);
+                //Debug.Log("I Can't fill this intersection batman");
+                Destroy(c.gameObject);
             }
             
         });
@@ -204,11 +204,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
             for(int j = 0; j < Mathf.Min(test.Length, t); j++)
             {
 
-                Debug.Log(Mathf.Abs(Physics2D.Distance(collider, test[j]).distance) + " < " + _maximumOverlapp);
+                //Debug.Log(Mathf.Abs(Physics2D.Distance(collider, test[j]).distance) + " < " + _maximumOverlapp);
 
                 if (Mathf.Abs(Physics2D.Distance(collider, test[j]).distance) >= _maximumOverlapp)
                 {
-                    Debug.Log(collider.transform.parent.parent.parent.name + " connector " + other.name  + " can't connect to " + other.name + " because of " + test[j].transform.parent.parent.parent.name);
+                    //Debug.Log(collider.transform.parent.parent.parent.name + " connector " + other.name  + " can't connect to " + other.name + " because of " + test[j].transform.parent.parent.parent.name);
                     _overlap = true;
                     break;
                 }
@@ -347,7 +347,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
 
 
-        Debug.Log("There is " + instanciatedRooms.Count + " rooms generated in " + stopwatch.ElapsedMilliseconds + " ms");
+        //Debug.Log("There is " + instanciatedRooms.Count + " rooms generated in " + stopwatch.ElapsedMilliseconds + " ms");
         
         return instanciatedRooms;
     }
@@ -358,7 +358,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         {
             if (!hasStart)
             {
-                Debug.Log("Starting " + startingEnergy.ToString());
+                //Debug.Log("Starting " + startingEnergy.ToString());
                 FillRoom(roomToFill.Dequeue(), startingEnergy);
                 hasStart = true;
             }
@@ -366,7 +366,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             {
                 FillRoom(roomToFill.Dequeue());
             }
-            Debug.Log("Remain " + roomToFill.Count + " in queue");
+            //Debug.Log("Remain " + roomToFill.Count + " in queue");
         }
     }
 
@@ -379,6 +379,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             FillRoom(roomToFill.Dequeue());
             yield return null;
         }
+        GameController.GetInstance().OnLevelLoadComplete();
         //Destroy(this);
     }
 }
