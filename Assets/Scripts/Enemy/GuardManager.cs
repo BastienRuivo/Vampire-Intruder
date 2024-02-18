@@ -184,6 +184,11 @@ public class GuardManager : MonoBehaviour
         HandleVision();
     }
 
+    public VisionConeController GetVision()
+    {
+        return _visionConeController;
+    }
+
     /** Coroutine to compute new player path
      * Then set an alarm to the timer to avoid high computation
     */
