@@ -74,7 +74,7 @@ namespace Systems.Ability
             return _inputLock;
         }
 
-        public void ApplyAbilityCosts(Ability ability)
+        public void CommitAbility(Ability ability)
         {
             if(ability == null)
                 return;
@@ -83,6 +83,10 @@ namespace Systems.Ability
             if (grantedAbility == null)
                 return;
             ApplyAbilityCosts(grantedAbility);
+            
+            //handle cooldown
+            if(grantedAbility.HasCooldown())
+                grantedAbility.Cooldown();
         }
         
         public void CancelAbility(Ability ability)
@@ -354,8 +358,10 @@ namespace Systems.Ability
             //mark ability as complete
             _runningAbilities[name] = null;
             
-            //apply costs in case ability did not applied them
-            ApplyAbilityCosts(thisAbility);
+            //cleanup resources left behind
+            foreach (GameObject resource in _abilities[name].Resources)
+                Destroy(resource);
+            _abilities[name].Resources.Clear();
             
             //release potential input lock
             if (_abilities[name].HasInputLock())
@@ -364,14 +370,12 @@ namespace Systems.Ability
                 _inputLock.Release();
             }
             
-            //cleanup resources left behind
-            foreach (GameObject resource in _abilities[name].Resources)
-                Destroy(resource);
-            _abilities[name].Resources.Clear();
-            
             //handle cooldown
-            if(thisAbility.HasCooldown())
+            if(thisAbility.HasCooldown() && !thisAbility.HasAppliedCosts())
                 thisAbility.Cooldown();
+            
+            //apply costs in case ability did not applied them
+            ApplyAbilityCosts(thisAbility);
             
             //handle consumables
             if (!thisAbility.IsConsumable()) 

@@ -31,12 +31,13 @@ namespace Systems.Ability.Abilities
             bool hasTarget = false;
             Vector3 targetPosition = default;
             
+            avatar.GetComponent<PlayerController>().BindVisionToMouse();
+            
             while (true)
             {
                 yield return new WaitForNextFrameUnit();
                 if (Input.GetMouseButtonDown((int)MouseButton.Right))
                 {
-                    CancelAbility(avatar);
                     break;
                 }
 
@@ -49,10 +50,15 @@ namespace Systems.Ability.Abilities
                     break;
                 }
             }
+            avatar.GetComponent<PlayerController>().UnbindVisionFromMouse();
 
             if (hasTarget)
             {
                 avatar.transform.position = targetPosition;
+            }
+            else
+            {
+                CancelAbility(avatar);
             }
             
             yield return null; 

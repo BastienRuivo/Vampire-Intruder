@@ -17,6 +17,8 @@ namespace Systems.Ability.Abilities
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
             GameObject cursor = InstanceResource(avatar, "Abilities/Aiming/MouseAimLock");
+            avatar.GetComponent<PlayerController>().BindVisionToMouse();
+
             GameObject target = null;
             if (cursor != null)
             {
@@ -61,6 +63,8 @@ namespace Systems.Ability.Abilities
                     }
                 }
             }
+            
+            avatar.GetComponent<PlayerController>().UnbindVisionFromMouse();
             
             if (target != null)
             {

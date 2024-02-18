@@ -63,7 +63,7 @@ namespace Systems.Ability
 
         protected void CommitAbility(GameObject avatar)
         {
-            GetAbilitySystemComponent(avatar).ApplyAbilityCosts(this);
+            GetAbilitySystemComponent(avatar).CommitAbility(this);
         }
 
         protected void CancelAbility(GameObject avatar)

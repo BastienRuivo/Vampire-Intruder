@@ -83,13 +83,14 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _ascRef.GrantAbility<AEffectStatClamp>("_StatClamp");
         _ascRef.GrantAbility<AEffectVampireBite>("Bite");
         _ascRef.GrantAbility<AVampireTryBite>("TryBite");
-        _ascRef.GrantAbility<TestAbility>("Test");
         _ascRef.GrantAbility<AVampireThirst>("Thirst");
         _ascRef.GrantAbility<ATeleportation>("TP");
+        _ascRef.GrantAbility<ADash>("Dash");
+        _ascRef.GrantAbility<ABlind>("Blind");
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
-        _ascRef.BindAbility("TP", KeyCode.E);
+        _ascRef.BindAbility("Dash", KeyCode.E);
     }
 
     public VisionConeController GetVision()
