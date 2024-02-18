@@ -1,16 +1,13 @@
-using System;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
-namespace Systems.Vision
+namespace Systems.Vision.Cone
 {
-    public class VisionConeController : MonoBehaviour
+    public class VisionConeController : VisionShapeController
     {
-        /// <remarks>Must validate the target with HasRefreshability first.</remarks>
-        /// <param name="target">a target position.</param>
-        /// <returns>True if the cone target is visible to the cone</returns>
-        public bool HasVisibility(Vector3 target)
+        public override bool HasVisibility(Vector3 target)
         {
             Vector3 conePosition = transform.position;
             Vector3 delta = target - conePosition;
@@ -46,13 +43,8 @@ namespace Systems.Vision
             
             return false;
         }
-
-        /// <summary>
-        /// Check if it is worth refreshing the visibility cone.
-        /// </summary>
-        /// <param name="target">a target position</param>
-        /// <returns>true if it is worth refreshing the cone.</returns>
-        public bool HasRefreshability(Vector3 target)
+        
+        public override bool HasRefreshability(Vector3 target)
         {
             Vector3 conePosition = transform.position;
             Vector3 direction = target - conePosition;
@@ -79,29 +71,22 @@ namespace Systems.Vision
             
             return hit.collider == null;
         }
-
-        /// <summary>
-        /// Notify the cone that it should be enabled.
-        /// </summary>
-        public void Enable()
+        
+        public override void Enable()
         {
             if(enabled) return;
             enabled = true;
             _isEnabledMaterialSetting.RetargetValue(1.0f);
         }
-
-        /// <summary>
-        /// Notify the cone that it should be disabled.
-        /// </summary>
-        public void Disable()
+        
+        public override void Disable()
         {
             if(! enabled) return;
             enabled = false;
             _isEnabledMaterialSetting.RetargetValue(0.0f);
         }
         
-        /// <returns>true is the cone is currently enabled.</returns>
-        public bool IsEnabled()
+        public override bool IsEnabled()
         {
             return enabled;
         }
@@ -115,15 +100,28 @@ namespace Systems.Vision
             return _visionDecalMaterial;
         }
 
+        public float GetViewMinAngle()
+        {
+            return _coneAngleMin;
+        }
+
+        public float GetViewAngle()
+        {
+            return _coneAngle;
+        }
+
+        public Texture2D GetDepthMap()
+        {
+            return _linearDepthMap;
+        }
+        
         private void Awake()
         {
             _isEnabledMaterialSetting = new SmoothScalarValue(enabled ? 1.0f : 0.0f, 0.25f);
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            _visionDecalMaterial = visionDecal.GetComponent<SpriteRenderer>().material;
+            if(visionDecal.GetComponent<SpriteRenderer>() != null)
+                _visionDecalMaterial = visionDecal.GetComponent<SpriteRenderer>().material;
+            if(visionDecal.GetComponent<Image>() != null)
+                _visionDecalMaterial = visionDecal.GetComponent<Image>().material;
             
             _linearDepthMap = new Texture2D((int)traceCount, 1, TextureFormat.RFloat, false);
             _depthMapData = new Color[traceCount] ;
@@ -134,6 +132,12 @@ namespace Systems.Vision
             _linearDepthMap.SetPixels(_depthMapData);
             _linearDepthMap.Apply();
             _visionDecalMaterial.SetTexture(ShadowMap, _linearDepthMap);
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+
         }
 
         // Update is called once per frame

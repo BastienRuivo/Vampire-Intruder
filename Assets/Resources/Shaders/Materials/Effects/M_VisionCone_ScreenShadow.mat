@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_VisionCone
-  m_Shader: {fileID: -6465566751694194690, guid: 0f9fd079d49672344b6f71bfc95e3a3d, type: 3}
+  m_Name: M_VisionCone_ScreenShadow
+  m_Shader: {fileID: -6465566751694194690, guid: 926eaab7eb35b7b458f71e0e130b5aea, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -90,7 +90,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _ObserverFieldOfView: 2.443461
-    - _ObserverMinAngle: 3.4906585
+    - _ObserverMinAngle: 5.846853
     - _ObserverViewDistance: 5.5
     - _OcclusionStrength: 1
     - _Parallax: 0.02

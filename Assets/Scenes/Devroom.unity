@@ -123,6 +123,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &42226686 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6314951935213739636, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+  m_PrefabInstance: {fileID: 709836772}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &129825898
 GameObject:
   m_ObjectHideFlags: 0
@@ -1536,7 +1541,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   data:
-    dataString: UEsDBBQAAAgIAAAIIeyiNXIUNQAAAD4AAAAJACQAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0Bq1YqSy0qzszPU7JSMNEz0jM011FQSi9KLMgoBooYgDilmSkgdnQskFNSWZDql5ibChGoBQBQSwECLQAUAAAICAAACCHsojVyFDUAAAA+AAAACQAkAAAAAAAAAAAAAAAAAAAAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsFBgAAAAABAAEAWwAAAIAAAAAAAA==
+    dataString: UEsDBBQAAAgIAAAIIeyhnhUqkQIAAFMFAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFlVE1zmzAQ/SsenWtGYAdCby1xnBySeOJ0cuGiwGI0BomRRGwn4//elQBDXS6It2/ffopvwoVuIDNSrRXPn2QO5OeMPGpZg1E8syD5MRtZD3BkOym2/AsG8jvPTWlJzHFemeEScd+6DTq/xK6y5JB61D6LW7S2ghdS1at8B4nURqO9YJUGNClprIxA6HtGjviaL28QP+EpiCievvAU09kZjxkIA2qk3nrRMo79Zc+fUy8MEFjEvds88mIaLEN/NaeRU2hFVrG6gdzWNQr56EnDIa7vewt/EToHgbX3XOr5URhFlpXJquK6T5uYU+P6k7BGt1g9EnLOsB8uV9+zHiXwXWlsUVP3l6LQYFFbqGKnO66wsZ0u+S27btdM77tUP1nV2kh+HLjkOtGn/+xz35kLJeuHIa5PbQxT8mz/yk4Z02YyhSl8N0nddezAqj37qOC9BPEs10q2IkejUa11bTUEd+PnpbSkhGw/4l2qV2DbjCOgffOHkdsazq76Y1Lx+sMNYNkB20q6jseWDApH9IgJuz3SvQSiNos/Gt7YbrpwveGeK23Q1FcpbHofslWWSlauZ7aa1iRSCXBwn3QDglXmtEEZcz3CK9sk7JXlntk71gfvbcPVuXJx8Min9Mq0kYfLsHQpD0+gy5fWVFzAmLQ1PGOfEilEt2HTngxu21YVLJu47Vqe/7taJA+L2wKvQe7TACjAvFgEmR/eLLNFHEcsCInbPS6wTlZtukT79uDUxCgucM+sov31zNaKNW7bc8UOa/5Vy0nLuSjkNlMA4qVTuCQOCoPg9cxXOccGbcEYLty8yXdKKpntIU8vQqmrdHU0iqWjSkoa/imNRVKSuF9MSix82eWNgk8OBxt8EDuT819QSwMEFAAACAgAAAgh7DsFBcxtAAAAeAAAAAkAJABtZXRhLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQGrVipLLSrOzM9TslIw0TPSMzTXUVBKL0osyCgGihiCOKWZKSB2tFKKWZpFmpm5eYqhgVGqQWqqbpqxUbKhmalJsrGlpXmikZlSLFB9SWVBql9ibipET0BiSUZaZl5KZl66nntRZoo7yGil2FoAUEsBAi0AFAAACAgAAAgh7KGeFSqRAgAAUwUAAAsAJAAAAAAAAAAAAAAAAAAAAGdyYXBoMC5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsBAi0AFAAACAgAAAgh7DsFBcxtAAAAeAAAAAkAJAAAAAAAAAAAAAAA3gIAAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAVBLBQYAAAAAAgACALgAAACWAwAAAAA=
     upgradeData: 
     file_cachedStartup: {fileID: 0}
     data_cachedStartup: 
@@ -2043,6 +2048,10 @@ PrefabInstance:
     - target: {fileID: 2671610580363259081, guid: fb83b55c8617ddd41ad11996b9505ab0, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180498148441204807, guid: fb83b55c8617ddd41ad11996b9505ab0, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6446200479537799780, guid: fb83b55c8617ddd41ad11996b9505ab0, type: 3}
       propertyPath: player
@@ -6333,6 +6342,14 @@ PrefabInstance:
     - target: {fileID: 2487885219397157561, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2648584114762012359, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: visionDecal
+      value: 
+      objectReference: {fileID: 42226686}
+    - target: {fileID: 5092174719451272904, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: targetEntityTag
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: speed

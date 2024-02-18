@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5796011793356176972}
   - component: {fileID: 4098457778146461731}
+  - component: {fileID: 6524033022220863532}
   m_Layer: 0
   m_Name: VisionConeBase
   m_TagString: Untagged
@@ -44,8 +45,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d41df1430bcc80f459c5bdd646863385, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enabled: 1
   fov: 90
   viewDistance: 3.5
-  traceCount: 64
-  visionDecalMaterial: {fileID: 2100000, guid: 16601e7f8766a9c429590b9379ca74da, type: 2}
+  visionCollisionLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  traceCount: 96
+  refreshDistance: 3.5
   visionDecal: {fileID: 0}
+--- !u!114 &6524033022220863532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2564239853164258817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ea9495477254fcaa58b2987586a96fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  refreshDistance: 3.5
