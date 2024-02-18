@@ -13,16 +13,18 @@ using UnityEngine.UI;
 public class GameUiController : MonoBehaviour, 
     IEventObserver<TimeProgression>, IEventObserver<GameObject>, IEventObserver<GameController.UserMessageData>
 {
-    [FormerlySerializedAs("JessikaBeginQuote")] [Header("Jessika's Quotes")] public string jessikaBeginQuote;
-    [FormerlySerializedAs("JessikaMiddleQuote")] [Header("Jessika's Quotes")] public string jessikaMiddleQuote;
-    [FormerlySerializedAs("JessikaFinalQuote")] [Header("Jessika's Quotes")] public string jessikaFinalQuote;
-
-    private readonly SmoothScalarValue _playerBloodStatSmooth = new SmoothScalarValue(1);
-    private readonly SmoothScalarValue _playerBloodStatEyeEffectSmooth =  new SmoothScalarValue(0, 5f);
-
+    [Header("Jessika's Quotes")] 
+    public Color jessikaQuotationColor;
+    public Color guardsQuotationColor;
+    [FormerlySerializedAs("JessikaBeginQuote")] public string jessikaBeginQuote;
+    [FormerlySerializedAs("JessikaMiddleQuote")] public string jessikaMiddleQuote;
+    [FormerlySerializedAs("JessikaFinalQuote")] public string jessikaFinalQuote;
+    
+    [Header("UI elements")]
     public GameObject healthBarPanel;
     public GameObject eyeballBarPanel;
     public GameObject objectivesPanel;
+    public GameObject quotationTextBox;
 
     [Header("Objectives")]
     public float upSpeed;
@@ -30,6 +32,9 @@ public class GameUiController : MonoBehaviour,
     [Range(0f, 1f)]
     public float objectivesHeightOnScreen;
 
+    private readonly SmoothScalarValue _playerBloodStatSmooth = new SmoothScalarValue(1);
+    private readonly SmoothScalarValue _playerBloodStatEyeEffectSmooth =  new SmoothScalarValue(0, 5f);
+    
     private float _objectiveDownY;
     private float _objectiveUpY;
     private bool _isObjectiveDisplayed;
@@ -131,7 +136,7 @@ public class GameUiController : MonoBehaviour,
         _messageQueue.RemoveFirst();
 
         string sender = "";
-        Color color = Color.blue;
+        Color color = jessikaQuotationColor;
         switch (_currentDialog.GetMessage().Sender)
         {
             case GameController.UserMessageData.MessageToUserSenderType.Player:
@@ -139,7 +144,7 @@ public class GameUiController : MonoBehaviour,
                 break;
             case GameController.UserMessageData.MessageToUserSenderType.Guard:
                 sender = "Guard";
-                color = Color.red;
+                color = guardsQuotationColor;
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -162,8 +167,9 @@ public class GameUiController : MonoBehaviour,
             case GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming:
                 if (_currentDialogRoutine != null)
                 {
-                    _messageQueue.AddFirst(_currentDialog);
-                    StartCoroutine(_currentDialogRoutine);
+                    if(_currentDialog.GetMessage().Priority != GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnTiming)
+                        _messageQueue.AddFirst(_currentDialog);
+                    StopCoroutine(_currentDialogRoutine);
                     _currentDialogRoutine = null;
                 }
                 _messageQueue.AddFirst(new MessageQueueElement(message));
@@ -175,8 +181,8 @@ public class GameUiController : MonoBehaviour,
     
     private IEnumerator DialogRoutine(string text, Color color, float dialogLineDuration = 5.0f)
     {
-        GetComponentInChildren<TextMeshProUGUI>().SetText(text);
-        GetComponentInChildren<TextMeshProUGUI>().color = color;
+        quotationTextBox.GetComponent<TextMeshProUGUI>().SetText(text);
+        quotationTextBox.GetComponent<TextMeshProUGUI>().color = color;
         GetComponentInChildren<Animator>().SetBool("ShowDialog", true);
         yield return new WaitForSeconds(dialogLineDuration);
         GetComponentInChildren<Animator>().SetBool("ShowDialog", false);
