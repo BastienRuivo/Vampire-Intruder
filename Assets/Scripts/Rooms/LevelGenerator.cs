@@ -12,6 +12,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public GameObject[] decorations;
     public GameObject[] corridors;
 
+    public Tile[] replacement;
+
     public List<GameObject> instanciatedRooms;
     public Queue<GameObject> roomToFill;
 
@@ -161,7 +163,25 @@ public class LevelGenerator : Singleton<LevelGenerator>
             {
                 // TODO : CAN'T FILL THE INSTERSECTION WITH A ROOM, MASK IT
                 //Debug.Log("I Can't fill this intersection batman");
-                Destroy(c.gameObject);
+                Transform go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? room.transform.Find(_walls) : room.transform.Find(_hiddenWalls);
+                Tilemap tm = go.gameObject.GetComponent<Tilemap>();
+                Tile t;
+                switch(c.dir)
+                {
+                    case Direction.NORTH:
+                        t = replacement[2]; break;
+                    case Direction.EAST:
+                        t = replacement[3]; break;
+                    case Direction.SOUTH:
+                        t = replacement[0]; break;
+                    case Direction.WEST:
+                    default:
+                        t = replacement[1]; break;
+                }
+                tm.SetTile(c.coordOnGrid, t);
+                c.SetInactive();
+
+
             }
             
         });

@@ -33,6 +33,9 @@ public class RoomConnector : MonoBehaviour
 
     private IEnumerator _roomFadeAway = null;
     private bool _fade = false;
+    private GameObject _collisions;
+    private GameObject _trigger;
+
 
     /// <summary>
     /// Get an allowed branch from a number between 0 and 100
@@ -110,5 +113,17 @@ public class RoomConnector : MonoBehaviour
             SetRoomVisibility(roomRoot, alpha);
             yield return null;
         }
+    }
+
+    void Awake()
+    {
+        _collisions = transform.Find("Grid/Collision").gameObject;
+        _trigger = transform.Find("Grid/ColliderTrigger").gameObject;
+    }
+
+    public void SetInactive()
+    {
+        _collisions.SetActive(true);
+        Destroy(_trigger);
     }
 }
