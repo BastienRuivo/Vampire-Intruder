@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Pathfinding;
+using Systems.Vision;
+using Systems.Vision.Cone;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
@@ -24,6 +26,7 @@ public class GuardManager : MonoBehaviour
     public LayerMask visionMask;
     public GameObject currentRoom;
     public GameObject player;
+    private PlayerController _playerController;
     public float guardVisionSpeed = 3f;
 
     public enum AnimationState
@@ -83,8 +86,10 @@ public class GuardManager : MonoBehaviour
     // Sound to play when guard spot player
     public AudioClip _spotSound;
 
-    // Game object representing the guard vision
-    private GameObject _visionAnchor;
+    [Header("Vision")] 
+    public GameObject visionCone;
+    private VisionConeController _visionConeController;
+
     // Target of pathfinding
     private GameObject _target;
     // Temporary target for pathfinding
@@ -126,43 +131,20 @@ public class GuardManager : MonoBehaviour
 
     private bool _playerInFOV;
     private bool _playerInRange;
-
-
-    //Cone trace
-    private GameObject _visionCone;
-    private SpriteRenderer _visionRenderer;
-    private Texture2D _linearShadowMap;
-    private Color[] _shadowMapData;
-    private Vector2 _firstDir;
-    private float _coneAngle;
-    private float _coneAngleMin;
+    
     private Animator _animator;
     private Transform _cameraPos;
-    
+    private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
+
     private void Awake() {
         alertStage = AlertStage.Idle;
         _previousAlertStage = alertStage;
         _currentAlert = alertTimer;
+        _visionConeController = visionCone.GetComponent<VisionConeController>();
+        _playerController = player.GetComponent<PlayerController>();
     }
     private void Start()
     {
-        _linearShadowMap = new Texture2D((int)traceResolution, 1, TextureFormat.RFloat, false);
-        _shadowMapData = new Color[traceResolution] ;
-        for (var i = 0; i < _shadowMapData.Length; i++)
-        {
-            _shadowMapData[i] = new Color(0,0,0);
-        }
-        _linearShadowMap.SetPixels(_shadowMapData);
-        _linearShadowMap.Apply();
-        
-        //find children
-        foreach (Transform child in transform.GetChild(0).transform)
-        {
-            if (!child.gameObject.CompareTag("EnemyVisionDecal")) continue;
-            _visionCone = child.gameObject;
-            child.gameObject.GetComponent<SpriteRenderer>().material.SetTexture("_ShadowMap", _linearShadowMap);
-        }
-
         _target = FindClosestNode();
         _seeker = GetComponent<Seeker>();
         _body = GetComponent<Rigidbody2D>();
@@ -172,12 +154,11 @@ public class GuardManager : MonoBehaviour
         _updatePathCoroutine = UpdatePath();
         StartCoroutine(_updatePathCoroutine);
 
-        _visionAnchor = transform.GetChild(0).gameObject;
         _animator = GetComponent<Animator>();
-
-
-        _visionRenderer = _visionCone.GetComponent<SpriteRenderer>();
+        
         _guardRenderer = GetComponent<SpriteRenderer>();
+        
+        _visionConeController.GetMaterial().SetTexture("_PlayerShadowMap", _playerController.GetVision().GetDepthMap());
     }
     private void Update()
     {
@@ -196,6 +177,10 @@ public class GuardManager : MonoBehaviour
             _cameraPos.position = newPos;
         }
 
+        _visionConeController.GetMaterial().SetVector("_PlayerPosition", _playerController.GetVision().transform.position);
+        _visionConeController.GetMaterial().SetFloat("_PlayerViewDistance", _playerController.GetVision().viewDistance);
+        _visionConeController.GetMaterial().SetFloat("_PlayerViewMinAngle", _playerController.GetVision().GetViewMinAngle());
+        _visionConeController.GetMaterial().SetFloat("_PlayerFieldOfView", _playerController.GetVision().GetViewAngle());
         HandleVision();
     }
 
@@ -241,37 +226,32 @@ public class GuardManager : MonoBehaviour
     */
     private void HandleVision()
     {
-        //handle distance
-        UpdateRange(player.transform.position);
-        if (!_playerInRange) { UpdateAlertStage(false); return; }
-
-        //handle range
-        UpdateFieldOfView(player.transform.position);
-        UpdateShadowMap();
-        _visionRenderer.material.SetVector("_ObserverPosition", Tools.WorldToGridCoordinates(transform.position));
-        _visionRenderer.material.SetFloat("_ObserverMinAngle", _coneAngleMin);
-        _visionRenderer.material.SetFloat("_ObserverViewDistance", viewDistance);
-        _visionRenderer.material.SetFloat("_ObserverFieldOfView", _coneAngle);
-        _visionRenderer.material.SetFloat("_AlertRatio", _alertRatio);
-
-
-        
-        if (!_playerInFOV) { UpdateAlertStage(false); HandleDialogs(); return; }
-
-        //handle direct line trace
-        if (!NoWallToTarget(player))
+        if (_visionConeController.HasRefreshability(player.transform.position))
         {
+            _visionConeController.Enable();
+            _visionConeController.GetMaterial().SetFloat(AlertRatio, _alertRatio);
+            if (_visionConeController.HasVisibility(player.transform.position))
+            {
+                UpdateAlertStage(true);
+                HandleDialogs();
+                if (alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
+                {
+                    GameController.GetGameMode().GetCaught();
+                }
+            }
+            else
+            {
+                UpdateAlertStage(false);
+                HandleDialogs();
+            }
+            
+            //_AlertRatio
+        }
+        else
+        {
+            _visionConeController.Disable();
             UpdateAlertStage(false);
             HandleDialogs();
-            return;
-        }
-
-        UpdateAlertStage(true);
-        HandleDialogs();
-
-        if (_playerInFOV && alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
-        {
-            GameController.GetGameMode().GetCaught();
         }
     }
     
@@ -282,6 +262,8 @@ public class GuardManager : MonoBehaviour
 
     public void EnterPlayerSigth()
     {
+        return; //todo fix enemy visibility
+
         if(_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);
@@ -291,6 +273,7 @@ public class GuardManager : MonoBehaviour
     }
     public void ExitPlayerSight()
     {
+        return; //todo fix enemy visibility
         if (_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);
@@ -460,54 +443,6 @@ public class GuardManager : MonoBehaviour
         _guardRenderer.color = Color.Lerp(Color.green, Color.red, alertRatio);
     }//todo replace with real animation.
 
-    /** 
-     * Update guard's FOV cone
-     */
-    private void UpdateFieldOfView(Vector3 playerPosition)
-    {
-        //TODO Comment
-        PolygonCollider2D childCollider = GetComponentInChildren<PolygonCollider2D>();
-        if (childCollider is PolygonCollider2D)
-        {
-            Vector2[] path = childCollider.GetPath(0);
-
-            Vector2 origin = childCollider.transform.TransformPoint(path[1]);
-            Vector2 boundA = childCollider.transform.TransformPoint(path[0]);
-            Vector2 boundB = childCollider.transform.TransformPoint(path[2]);
-
-            float angleA = ComputeAngle(origin, boundA);
-            float angleB = ComputeAngle(origin, boundB);
-
-            _foVThetaMin = angleA > angleB ? angleB : angleA;
-            _firstDir = angleA > angleB ? boundA - origin : boundB - origin;
-            _foVThetaMax = angleA > angleB ? angleA : angleB;
-
-            float theta = _foVThetaMax - _foVThetaMin;
-            if (theta > Mathf.PI)
-            {
-                (_foVThetaMax, _foVThetaMin) = (_foVThetaMin, _foVThetaMax);
-                _firstDir = angleA > angleB ? boundB - origin : boundA - origin;
-                theta = 2 * Mathf.PI - theta;
-            }
-
-            _coneAngleMin = _foVThetaMin;
-            _coneAngle = theta;
-            _firstDir.Normalize();
-
-            Vector3 guardWordPosition = Tools.GridToWorldCoordinates(transform.position);
-            Vector3 targetWorldPosition = Tools.GridToWorldCoordinates(playerPosition);
-            float playerAngle = ComputeAngle(guardWordPosition, targetWorldPosition);
-            float dThetaMax = _foVThetaMax - playerAngle;
-            float dThetaMix = _foVThetaMin - playerAngle;
-            _playerInFOV = ((dThetaMax >= 0 && dThetaMax < theta) || (dThetaMix <= 0 && dThetaMix > -1 * theta));
-        } //todo check
-        else
-        {
-            _playerInFOV = false;
-            Debug.LogError("No vision path collider attached to enemy.");
-        }
-    }
-
     /**
      * Follow the current path
     */
@@ -571,7 +506,7 @@ public class GuardManager : MonoBehaviour
         bool canSeeTarget = NoWallToTarget(visionTarget);
         Vector3 pathPos = _currentPath.vectorPath[_currentPointInPath];
         Vector2 dir = (new Vector2(pathPos.x, pathPos.y) - _body.position).normalized;
-        float angle = ComputeAngle(transform.position, canSeeTarget? visionTarget.transform.position : pathPos) * Mathf.Rad2Deg;
+        float angle = Tools.ComputeAngle(transform.position, canSeeTarget? visionTarget.transform.position : pathPos) * Mathf.Rad2Deg;
 
         // Change cone orientation
         LookAt(angle + 90f);
@@ -590,52 +525,14 @@ public class GuardManager : MonoBehaviour
 
         _body.AddForce(force);
     }
-
-    /**
-     * Compute the shadow vision
-    */
-    private void UpdateShadowMap()
-    {
-        float step = _coneAngle / (float)(traceResolution - 1.0f);
-        float angle = 0.0f;
-        Vector3 guardGridPosition = Tools.WorldToGridCoordinates(transform.position);
-
-        //Ray casting
-        for (uint i = 0; i < traceResolution; i++)
-        {
-            Vector2 dir2D = RotateVector(_firstDir, -angle);
-            Vector3 direction = new Vector3(dir2D.x, dir2D.y, 0.0f);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, viewDistance, visionMask);
-            //Debug.DrawRay(transform.position, direction, hit.collider == null? Color.red : Color.green, 0.1f);
-            
-            //Store depth
-            if (hit.collider == null)
-            {
-                _shadowMapData[i].r = 1.0f;
-                _shadowMapData[i].b = 1.0f;
-                _shadowMapData[i].g = 1.0f;
-            }
-            else
-            {
-                _shadowMapData[i].r = hit.distance / viewDistance;
-                _shadowMapData[i].b = hit.distance / viewDistance;
-                _shadowMapData[i].g = hit.distance / viewDistance;
-            }
-
-            angle += step;
-        }
-
-        _linearShadowMap.SetPixels(_shadowMapData);
-        _linearShadowMap.Apply();
-    }
-
+    
     /**
      * Change anchor orientation a little bit
      * @param angle target of the vision anchor
     */
     private void LookAt(float angle)
     {
-        _visionAnchor.transform.rotation = Quaternion.Lerp(_visionAnchor.transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * guardVisionSpeed);
+        visionCone.transform.rotation= Quaternion.Lerp(visionCone.transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * guardVisionSpeed);
     }
 
     /**
@@ -700,17 +597,6 @@ public class GuardManager : MonoBehaviour
     }
 
     /**
-     * Check if the player is in range of the guard
-     * @param playerPosition position of the player on the map
-    */
-    private void UpdateRange(Vector3 playerPosition)
-    {
-        Vector3 guardWordPosition = Tools.GridToWorldCoordinates(transform.position);
-        Vector3 targetWorldPosition = Tools.GridToWorldCoordinates(playerPosition);
-        _playerInRange = (Vector3.Distance(guardWordPosition, targetWorldPosition) < viewDistance);
-    }
-
-    /**
      * Raycast to see if the target is currently visible for the guard
      * @param target the target we want to check if there's a wall between
      * @return a boolean indicating if there is no obstacle and therefore if the target is visible
@@ -723,28 +609,6 @@ public class GuardManager : MonoBehaviour
         // Debug.DrawRay(transform.position, direction, Color.red);
 
         return hit.collider == null;
-        
-        /*
-        Vector3 guardGridPosition = Tools.WorldToGridCoordinates(transform.position);
-        Vector3 targetGridPosition = Tools.WorldToGridCoordinates(target.transform.position);
-        Vector3 direction = targetGridPosition - guardGridPosition;
-        float distance = Vector3.Distance(targetGridPosition, guardGridPosition);
-
-        RaycastHit2D hit = Physics2D.Raycast(guardGridPosition, direction, distance, visionMask);
-        */
-    }
-
-    /**
-     * Compute the angle between two Vectors
-     * @param observer The object that you want to oriente
-     * @param objective where you want your object to be oriented to
-     * @return the angle in radian to oriente the observer
-    */
-    private float ComputeAngle(Vector3 observer, Vector3 objective)
-    {
-        Vector3 direction = objective - observer;
-        float Pi2 = Mathf.PI * 2;
-        return (Mathf.Atan2(direction.y, direction.x) + Pi2) % Pi2;
     }
 
     /**
@@ -770,23 +634,6 @@ public class GuardManager : MonoBehaviour
         }
 
         return closest != -1 ? nodes[closest].gameObject : null;
-    }
-
-    /**
-     * Rotate of angle a 2d vector
-     * @param vector the vector to rotate
-     * @param angleRadians the angle of the rotation
-     * @return the rotated vector
-    */
-    private Vector2 RotateVector(Vector2 vector, float angleRadians)
-    {
-        float cosTheta = (float)Math.Cos(angleRadians);
-        float sinTheta = (float)Math.Sin(angleRadians);
-
-        float newX = vector.x * cosTheta - vector.y * sinTheta;
-        float newY = vector.x * sinTheta + vector.y * cosTheta;
-
-        return new Vector2(newX, newY);
     }
 
     public void SetAlpha(float alpha)

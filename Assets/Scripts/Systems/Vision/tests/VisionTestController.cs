@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Systems.Vision;
+using Systems.Vision.Cone;
 using UnityEngine;
 
 public class VisionTestController : MonoBehaviour
