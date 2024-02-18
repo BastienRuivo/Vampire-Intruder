@@ -26,6 +26,7 @@ public class GuardManager : MonoBehaviour
     public LayerMask visionMask;
     public GameObject currentRoom;
     public GameObject player;
+    private PlayerController _playerController;
     public float guardVisionSpeed = 3f;
 
     public enum AnimationState
@@ -140,6 +141,7 @@ public class GuardManager : MonoBehaviour
         _previousAlertStage = alertStage;
         _currentAlert = alertTimer;
         _visionConeController = visionCone.GetComponent<VisionConeController>();
+        _playerController = player.GetComponent<PlayerController>();
     }
     private void Start()
     {
@@ -155,6 +157,8 @@ public class GuardManager : MonoBehaviour
         _animator = GetComponent<Animator>();
         
         _guardRenderer = GetComponent<SpriteRenderer>();
+        
+        _visionConeController.GetMaterial().SetTexture("_PlayerShadowMap", _playerController.GetVision().GetDepthMap());
     }
     private void Update()
     {
@@ -173,6 +177,10 @@ public class GuardManager : MonoBehaviour
             _cameraPos.position = newPos;
         }
 
+        _visionConeController.GetMaterial().SetVector("_PlayerPosition", _playerController.GetVision().transform.position);
+        _visionConeController.GetMaterial().SetFloat("_PlayerViewDistance", _playerController.GetVision().viewDistance);
+        _visionConeController.GetMaterial().SetFloat("_PlayerViewMinAngle", _playerController.GetVision().GetViewMinAngle());
+        _visionConeController.GetMaterial().SetFloat("_PlayerFieldOfView", _playerController.GetVision().GetViewAngle());
         HandleVision();
     }
 
@@ -254,6 +262,8 @@ public class GuardManager : MonoBehaviour
 
     public void EnterPlayerSigth()
     {
+        return; //todo fix enemy visibility
+
         if(_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);
@@ -263,6 +273,7 @@ public class GuardManager : MonoBehaviour
     }
     public void ExitPlayerSight()
     {
+        return; //todo fix enemy visibility
         if (_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);

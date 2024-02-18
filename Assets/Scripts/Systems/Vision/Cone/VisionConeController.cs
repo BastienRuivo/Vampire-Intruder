@@ -100,14 +100,24 @@ namespace Systems.Vision.Cone
             return _visionDecalMaterial;
         }
 
+        public float GetViewMinAngle()
+        {
+            return _coneAngleMin;
+        }
+
+        public float GetViewAngle()
+        {
+            return _coneAngle;
+        }
+
+        public Texture2D GetDepthMap()
+        {
+            return _linearDepthMap;
+        }
+        
         private void Awake()
         {
             _isEnabledMaterialSetting = new SmoothScalarValue(enabled ? 1.0f : 0.0f, 0.25f);
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
             if(visionDecal.GetComponent<SpriteRenderer>() != null)
                 _visionDecalMaterial = visionDecal.GetComponent<SpriteRenderer>().material;
             if(visionDecal.GetComponent<Image>() != null)
@@ -122,6 +132,12 @@ namespace Systems.Vision.Cone
             _linearDepthMap.SetPixels(_depthMapData);
             _linearDepthMap.Apply();
             _visionDecalMaterial.SetTexture(ShadowMap, _linearDepthMap);
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+
         }
 
         // Update is called once per frame

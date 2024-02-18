@@ -395,6 +395,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6463680674939606716}
     m_Modifications:
+    - target: {fileID: 182716843500381231, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 38c75205d172e7e4ea7bdee41e1537a5, type: 2}
     - target: {fileID: 3000714032349069863, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: viewDistance
       value: 3

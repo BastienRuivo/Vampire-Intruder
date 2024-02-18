@@ -1,8 +1,10 @@
+using System;
 using Interfaces;
 using Systems.Ability;
 using Systems.Ability.Abilities;
 using Systems.Ability.tests;
 using Systems.Vision;
+using Systems.Vision.Cone;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -11,6 +13,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>
 {
     public GameObject visionObject;
+    private VisionConeController _coneController;
     
     [Header("Speed")]
     public float speed = 20f;
@@ -56,14 +59,22 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _coneBehaviors[1].enabled = false;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         animator = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody2D>();
         
         _ascRef = GetComponent<AbilitySystemComponent>();
+        _coneController = visionObject.GetComponent<VisionConeController>();
+
+        _coneBehaviors = GetComponents<InputToVisionSystemBehavior>();
         
+        visionObject.GetComponent<VisionSystemController>().OnOverlapChanged.Subscribe(this);
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
         //Defines statistics the ASC will work with.
         _ascRef.DefineStat("Blood", baseValue:100.0f, lowerRange:-15.0f);
         _ascRef.DefineStat("BloodMax", baseValue:100.0f, lowerRange:1.0f);
@@ -77,10 +88,11 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
         _ascRef.BindAbility("Test", KeyCode.E);
+    }
 
-        _coneBehaviors = GetComponents<InputToVisionSystemBehavior>();
-        
-        visionObject.GetComponent<VisionSystemController>().OnOverlapChanged.Subscribe(this);
+    public VisionConeController GetVision()
+    {
+        return _coneController;
     }
 
     private void ZoomCamera()
