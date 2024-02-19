@@ -5,7 +5,7 @@ public class PlayerState : Singleton<PlayerState>
   
 
     [Header("Values")]
-    public GameObject currentRoom;
+    public RoomData currentRoom;
     private bool inputLocked = false;
 
     public void LockInput()

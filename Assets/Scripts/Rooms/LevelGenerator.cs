@@ -1,3 +1,4 @@
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,18 +77,22 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// <param name="room">Room game object with connectors to fill</param>
     public void FillRoom(GameObject room, float addEnergy = 0f)
     {
-        var connectors = room.GetComponentsInChildren<RoomConnector>();
         instanciatedRooms.Add(room);
 
-        var grid = room.transform.Find(_floor).GetComponent<Tilemap>().layoutGrid;
         RoomData roomData = room.GetComponent<RoomData>();
+
+        GameObject graph = room.transform.Find("CustomPivot/Graph").gameObject;
+
+        if (graph != null) Destroy(graph);
+
+        var grid = room.transform.Find(_floor).GetComponent<Tilemap>().layoutGrid;
         roomData.energy += addEnergy;
 
         //Debug.Log("Fill " + room.name + " with energy " + roomData.energy);
         // If energy is neg, then it's over
         if (roomData.energy <= 0f) return;
         // For all connectors of the room, try to place somtheing
-        connectors.Where(c => !c.isFilled).ToList().ForEach(c =>
+        roomData.GetConnectors().Where(c => !c.isFilled).ToList().ForEach(c =>
         {
             //Debug.Log("Filling connector " + c.name);
             Vector3Int directionOffset = DirectionHelper.DirectionOffsetGrid(c.dir) + new Vector3Int(1, 1, 0);
@@ -123,7 +128,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
                     instance.name += Random.Range(0, 42).ToString();
 
                     Direction invDir = DirectionHelper.Inverse(c.dir);
-                    RoomConnector[] instConnectors = instance.GetComponentsInChildren<RoomConnector>().Where(co => co.dir == invDir).ToArray();
+                    RoomData instData = instance.GetComponent<RoomData>();
+                    RoomConnector[] instConnectors = instData.GetConnectors().Where(co => co.dir == invDir).ToArray();
                     if (instConnectors.Length <= 0)
                     {
                         // Usually when you put a wrong direction in one of the rooms prefab
@@ -161,8 +167,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
             if(!generated)
             {
-                // TODO : CAN'T FILL THE INSTERSECTION WITH A ROOM, MASK IT
-                //Debug.Log("I Can't fill this intersection batman");
                 Transform go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? room.transform.Find(_walls) : room.transform.Find(_hiddenWalls);
                 Tilemap tm = go.gameObject.GetComponent<Tilemap>();
                 Tile t;
@@ -179,9 +183,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                         t = replacement[1]; break;
                 }
                 tm.SetTile(c.coordOnGrid, t);
-                c.SetInactive();
-
-
+                c.SetActiveState(false);
             }
             
         });
@@ -236,7 +238,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             if (_overlap) continue;
 
             // Fill the two now connected connectors
-            FillConnectors(other, c, instance, room);
+            FillConnectors(other, c, instance.GetComponent<RoomData>(), room.GetComponent<RoomData>());
             return true;
         }
 
@@ -301,7 +303,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// <param name="B">Room connector of troom</param>
     /// <param name="croom">Game object of room A</param>
     /// <param name="troom">Game object of room B</param>
-    private void FillConnectors(RoomConnector A, RoomConnector B, GameObject croom, GameObject troom)
+    private void FillConnectors(RoomConnector A, RoomConnector B, RoomData croom, RoomData troom)
     {
         // Fill the A connector
         A.isFilled = true;
@@ -330,6 +332,9 @@ public class LevelGenerator : Singleton<LevelGenerator>
         }
         B.currentWalls = A.targetWalls;
         B.targetWalls = A.currentWalls;
+
+        A.SetActiveState(true);
+        B.SetActiveState(true);
     }
     
     /// <summary>
@@ -348,8 +353,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// <summary>
     /// Load and generate a complete lvl.
     /// </summary>
-    /// <returns> List of all generated room gameObject</returns>
-    public List<GameObject> Generate()
+    /// <returns>The hall room</returns>
+    public RoomData Generate()
     {
         System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -362,14 +367,9 @@ public class LevelGenerator : Singleton<LevelGenerator>
         _coroutine = GenerateLevel();
         StartCoroutine(_coroutine);
 
-        hasStart= true;
+        hasStart = true;
 
-
-
-
-        //Debug.Log("There is " + instanciatedRooms.Count + " rooms generated in " + stopwatch.ElapsedMilliseconds + " ms");
-        
-        return instanciatedRooms;
+        return instanciatedRooms[0].GetComponent<RoomData>();
     }
 
     private void Update()
@@ -399,7 +399,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             FillRoom(roomToFill.Dequeue());
             yield return null;
         }
-        GameController.GetInstance().OnLevelLoadComplete();
+        GameController.GetInstance().OnLevelLoadComplete(instanciatedRooms.Select(x => x.GetComponent<RoomData>()).ToList());
         //Destroy(this);
     }
 }

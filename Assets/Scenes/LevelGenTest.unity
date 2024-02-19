@@ -336,7 +336,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e3c8d5de2c4797b499092ae9c99efd4d, type: 2}
   - {fileID: 11400000, guid: 2eb1fb4eb747f4a4d847b4e1b573047e, type: 2}
   instanciatedRooms: []
-  startingEnergy: 0.8
+  startingEnergy: 0.45
 --- !u!1001 &1535210841
 PrefabInstance:
   m_ObjectHideFlags: 0

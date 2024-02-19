@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -9,11 +10,11 @@ public class RoomConnector : MonoBehaviour
     [Header("Current Room")]
     // Current room will always be set visible within this script, it's the connector from the other room
     // that will disable it
-    public GameObject currentRoom;
+    public RoomData currentRoom;
     public GameObject currentWalls;
 
     [Header("Connected Room")]
-    public GameObject targetRoom;
+    public RoomData targetRoom;
     public GameObject targetWalls;
     public RoomConnector targetRoomConnector;
 
@@ -58,14 +59,14 @@ public class RoomConnector : MonoBehaviour
 
     public void Enter()
     {
-        SetRoomVisibility(targetRoom, 1f);
+        SetRoomVisibility(targetRoom.gameObject, 1f);
         targetWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
         currentWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
     }
 
     public void Exit()
     {
-        SetRoomVisibility(currentRoom, 1f);
+        SetRoomVisibility(currentRoom.gameObject, 1f);
 
         //// Start coroutine
         // Disable Coroutine if one is already started
@@ -73,15 +74,23 @@ public class RoomConnector : MonoBehaviour
         {
             targetRoomConnector._fade = false;
             StopCoroutine(targetRoomConnector._roomFadeAway);
-            SetRoomVisibility(currentRoom, 1f);
+            SetRoomVisibility(currentRoom.gameObject, 1f);
         }
         
-        _roomFadeAway = DisableRoom(targetRoom);
+        _roomFadeAway = DisableRoom(targetRoom.gameObject);
         _fade = true;
         StartCoroutine(_roomFadeAway);
 
         PlayerState.GetInstance().currentRoom = currentRoom;
+
+        GameController.GetInstance().OnRoomChange(currentRoom);
     }
+
+    public void SetActive()
+    {
+        
+    }
+
 
     private void SetRoomVisibility(GameObject roomRoot, float value)
     {
@@ -121,9 +130,15 @@ public class RoomConnector : MonoBehaviour
         _trigger = transform.Find("Grid/ColliderTrigger").gameObject;
     }
 
-    public void SetInactive()
+    public void SetActiveState(bool isActive)
     {
-        _collisions.SetActive(true);
-        Destroy(_trigger);
+        if(isActive)
+        {
+            Destroy(_collisions);
+        }
+        else
+        {
+            Destroy(_trigger);
+        }
     }
 }

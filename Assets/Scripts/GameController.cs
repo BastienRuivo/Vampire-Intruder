@@ -60,8 +60,9 @@ public class GameController : Singleton<GameController>
     public int gameEventTickCount = 12;
 
     [Header("Rooms")]
-    public List<GameObject> rooms;
+    public List<RoomData> rooms;
     public bool shouldGenerateLvl = true;
+    public List<RoomData> activesRoom = new List<RoomData>();
 
     [FormerlySerializedAs("TimeBell")] public AudioClip timeBell;
     [FormerlySerializedAs("CaughtBell")] public AudioClip caughtBell;
@@ -77,6 +78,7 @@ public class GameController : Singleton<GameController>
     private readonly EventDispatcher<int> _gameEventDispatcher = new ();
     private readonly EventDispatcher<TimeProgression> _gameProgressionEventDispatcher = new ();
     private readonly EventDispatcher<UserMessageData> _gameUserMessageEventDispatcher = new ();
+
 
 
     /// <summary>
@@ -95,7 +97,6 @@ public class GameController : Singleton<GameController>
     public void SetObjectives()
     {
         var objectives = GameObject.FindGameObjectsWithTag("Interactible").Select(x => x.GetComponent<Interactible>()).ToList();
-        Debug.Log(objectives.Count);
         List<string> chosenRefs = new List<string>();
         List<Interactible> rejected = new List<Interactible>();
         objectives.ForEach(o =>
@@ -307,10 +308,11 @@ public class GameController : Singleton<GameController>
         // Generate map
         if(shouldGenerateLvl)
         {
-            rooms = LevelGenerator.GetInstance().Generate();
-            PlayerState.GetInstance().currentRoom = rooms[0];
-            var start = rooms[0].transform.Find("CustomPivot/Start");
-            var f = rooms[0].transform.Find("CustomPivot/Props/Floor");
+            RoomData hall = LevelGenerator.GetInstance().Generate();
+
+            PlayerState.GetInstance().currentRoom = hall;
+            var start = hall.transform.Find("CustomPivot/Start");
+            var f = hall.transform.Find("CustomPivot/Props/Floor");
             Debug.Log(f.name.ToString());
             PlayerState.GetInstance().GetPlayer().transform.position = start.transform.position;
         }
@@ -320,7 +322,7 @@ public class GameController : Singleton<GameController>
     {
         rooms.ForEach(room =>
         {
-            room.GetComponent<RoomData>().BuildGraph(room.transform.position);
+            var gg = room.BuildGraph(room.transform.position);
         });
         AstarPath.active.Scan();
     }
@@ -328,7 +330,9 @@ public class GameController : Singleton<GameController>
 
     private void HideOtherMaps()
     {
-        rooms.Where(obj => obj.name != PlayerState.GetInstance().currentRoom.name).ToList().ForEach(obj =>
+        var otherRooms = rooms.Where(obj => obj.name != PlayerState.GetInstance().currentRoom.name).ToList();
+        Debug.Log("Current player room is " + PlayerState.GetInstance().currentRoom.name + " there is " + otherRooms.Count + " rooms");
+        otherRooms.ForEach(obj =>
         {
             var renderers = obj.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)
@@ -347,10 +351,13 @@ public class GameController : Singleton<GameController>
         });
     }
 
-    public void OnLevelLoadComplete()
+    public void OnLevelLoadComplete(List<RoomData> rooms)
     {
+        this.rooms = rooms;
+        Debug.Log("Level loaded with " + rooms.Count + " rooms");
+        OnRoomChange(rooms[0]);
         GenerateAStarGraph();
-        HideOtherMaps();
+        //HideOtherMaps();
         SetObjectives();
     }
 
@@ -396,5 +403,15 @@ public class GameController : Singleton<GameController>
     void Update()
     {
         UpdateGameStatus();
+    }
+
+    public void OnRoomChange(RoomData activeRoot)
+    {
+
+        activesRoom = activeRoot.GetConnectedRooms();
+        rooms.ForEach(r =>
+        {
+            r.gameObject.SetActive(activesRoom.Contains(r));
+        });
     }
 }

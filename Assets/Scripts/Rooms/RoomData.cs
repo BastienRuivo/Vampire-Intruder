@@ -1,6 +1,7 @@
 using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RoomData : MonoBehaviour
@@ -64,9 +65,15 @@ public class RoomData : MonoBehaviour
     private static readonly float _obstacleSize = 1.5f;
     private bool _isColliding;
     private RoomData _collider;
-
+    private RoomConnector[] _connectors;
     public float energy;
-    
+
+    private void Awake()
+    {
+        _connectors = GetComponentsInChildren<RoomConnector>();
+    }
+
+
     /// <summary>
     /// Generate the Grid Graph of the room for astar pathfinding
     /// All mob are currently restrained to their rooms
@@ -87,6 +94,12 @@ public class RoomData : MonoBehaviour
         return gg;
     }
 
+    public void SetMainRoom()
+    {
+        PlayerState.GetInstance().currentRoom = this;
+        List<RoomData> rooms = _connectors.Select(x => x.targetRoom).ToList();
+        GameController.GetInstance().activesRoom = rooms;
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         _isColliding= true;
@@ -106,5 +119,19 @@ public class RoomData : MonoBehaviour
             _collider._collider = null;
             _collider = null;
         }
+    }
+
+    public RoomConnector[] GetConnectors()
+    {
+        return _connectors;
+    }
+
+    public List<RoomData> GetConnectedRooms()
+    {
+        List<RoomData> roomDatas = new List<RoomData>
+        {
+            this
+        };
+        return roomDatas.Union(_connectors.Select(x => x.targetRoom)).ToList();
     }
 }
