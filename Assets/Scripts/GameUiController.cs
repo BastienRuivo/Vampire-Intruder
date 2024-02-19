@@ -199,7 +199,6 @@ public class GameUiController : MonoBehaviour,
             case TimeProgression.Begin:
                 _levelCompleteFade = UpdateLevelLoadScreen();
                 StartCoroutine(_levelCompleteFade);
-                Debug.Log("AAAAAAAAAAA");
                 EnqueueMessage(new GameController.UserMessageData(
                     GameController.UserMessageData.MessageToUserSenderType.Player,
                     $"Jessika : \"{jessikaBeginQuote}\"",
@@ -250,6 +249,7 @@ public class GameUiController : MonoBehaviour,
 
     public IEnumerator UpdateLevelLoadScreen()
     {
+
         Image im = levelLoadingPanel.GetComponent<Image>();
         while(im.color.a > 0)
         {

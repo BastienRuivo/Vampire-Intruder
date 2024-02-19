@@ -98,6 +98,7 @@ public class GameController : Singleton<GameController>
     public void SetObjectives()
     {
         var objectives = GameObject.FindGameObjectsWithTag("Interactible").Select(x => x.GetComponent<Interactible>()).ToList();
+        Debug.Log(objectives.Count + " on map");
         List<string> chosenRefs = new List<string>();
         List<Interactible> rejected = new List<Interactible>();
         objectives.ForEach(o =>
@@ -315,7 +316,6 @@ public class GameController : Singleton<GameController>
             PlayerState.GetInstance().currentRoom = hall;
             var start = hall.transform.Find("CustomPivot/Start");
             var f = hall.transform.Find("CustomPivot/Props/Floor");
-            Debug.Log(f.name.ToString());
             PlayerState.GetInstance().GetPlayer().transform.position = start.transform.position;
         }
     }
@@ -357,13 +357,16 @@ public class GameController : Singleton<GameController>
     {
         this.rooms = rooms;
         Debug.Log("Level loaded with " + rooms.Count + " rooms");
-        OnRoomChange(rooms[0]);
         GenerateAStarGraph();
         HideOtherMaps();
         SetObjectives();
 
+
+        OnRoomChange(rooms[0]);
+
+        _hasLevelLoaded = true;
+
         PlayerState.GetInstance().UnlockInput();
-        _hasLevelLoaded= true;
     }
 
     private void UpdateGameStatus(){
