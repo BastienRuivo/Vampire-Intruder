@@ -63,6 +63,7 @@ public class GameController : Singleton<GameController>
     public List<RoomData> rooms;
     public bool shouldGenerateLvl = true;
     public List<RoomData> activesRoom = new List<RoomData>();
+    bool _hasLevelLoaded = false;
 
     [FormerlySerializedAs("TimeBell")] public AudioClip timeBell;
     [FormerlySerializedAs("CaughtBell")] public AudioClip caughtBell;
@@ -308,6 +309,7 @@ public class GameController : Singleton<GameController>
         // Generate map
         if(shouldGenerateLvl)
         {
+            PlayerState.GetInstance().LockInput();
             RoomData hall = LevelGenerator.GetInstance().Generate();
 
             PlayerState.GetInstance().currentRoom = hall;
@@ -357,11 +359,15 @@ public class GameController : Singleton<GameController>
         Debug.Log("Level loaded with " + rooms.Count + " rooms");
         OnRoomChange(rooms[0]);
         GenerateAStarGraph();
-        //HideOtherMaps();
+        HideOtherMaps();
         SetObjectives();
+
+        PlayerState.GetInstance().UnlockInput();
+        _hasLevelLoaded= true;
     }
 
     private void UpdateGameStatus(){
+        if(!_hasLevelLoaded) return;
         _eventTime += Time.deltaTime;
         if (_eventTime < gameEventTickTime)
             return;

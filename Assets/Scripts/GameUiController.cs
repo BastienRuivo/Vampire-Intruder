@@ -25,6 +25,7 @@ public class GameUiController : MonoBehaviour,
     public GameObject eyeballBarPanel;
     public GameObject objectivesPanel;
     public GameObject quotationTextBox;
+    public GameObject levelLoadingPanel;
 
     [Header("Objectives")]
     public float upSpeed;
@@ -39,6 +40,7 @@ public class GameUiController : MonoBehaviour,
     private float _objectiveUpY;
     private bool _isObjectiveDisplayed;
     private IEnumerator _objectiveDisplayCoroutine;
+    private IEnumerator _levelCompleteFade;
 
     private struct MessageQueueElement
     {
@@ -90,6 +92,8 @@ public class GameUiController : MonoBehaviour,
             _objectiveDisplayCoroutine = _isObjectiveDisplayed ? DisplayObjective() : HideObjective();
             StartCoroutine(_objectiveDisplayCoroutine);
         }
+
+
     }
 
     IEnumerator DisplayObjective()
@@ -193,6 +197,9 @@ public class GameUiController : MonoBehaviour,
         switch (context)
         {
             case TimeProgression.Begin:
+                _levelCompleteFade = UpdateLevelLoadScreen();
+                StartCoroutine(_levelCompleteFade);
+                Debug.Log("AAAAAAAAAAA");
                 EnqueueMessage(new GameController.UserMessageData(
                     GameController.UserMessageData.MessageToUserSenderType.Player,
                     $"Jessika : \"{jessikaBeginQuote}\"",
@@ -239,5 +246,17 @@ public class GameUiController : MonoBehaviour,
     public void OnEvent(GameController.UserMessageData context)
     {
         EnqueueMessage(context);
+    }
+
+    public IEnumerator UpdateLevelLoadScreen()
+    {
+        Image im = levelLoadingPanel.GetComponent<Image>();
+        while(im.color.a > 0)
+        {
+            Color c = im.color;
+            c.a -= Time.deltaTime * 0.5f;
+            im.color = c;
+            yield return null;
+        }
     }
 }
