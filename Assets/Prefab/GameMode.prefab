@@ -61,10 +61,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba75133f55b17384797a62374c655d9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameEventTickTime: 10
+  gameEventTickTime: 60
   gameEventTickCount: 12
   rooms:
   - {fileID: 0}
   - {fileID: 0}
+  shouldGenerateLvl: 1
+  activesRoom: []
   timeBell: {fileID: 8300000, guid: e4fae1baabc2dc440a0113b2830f3b83, type: 3}
   caughtBell: {fileID: 8300000, guid: d10610c5cc10b1b43b578250baab23d6, type: 3}
+  mainObjectiveReference: 
+  nbObjectives: 0
