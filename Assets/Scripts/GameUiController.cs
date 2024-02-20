@@ -237,7 +237,7 @@ public class GameUiController : MonoBehaviour,
         float blood = ascRef.QueryStat("Blood");
         float maxBlood = ascRef.QueryStat("BloodMax");
         float bloodRatio = blood / maxBlood;
-        Debug.Log("Blood (L + ) ratio is " + bloodRatio);
+        //Debug.Log("Blood (L + ) ratio is " + bloodRatio);
         
         bloodRatio = bloodRatio > 0? bloodRatio : 0.0f;
         

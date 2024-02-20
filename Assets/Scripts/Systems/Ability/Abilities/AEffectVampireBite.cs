@@ -13,7 +13,7 @@ namespace Systems.Ability.Abilities
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
-            Debug.Log("Vampire is draining blood...");
+            //Debug.Log("Vampire is draining blood...");
             
             //todo play animation
             
@@ -23,7 +23,7 @@ namespace Systems.Ability.Abilities
             //wait for a period of time;
             yield return new WaitForSeconds(4);
             
-            Debug.Log("Vampire is done drinking...");
+            //Debug.Log("Vampire is done drinking...");
 
         }
 
