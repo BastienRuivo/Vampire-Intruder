@@ -315,16 +315,21 @@ public class GameController : Singleton<GameController>
 
             PlayerState.GetInstance().currentRoom = hall;
             var start = hall.transform.Find("CustomPivot/Start");
-            var f = hall.transform.Find("CustomPivot/Props/Floor");
             PlayerState.GetInstance().GetPlayer().transform.position = start.transform.position;
+        }
+        else
+        {
+            OnLevelLoadComplete(rooms);
+
         }
     }
 
     private void GenerateAStarGraph()
     {
+        Debug.Log("There is " + rooms.Count + " rooms to build");
         rooms.ForEach(room =>
         {
-            var gg = room.BuildGraph(room.transform.position);
+            room.BuildGraph(room.transform.position);
         });
         AstarPath.active.Scan();
     }
@@ -364,9 +369,11 @@ public class GameController : Singleton<GameController>
 
         OnRoomChange(rooms[0]);
 
-        _hasLevelLoaded = true;
-
         PlayerState.GetInstance().UnlockInput();
+
+
+
+        _hasLevelLoaded = true;
     }
 
     private void UpdateGameStatus(){
@@ -422,5 +429,10 @@ public class GameController : Singleton<GameController>
         {
             r.gameObject.SetActive(activesRoom.Contains(r));
         });
+    }
+
+    public bool IsLevelLoaded()
+    {
+        return _hasLevelLoaded;
     }
 }

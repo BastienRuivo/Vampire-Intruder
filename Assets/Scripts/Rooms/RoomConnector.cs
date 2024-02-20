@@ -126,7 +126,11 @@ public class RoomConnector : MonoBehaviour
 
     void Awake()
     {
-        _collisions = transform.Find("Grid/Collision").gameObject;
+        Transform coll = transform.Find("Grid/Collision");
+        if(coll != null)
+        {
+            _collisions = coll.gameObject;
+        }
         _trigger = transform.Find("Grid/ColliderTrigger").gameObject;
     }
 

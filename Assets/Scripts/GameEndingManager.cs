@@ -14,8 +14,8 @@ public class GameEndingManager : MonoBehaviour
     public GameObject gameOverUI;
     public AudioClip _bell;
     public Text text;
-    public string successMessage = "Mission r�ussite";
-    public string failureMessage = "Mission �chou�e \n Lord Jasper est d��u de vous";
+    public string successMessage = "Mission réussite";
+    public string failureMessage = "Mission échou�e \n Lord Jasper est déçu de vous";
     
     
     public static GameEndingManager instance;
