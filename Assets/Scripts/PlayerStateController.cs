@@ -5,7 +5,7 @@ public class PlayerState : Singleton<PlayerState>
   
 
     [Header("Values")]
-    public GameObject currentRoom;
+    public RoomData currentRoom;
     private bool inputLocked = false;
 
     public void LockInput()
@@ -21,5 +21,10 @@ public class PlayerState : Singleton<PlayerState>
     public bool CanMove()
     {
         return !inputLocked;
+    }
+
+    public GameObject GetPlayer()
+    {
+        return gameObject;
     }
 }

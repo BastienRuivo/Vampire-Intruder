@@ -129,7 +129,7 @@ namespace Pathfinding {
 		public override GridNodeBase GetNeighbourAlongDirection (int direction) {
 			if (HasConnectionInDirection(direction)) {
 				GridGraph gg = GetGridGraph(GraphIndex);
-				return gg.nodes[NodeInGridIndex+gg.neighbourOffsets[direction]];
+				return gg.nodes[NodeInGridIndex + gg.neighbourOffsets[direction]];
 			}
 			return null;
 		}

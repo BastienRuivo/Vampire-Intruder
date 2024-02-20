@@ -92,4 +92,36 @@ public static class DirectionHelper
         }
         return new Vector2(0f, 0f);
     }
+
+    public static Direction Inverse(Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.NORTH: return Direction.SOUTH;
+            case Direction.SOUTH: return Direction.NORTH;
+            case Direction.EAST: return Direction.WEST;
+            case Direction.WEST: return Direction.EAST;
+            case Direction.LEFT: return Direction.RIGHT;
+            case Direction.RIGHT: return Direction.LEFT;
+            case Direction.TOP: return Direction.BOTTOM;
+            case Direction.BOTTOM: return Direction.TOP;
+            default:
+            {
+                Debug.Log("Direction :: Inverse :: Achievement Get \"How did we get here ?\"");
+                return new Direction();
+            }
+        }
+    }
+
+    public static Vector3Int DirectionOffsetGrid(Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.NORTH: return new Vector3Int(1, 0);
+            case Direction.SOUTH: return new Vector3Int(-1, 0);
+            case Direction.EAST: return new Vector3Int(0, -1);
+            case Direction.WEST: return new Vector3Int(0, 1);
+            default: return Vector3Int.zero;
+        }
+    }
 }

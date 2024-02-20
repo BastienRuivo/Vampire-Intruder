@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class CameraShake : MonoBehaviour
+public class CameraShake : Singleton<CameraShake>
 {
     public float shakeDuration = 0.5f; 
     private Vector3 originalPosition;

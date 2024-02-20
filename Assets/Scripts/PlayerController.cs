@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
-        _ascRef.BindAbility("Dash", KeyCode.E);
+        _ascRef.BindAbility("TP", KeyCode.E);
     }
 
     public VisionConeController GetVision()

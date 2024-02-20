@@ -172,4 +172,14 @@ public class Interactible : MonoBehaviour
             default: break;
         }
     }
+
+    public void SetInactive()
+    {
+        _isActive = false;
+    }
+
+    public void SetActive()
+    {
+        _isActive = true;
+    }
 }

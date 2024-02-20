@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6981011263566159946
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: duration
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: reference
+      value: _Vampire_Hunt_Bible
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: isMainObjective
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: objectivePhrase
+      value: Voler la bible des chasseurs de vampires
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: replacementSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 73340f7f8bac4ad4a81de9c9816376ae, type: 3}
+    - target: {fileID: 2581829258208804590, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d3a0b3ca33470ae4d8e9f4c14213a90d, type: 3}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7286355327672963702, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7286355327672963702, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 3.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8962394357595514180, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: m_Name
+      value: Lectern
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 29d591be06c056a4b913b92528e05162, type: 3}
