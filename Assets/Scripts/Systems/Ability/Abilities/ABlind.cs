@@ -67,21 +67,13 @@ namespace Systems.Ability.Abilities
                     cursorController.isTargetValid = false;
                     continue;
                 }
-
-                if (Vector3.Distance(cursorController.currentTarget.transform.position, avatar.transform.position) <
-                    1f)
-                {
-                    cursorController.isTargetValid = true;
                 
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        target = cursorController.currentTarget;
-                        break;
-                    }
-                }
-                else
+                cursorController.isTargetValid = true;
+            
+                if (Input.GetMouseButtonDown(0))
                 {
-                    cursorController.isTargetValid = false;
+                    target = cursorController.currentTarget;
+                    break;
                 }
             }
             
