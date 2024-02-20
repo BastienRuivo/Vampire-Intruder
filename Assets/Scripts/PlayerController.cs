@@ -21,8 +21,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     [Header("Camera")]
     public Camera playerCamera;
     public float speedZoom = 10f;
-    public float minZoom = 1f;
-    public float maxZoom = 10f;
+    [Range(0.1f, 10f)] public float currentZoom;
 
     // private variables
     private Animator animator;
@@ -90,7 +89,10 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
-        _ascRef.BindAbility("TP", KeyCode.E);
+        _ascRef.BindAbility("Blind", KeyCode.E);
+
+
+        playerCamera.orthographicSize = currentZoom;
     }
 
     public VisionConeController GetVision()
@@ -104,8 +106,8 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         {
             return;
         }
-        float dzoom = speedZoom * Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 10.0f;
-        playerCamera.orthographicSize = Mathf.Clamp(playerCamera.orthographicSize - dzoom, minZoom, maxZoom);
+        playerCamera.orthographicSize = currentZoom;
+        //float dzoom = speedZoom * Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 10.0f;
     }
 
     void Move()

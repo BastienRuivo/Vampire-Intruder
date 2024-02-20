@@ -11,6 +11,7 @@ using Unity.VisualScripting;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 using Tools = DefaultNamespace.Tools;
+using Systems.Ability;
 
 public enum AlertStage
 {
@@ -23,7 +24,7 @@ public enum AlertStage
 public class GuardManager : MonoBehaviour
 {
     public LayerMask visionMask;
-    public GameObject currentRoom;
+    private RoomData _currentRoom;
     private GameObject _player;
     private PlayerController _playerController;
     public float guardVisionSpeed = 3f;
@@ -31,7 +32,8 @@ public class GuardManager : MonoBehaviour
     public enum AnimationState
     {
         IDLE = 0,
-        WALKING = 1
+        WALKING = 1,
+        EATEN
     }
 
     [Header("Alert")]
@@ -94,7 +96,7 @@ public class GuardManager : MonoBehaviour
     // Temporary target for pathfinding
     private GameObject _tempTarget = null;
     // Is following the path reversed
-    private bool _isPathReversed = false;
+    public bool isPathReversed = false;
     // Current guard path
     private Path _currentPath;
     // Id inside the path
@@ -123,6 +125,12 @@ public class GuardManager : MonoBehaviour
     private SpriteRenderer _guardRenderer;
     [FormerlySerializedAs("TraceResolution")] 
     public uint traceResolution = 128;
+
+    private AbilitySystemComponent _ascRef;
+
+    public Material glowEffect;
+
+    
     
     
     private float _foVThetaMin;
@@ -142,6 +150,9 @@ public class GuardManager : MonoBehaviour
         _currentAlert = alertTimer;
         _visionConeController = visionCone.GetComponent<VisionConeController>();
         _playerController = _player.GetComponent<PlayerController>();
+        _ascRef = GetComponent<AbilitySystemComponent>();
+        _currentRoom = GetComponentInParent<RoomData>();
+        _currentRoom.guards.Add(this);
     }
     private void Start()
     {
@@ -159,6 +170,9 @@ public class GuardManager : MonoBehaviour
         _guardRenderer = GetComponent<SpriteRenderer>();
         
         _visionConeController.GetMaterial().SetTexture("_PlayerShadowMap", _playerController.GetVision().GetDepthMap());
+
+
+        _ascRef.GrantAbility<AGuardEaten>("Eaten");
     }
     private void Update()
     {
@@ -332,10 +346,11 @@ public class GuardManager : MonoBehaviour
             _currentAlert = Mathf.Max(_currentAlert - Time.deltaTime, 0f);
         }
 
-        _alertRatio = 1f - _currentAlert / alertTimer;
+        _alertRatio = 1f - (_currentAlert / alertTimer);
+
         AlertStage newAlertStage = ComputeAlertStage(_alertRatio);
         // If the alert level is increasing, perform...
-        if(newAlertStage > alertStage)
+        if (newAlertStage > alertStage)
         {
             switch (newAlertStage)
             {
@@ -449,7 +464,7 @@ public class GuardManager : MonoBehaviour
     private void DebugStageAlert(float alertRatio)
     {
         //Debug.Log($"{_playerInRange} {_playerInFOV}");
-        _guardRenderer.color = Color.Lerp(Color.green, Color.red, alertRatio);
+        _guardRenderer.material.SetColor("_Color", Color.Lerp(Color.green, Color.red, alertRatio));
     }//todo replace with real animation.
 
     /**
@@ -502,8 +517,8 @@ public class GuardManager : MonoBehaviour
                 if (node != null)
                 {
                     _directions = node.directionsToLook;
-                    if (node.isPathEnd) _isPathReversed = false;
-                    ChangeTarget(node.NextTarget(_isPathReversed));
+                    if (node.isPathEnd) isPathReversed = false;
+                    ChangeTarget(node.NextTarget(isPathReversed));
                     _currentWaitingTimer = timerWaitingBetweenNodes;
                     _fastNodeWaiting = false;
                 }
@@ -626,7 +641,7 @@ public class GuardManager : MonoBehaviour
     */
     private GameObject FindClosestNode()
     {
-        Node[] nodes = currentRoom.transform.Find("CustomPivot/Nodes").GetComponentsInChildren<Node>();
+        Node[] nodes = _currentRoom.transform.Find("CustomPivot/Nodes").GetComponentsInChildren<Node>();
 
         int closest = -1;
         float closestDist = 10e8f;
@@ -668,6 +683,34 @@ public class GuardManager : MonoBehaviour
             SetAlpha(alpha);
             yield return null;
         }
+    }
+
+    public void CallForHelp()
+    {
+        _currentRoom.guards.ForEach(guard =>
+        {
+            // TODO : ISOMETRIC DISTANCE
+            if (guard == null || guard == this) return;
+            float dst = Vector2.Distance(transform.position, guard.transform.position);
+            Debug.Log("guard is at " + dst);
+            if (dst < 2f)
+            {
+                guard._currentAlert = 0f;
+                Debug.Log("Updating");
+                guard.UpdateAlertStage(true);
+                Debug.Log("New alert " + guard.alertStage.ToString());
+            }
+        });
+    }
+
+    public Animator GetAnimator()
+    {
+        return _animator;
+    }
+
+    public SpriteRenderer GetSpriteRenderer()
+    {
+        return _guardRenderer;
     }
 }
 // CONE VISION

@@ -15,7 +15,9 @@ GameObject:
   - component: {fileID: 6123221713736057825}
   - component: {fileID: 6001719633282345185}
   - component: {fileID: 2047177989503012280}
-  m_Layer: 0
+  - component: {fileID: 3858773435294293573}
+  - component: {fileID: 2301457930720864282}
+  m_Layer: 9
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -110,10 +112,10 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 255
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 768
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -130,16 +132,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 625817b2bd7a847408ea2497d1fbb6cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraShake: {fileID: 0}
   visionMask:
     serializedVersion: 2
     m_Bits: 64
-  currentRoom: {fileID: 0}
-  player: {fileID: 0}
   guardVisionSpeed: 3
   feedbackAnimator: {fileID: 2047237445904502220}
   alertStage: 0
-  alertTimer: 6
+  alertTimer: 2
   viewDistance: 3.5
   inSight: 1.5
   outSight: 1
@@ -164,7 +163,9 @@ MonoBehaviour:
   camSpeed: 10
   _spotSound: {fileID: 8300000, guid: d10610c5cc10b1b43b578250baab23d6, type: 3}
   visionCone: {fileID: 2976086864853864014}
+  isPathReversed: 0
   traceResolution: 128
+  glowEffect: {fileID: 0}
 --- !u!95 &6123221713736057825
 Animator:
   serializedVersion: 5
@@ -249,6 +250,37 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.2
+--- !u!114 &3858773435294293573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2671610580363259081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93ad7b5ee70c529429aa8d1a0eecfbd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2301457930720864282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2671610580363259081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 820b8291709b7984c9d7d36efd112e68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upSpeed: 2
+  downSpeed: 3
+  maxAlpha: 1
+  effectColor: {r: 1, g: 0, b: 0, a: 1}
+  activeAtStart: 0
+  render: {fileID: 6180498148441204807}
+  mat: {fileID: 2100000, guid: dcaee032ea75bea4d958dc891846c5c9, type: 2}
 --- !u!1 &5541329228386690723
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,7 +291,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3777960010315307152}
   - component: {fileID: 2047237445904502220}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FeedbackAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,7 +345,7 @@ GameObject:
   m_Component:
   - component: {fileID: 427130492993236983}
   - component: {fileID: 3863622236020631978}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FeedbackImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -411,6 +443,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: VisionCone
       objectReference: {fileID: 0}
+    - target: {fileID: 3662001191948676101, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 4085431743850968581, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: m_LocalScale.x
       value: 20
@@ -470,6 +506,10 @@ PrefabInstance:
     - target: {fileID: 5462318061661815336, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: targetEntityTag
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7015659164972719840, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

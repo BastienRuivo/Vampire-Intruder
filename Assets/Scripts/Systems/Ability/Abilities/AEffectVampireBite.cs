@@ -3,8 +3,10 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
+
     public class AEffectVampireBite : Ability
     {
+        public static readonly float eatTime = 4f;
         public AEffectVampireBite()
         {
             //Add the ability stat costs here.
@@ -21,7 +23,7 @@ namespace Systems.Ability.Abilities
             LockInput(avatar);
             
             //wait for a period of time;
-            yield return new WaitForSeconds(4);
+            yield return new WaitForSeconds(eatTime);
             
             Debug.Log("Vampire is done drinking...");
 

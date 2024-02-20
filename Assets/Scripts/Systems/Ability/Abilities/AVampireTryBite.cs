@@ -69,8 +69,8 @@ namespace Systems.Ability.Abilities
             if (target != null)
             {
                 avatar.transform.position = target.transform.position;
-                DestroyObject(avatar, target);
                 GetAbilitySystemComponent(avatar).TriggerAbility("Bite");
+                GetAbilitySystemComponent(target).TriggerAbility("Eaten");
             }
             
             yield return null;
