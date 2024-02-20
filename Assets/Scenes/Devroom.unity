@@ -1032,6 +1032,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4029405559872618862, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
   m_PrefabInstance: {fileID: 2019892681}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &910032902 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4959566679046247321, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+  m_PrefabInstance: {fileID: 2019892681}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910032900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6a7f665e34fca4c8b4ee6be51be4c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &919537964
 GameObject:
   m_ObjectHideFlags: 0
@@ -2890,7 +2901,7 @@ PrefabInstance:
     - target: {fileID: 8158490158258709371, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: currentRoom
       value: 
-      objectReference: {fileID: 910032900}
+      objectReference: {fileID: 910032902}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
