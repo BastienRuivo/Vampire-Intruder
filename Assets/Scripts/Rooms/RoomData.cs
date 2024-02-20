@@ -11,7 +11,13 @@ public class RoomData : MonoBehaviour
         HALL,
         TREASURE,
         CORRIDOR,
-        DECORATION,
+        LIBRARY,
+        BEDROOM,
+        OFFICE,
+        PRISON,
+        LIVINGROOM,
+        CHURCH,
+        STOCKAGE,
         NOONE
     }
 
