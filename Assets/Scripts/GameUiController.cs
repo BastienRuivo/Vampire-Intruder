@@ -231,11 +231,14 @@ public class GameUiController : MonoBehaviour,
 
     public void OnEvent(GameObject context)
     {
+        
         AbilitySystemComponent ascRef = context.GetComponent<AbilitySystemComponent>();
         
         float blood = ascRef.QueryStat("Blood");
         float maxBlood = ascRef.QueryStat("BloodMax");
         float bloodRatio = blood / maxBlood;
+        Debug.Log("Blood (L + ) ratio is " + bloodRatio);
+        
         bloodRatio = bloodRatio > 0? bloodRatio : 0.0f;
         
         _playerBloodStatSmooth.RetargetValue(bloodRatio);

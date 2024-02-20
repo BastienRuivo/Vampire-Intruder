@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
+using DefaultNamespace.Templates;
 using Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -16,21 +17,110 @@ namespace Systems.Ability
         /// <param name="ability">The ability spawning the actor.</param>
         /// <param name="path">The Asset path of the object to load</param>
         /// <returns>a game object instanced from asset path.</returns>
-        public GameObject InstanceGameObject(Ability ability,string path)
+        public GameObject InstanceGameObject(Ability ability, string path)
         {
-            return Instantiate(Resources.Load<GameObject>(path));
+            if(ability == null)
+                return null;
+            GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+            if (grantedAbility == null)
+                return null;
+            GameObject instance = Instantiate(Resources.Load<GameObject>(path));
+            grantedAbility.Resources.AddFirst(instance);
+            return instance;
         }
-        
+
         /// <summary>
         /// Destroy a game object form an ability
         /// </summary>
         /// <param name="ability">The ability trying to destroy the actor.</param>
         /// <param name="gameObject">the game object to destroy</param>
-        public void DestroyGameObject(Ability ability, GameObject gameObject)
+        /// <param name="asResource">if the object was instanced from this ability as a resource</param>
+        public void DestroyGameObject(Ability ability, GameObject gameObject, bool asResource = true)
         {
-            if(gameObject == null)
+            if(gameObject == null || ability == null)
                 return;
-            GameObject.Destroy(gameObject);
+            if (asResource)
+            {
+                GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+                grantedAbility.Resources.Remove(gameObject);
+            }
+            Destroy(gameObject);
+        }
+
+        public void RequestInputLock(Ability ability, bool status)
+        {
+            if(ability == null)
+                return;
+            
+            GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+            if (grantedAbility == null)
+                return;
+
+            if (status)
+            {
+                if(!grantedAbility.HasInputLock())
+                    _inputLock.Take();
+            }
+            else
+            {
+                if(grantedAbility.HasInputLock())
+                    _inputLock.Release();
+            }
+            grantedAbility.SetInputLock(status);
+        }
+
+        public Lock GetInputLock()
+        {
+            return _inputLock;
+        }
+
+        public void CommitAbility(Ability ability)
+        {
+            if(ability == null)
+                return;
+            
+            GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+            if (grantedAbility == null)
+                return;
+            ApplyAbilityCosts(grantedAbility);
+            
+            //handle cooldown
+            if(grantedAbility.HasCooldown())
+                grantedAbility.Cooldown();
+        }
+        
+        public void CancelAbility(Ability ability)
+        {
+            if(ability == null)
+                return;
+            
+            var grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability);
+            if (grantedAbility.Value == null)
+                return;
+            CancelAbility(grantedAbility.Key);
+        }
+
+        public void ApplyEffect(Ability ability, params KeyValuePair<string, float>[] effectStats)
+        {
+            if(effectStats.Length == 0)
+                return;
+            
+            if(ability == null)
+                return;
+            
+            GrantedAbility grantedAbility = _abilities.First(pair => pair.Value.GetAbility() == ability).Value;
+            if (grantedAbility == null)
+                return;
+            
+            foreach (var (attribute, value) in effectStats)
+            {
+                if (_stats.TryGetValue(attribute, out var stat))
+                {
+                    stat += value;
+                }
+            }
+            
+            _statChangeEventDispatcher.BroadcastEvent(gameObject);
         }
         
         /// <summary>
@@ -255,27 +345,41 @@ namespace Systems.Ability
 
             if (!isAbilityValid) yield break;
             
-            //solve ability costs
-            foreach (KeyValuePair<string,float> cost in costs)
-            {
-                _stats[cost.Key] -= cost.Value;
-            }
-            
-            if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
+            thisAbility.SetHasAppliedCosts(false);
+            if(thisAbility.GetAbility().DoApplyCostsOnTrigger())
+                ApplyAbilityCosts(thisAbility);
             
             //start ability
             _runningAbilities[name] = thisAbility.GetAbility().OnAbilityTriggered(gameObject);
             yield return StartCoroutine(_runningAbilities[name]); //wait for ability to complete
-           
+            if(_runningAbilities[name] == null)
+                yield break;
+            
             //mark ability as complete
             _runningAbilities[name] = null;
             
+            //cleanup resources left behind
+            foreach (GameObject resource in _abilities[name].Resources)
+                Destroy(resource);
+            _abilities[name].Resources.Clear();
+            
+            //release potential input lock
+            if (_abilities[name].HasInputLock())
+            {
+                _abilities[name].SetInputLock(false);
+                _inputLock.Release();
+            }
+            
             //handle cooldown
-            if(thisAbility.HasCooldown())
+            if(thisAbility.HasCooldown() && !thisAbility.HasAppliedCosts())
                 thisAbility.Cooldown();
             
+            //apply costs in case ability did not applied them
+            ApplyAbilityCosts(thisAbility);
+            
             //handle consumables
-            if (!thisAbility.IsConsumable()) yield break;
+            if (!thisAbility.IsConsumable()) 
+                yield break;
             thisAbility.ConsumeCharge();
             
             //todo maybe remove ability if consumable runs out of charges, for now ability is just unusable
@@ -292,18 +396,32 @@ namespace Systems.Ability
             
             StopCoroutine(_runningAbilities[name]);
             _runningAbilities[name] = null;
-
-            if (!_abilities[name].GetAbility().DoRefundOnCancel()) return;
             
-            var costs = _abilities[name].GetAbility().GetAbilityCosts();
-            
-            //revert ability costs
-            foreach (KeyValuePair<string,float> cost in costs)
+            //release potential input lock
+            if (_abilities[name].HasInputLock())
             {
-                _stats[cost.Key] += cost.Value;
+                _abilities[name].SetInputLock(false);
+                _inputLock.Release();
             }
             
-            if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
+            //Cleanup in use resources
+            foreach (GameObject resource in _abilities[name].Resources)
+                Destroy(resource);
+            _abilities[name].Resources.Clear();
+
+            if (!_abilities[name].GetAbility().DoRefundOnCancel())
+                return;
+            
+            //Manage ability refunds;
+            if (_abilities[name].HasAppliedCosts())
+            {
+                var costs = _abilities[name].GetAbility().GetAbilityCosts();
+                foreach (KeyValuePair<string,float> cost in costs)
+                {
+                    _stats[cost.Key] += cost.Value;
+                }
+                if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
+            }
         }
 
         /// <summary>
@@ -317,11 +435,22 @@ namespace Systems.Ability
                 CancelAbility(ability);
             }
         }
-        
-        // Start is called before the first frame update
-        void Start()
+
+        private void ApplyAbilityCosts(GrantedAbility ability)
         {
+            if(ability.HasAppliedCosts()) return;
             
+            var costs = ability.GetAbility().GetAbilityCosts();
+            
+            //solve ability costs
+            foreach (KeyValuePair<string,float> cost in costs)
+            {
+                _stats[cost.Key] -= cost.Value;
+            }
+            
+            ability.SetHasAppliedCosts(true);
+            
+            if(costs.Count > 0) _statChangeEventDispatcher.BroadcastEvent(gameObject);
         }
 
         // Update is called once per frame
@@ -349,13 +478,14 @@ namespace Systems.Ability
             }
             
             //Auto trigger abilities bound to input keys
-            foreach (KeyValuePair<KeyCode,string> binding in _keyBindings)
-            {
-                if (Input.GetKeyDown(binding.Key))
+            if(_inputLock.IsOpened())
+                foreach (KeyValuePair<KeyCode,string> binding in _keyBindings)
                 {
-                    TriggerAbility(binding.Value);
+                    if (Input.GetKeyDown(binding.Key))
+                    {
+                        TriggerAbility(binding.Value);
+                    }
                 }
-            }
         }
         
         private class GrantedAbility
@@ -364,6 +494,9 @@ namespace Systems.Ability
             private int _charges;
             private float _currentCooldown;
             private bool _inCooldown = false;
+            public readonly LinkedList<GameObject> Resources = new LinkedList<GameObject>();
+            private bool _hasInputLock = false;
+            private bool _hasAppliedCosts = false;
 
             private KeyCode _binding = KeyCode.None;
             
@@ -447,6 +580,26 @@ namespace Systems.Ability
             {
                 return _binding;
             }
+
+            public void SetInputLock(bool status)
+            {
+                _hasInputLock = status;
+            }
+
+            public bool HasInputLock()
+            {
+                return _hasInputLock;
+            }
+
+            public void SetHasAppliedCosts(bool status)
+            {
+                _hasAppliedCosts = status;
+            }
+
+            public bool HasAppliedCosts()
+            {
+                return _hasAppliedCosts;
+            }
         }
 
         private class Attribute
@@ -513,6 +666,8 @@ namespace Systems.Ability
         [ItemCanBeNull] private readonly Dictionary<string, IEnumerator> _runningAbilities = new ();
 
         private readonly EventDispatcher<GameObject> _statChangeEventDispatcher = new ();
+
+        private readonly Lock _inputLock = new Lock();
 
         //todo add a way to affect stats of ASC from an ability.
     }

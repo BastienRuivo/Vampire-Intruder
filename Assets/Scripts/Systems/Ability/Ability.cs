@@ -12,9 +12,64 @@ namespace Systems.Ability
 
         protected bool SelfTriggeringAbility = false;
         
+        protected bool ApplyCostsOnTrigger = true;
+        
         protected bool RefundOnCancel = true;
 
         protected float Cooldown = -1.0f;
+
+        /// <summary>
+        /// Create a game object instance of a prefab from resource path as a resource of this ability.
+        /// Resources will be automatically cleanup up by the ability system at the end of this ability
+        /// </summary>
+        /// <param name="avatar">actor spawning the object</param>
+        /// <param name="resourcePath">resource path</param>
+        /// <returns>Instanced game object</returns>
+        protected GameObject InstanceResource(GameObject avatar, string resourcePath)
+        {
+            return GetAbilitySystemComponent(avatar).InstanceGameObject(this, resourcePath);
+        }
+
+        /// <summary>
+        /// Destroy an actor previously instanced as a resource of this ability
+        /// </summary>
+        /// <param name="avatar">actor calling the destruction of the object</param>
+        /// <param name="gameObject">resource to destroy</param>
+        protected void DestroyResource(GameObject avatar, GameObject gameObject)
+        {
+            GetAbilitySystemComponent(avatar).DestroyGameObject(this, gameObject);
+        }
+        
+        /// <summary>
+        /// Destroy an actor.
+        /// </summary>
+        /// <remarks>For an actor spawned from this ability, you may call DestroyResource instead.</remarks>
+        /// <param name="avatar">actor calling the destruction of the object</param>
+        /// <param name="gameObject">resource to destroy</param>
+        protected void DestroyObject(GameObject avatar, GameObject gameObject)
+        {
+            GetAbilitySystemComponent(avatar).DestroyGameObject(this, gameObject, false);
+        }
+
+        protected void LockInput(GameObject avatar)
+        {
+            GetAbilitySystemComponent(avatar).RequestInputLock(this, true);
+        }
+
+        protected void UnlockInput(GameObject avatar)
+        {
+            GetAbilitySystemComponent(avatar).RequestInputLock(this, false);
+        }
+
+        protected void CommitAbility(GameObject avatar)
+        {
+            GetAbilitySystemComponent(avatar).CommitAbility(this);
+        }
+
+        protected void CancelAbility(GameObject avatar)
+        {
+            GetAbilitySystemComponent(avatar).CancelAbility(this);
+        }
 
         public Dictionary<string, float> GetAbilityCosts()
         {
@@ -31,6 +86,11 @@ namespace Systems.Ability
         public bool IsSelfTriggeringAbility()
         {
             return SelfTriggeringAbility;
+        }
+
+        public bool DoApplyCostsOnTrigger()
+        {
+            return ApplyCostsOnTrigger;
         }
         
         /// <returns>true if the ability canceling the ability will refund the owner.</returns>

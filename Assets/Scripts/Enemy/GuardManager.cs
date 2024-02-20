@@ -22,10 +22,9 @@ public enum AlertStage
 
 public class GuardManager : MonoBehaviour
 {
-    public CameraShake cameraShake;
     public LayerMask visionMask;
     public GameObject currentRoom;
-    public GameObject player;
+    private GameObject _player;
     private PlayerController _playerController;
     public float guardVisionSpeed = 3f;
 
@@ -137,11 +136,12 @@ public class GuardManager : MonoBehaviour
     private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
 
     private void Awake() {
+        _player = PlayerController.GetPlayer();
         alertStage = AlertStage.Idle;
         _previousAlertStage = alertStage;
         _currentAlert = alertTimer;
         _visionConeController = visionCone.GetComponent<VisionConeController>();
-        _playerController = player.GetComponent<PlayerController>();
+        _playerController = _player.GetComponent<PlayerController>();
     }
     private void Start()
     {
@@ -182,6 +182,11 @@ public class GuardManager : MonoBehaviour
         _visionConeController.GetMaterial().SetFloat("_PlayerViewMinAngle", _playerController.GetVision().GetViewMinAngle());
         _visionConeController.GetMaterial().SetFloat("_PlayerFieldOfView", _playerController.GetVision().GetViewAngle());
         HandleVision();
+    }
+
+    public VisionConeController GetVision()
+    {
+        return _visionConeController;
     }
 
     /** Coroutine to compute new player path
@@ -230,15 +235,15 @@ public class GuardManager : MonoBehaviour
     */
     private void HandleVision()
     {
-        if (_visionConeController.HasRefreshability(player.transform.position))
+        if (_visionConeController.HasRefreshability(_player.transform.position))
         {
             _visionConeController.Enable();
             _visionConeController.GetMaterial().SetFloat(AlertRatio, _alertRatio);
-            if (_visionConeController.HasVisibility(player.transform.position))
+            if (_visionConeController.HasVisibility(_player.transform.position))
             {
                 UpdateAlertStage(true);
                 HandleDialogs();
-                if (alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, player.transform.position) < caughtDistance)
+                if (alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, _player.transform.position) < caughtDistance)
                 {
                     GameController.GetGameMode().GetCaught();
                 }
@@ -336,29 +341,29 @@ public class GuardManager : MonoBehaviour
             {
                 // If alerted, changer target to player and lock camera
                 case AlertStage.Alerted:
-                    cameraShake.Shake(0.2f);
+                    CameraShake.GetInstance().Shake(0.2f);
                     _speed = spotSpeed;
                     //PlayerState.GetInstance().LockInput();
                     AudioManager.GetInstance().playClip(_spotSound, transform.position);
-                    _cameraPos = player.transform.Find("Camera");
+                    _cameraPos = _player.transform.Find("Camera");
                     _speed = spotSpeed;
                     _currentWaitingTimer = 0f;
                     _fastNodeWaiting = false;
                     Destroy(_tempTarget);
                     _tempTarget = null;
-                    ChangeTarget(player);
+                    ChangeTarget(_player);
                     break;
                 // If very sus, check the player position
                 case AlertStage.Suspicious:
                     // create Node at 25% between guard and player
-                    cameraShake.Shake(0.02f);
+                    CameraShake.GetInstance().Shake(0.02f);
                     GameObject nodeGO = Instantiate(nodePrefab);
-                    nodeGO.transform.position = Vector3.Lerp(_body.position, player.transform.position, distancePercentageSuspicious);
+                    nodeGO.transform.position = Vector3.Lerp(_body.position, _player.transform.position, distancePercentageSuspicious);
                     _currentWaitingTimer = 0;
                     _fastNodeWaiting = false;
                     SetTemporaryTarget(nodeGO);
                     Node node = nodeGO.GetComponent<Node>();
-                    Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, player);
+                    Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, _player);
                     node.directionsToLook.Add(dir);
                     node.directionsToLook.Add(DirectionHelper.Previous(dir));
                     node.directionsToLook.Add(dir);

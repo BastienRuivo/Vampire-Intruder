@@ -9,18 +9,16 @@ namespace Systems.Ability.Abilities
 {
     public class AVampireTryBite : Ability
     {
-        [CanBeNull] public GameObject cursor = null;
         public AVampireTryBite()
         {
             Cooldown = 0.5f;
-            //cursor = Resources.Load("Prefabs/myPrefab")
-            
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
-            //GameObject instance = Instantiate(Resources.Load("enemy", typeof(GameObject))) as GameObject;
-            cursor = GetAbilitySystemComponent(avatar).InstanceGameObject(this, "Abilities/Aiming/MouseAimLock");
+            GameObject cursor = InstanceResource(avatar, "Abilities/Aiming/MouseAimLock");
+            avatar.GetComponent<PlayerController>().BindVisionToMouse();
+
             GameObject target = null;
             if (cursor != null)
             {
@@ -65,11 +63,13 @@ namespace Systems.Ability.Abilities
                     }
                 }
             }
-
-            GetAbilitySystemComponent(avatar).DestroyGameObject(this, cursor);
+            
+            avatar.GetComponent<PlayerController>().UnbindVisionFromMouse();
+            
             if (target != null)
             {
-                GetAbilitySystemComponent(avatar).DestroyGameObject(this, target);
+                avatar.transform.position = target.transform.position;
+                DestroyObject(avatar, target);
                 GetAbilitySystemComponent(avatar).TriggerAbility("Bite");
             }
             
