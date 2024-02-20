@@ -1032,6 +1032,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4029405559872618862, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
   m_PrefabInstance: {fileID: 2019892681}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &910032902 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4959566679046247321, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+  m_PrefabInstance: {fileID: 2019892681}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910032900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6a7f665e34fca4c8b4ee6be51be4c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &919537964
 GameObject:
   m_ObjectHideFlags: 0
@@ -1541,7 +1552,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   data:
-    dataString: UEsDBBQAAAgIAAAIIeyhnhUqkQIAAFMFAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFlVE1zmzAQ/SsenWtGYAdCby1xnBySeOJ0cuGiwGI0BomRRGwn4//elQBDXS6It2/ffopvwoVuIDNSrRXPn2QO5OeMPGpZg1E8syD5MRtZD3BkOym2/AsG8jvPTWlJzHFemeEScd+6DTq/xK6y5JB61D6LW7S2ghdS1at8B4nURqO9YJUGNClprIxA6HtGjviaL28QP+EpiCievvAU09kZjxkIA2qk3nrRMo79Zc+fUy8MEFjEvds88mIaLEN/NaeRU2hFVrG6gdzWNQr56EnDIa7vewt/EToHgbX3XOr5URhFlpXJquK6T5uYU+P6k7BGt1g9EnLOsB8uV9+zHiXwXWlsUVP3l6LQYFFbqGKnO66wsZ0u+S27btdM77tUP1nV2kh+HLjkOtGn/+xz35kLJeuHIa5PbQxT8mz/yk4Z02YyhSl8N0nddezAqj37qOC9BPEs10q2IkejUa11bTUEd+PnpbSkhGw/4l2qV2DbjCOgffOHkdsazq76Y1Lx+sMNYNkB20q6jseWDApH9IgJuz3SvQSiNos/Gt7YbrpwveGeK23Q1FcpbHofslWWSlauZ7aa1iRSCXBwn3QDglXmtEEZcz3CK9sk7JXlntk71gfvbcPVuXJx8Min9Mq0kYfLsHQpD0+gy5fWVFzAmLQ1PGOfEilEt2HTngxu21YVLJu47Vqe/7taJA+L2wKvQe7TACjAvFgEmR/eLLNFHEcsCInbPS6wTlZtukT79uDUxCgucM+sov31zNaKNW7bc8UOa/5Vy0nLuSjkNlMA4qVTuCQOCoPg9cxXOccGbcEYLty8yXdKKpntIU8vQqmrdHU0iqWjSkoa/imNRVKSuF9MSix82eWNgk8OBxt8EDuT819QSwMEFAAACAgAAAgh7DsFBcxtAAAAeAAAAAkAJABtZXRhLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQGrVipLLSrOzM9TslIw0TPSMzTXUVBKL0osyCgGihiCOKWZKSB2tFKKWZpFmpm5eYqhgVGqQWqqbpqxUbKhmalJsrGlpXmikZlSLFB9SWVBql9ibipET0BiSUZaZl5KZl66nntRZoo7yGil2FoAUEsBAi0AFAAACAgAAAgh7KGeFSqRAgAAUwUAAAsAJAAAAAAAAAAAAAAAAAAAAGdyYXBoMC5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsBAi0AFAAACAgAAAgh7DsFBcxtAAAAeAAAAAkAJAAAAAAAAAAAAAAA3gIAAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAVBLBQYAAAAAAgACALgAAACWAwAAAAA=
+    dataString: UEsDBBQAAAgIAAAIIew7UyeaOQAAAEYAAAAJACQAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0Bq1YqSy0qzszPU7JSMNEz0jM011FQSi9KLMgoBooYgjilmSkgdnReaU5OLFCgpLIg1S8xNxUhWAsAUEsBAi0AFAAACAgAAAgh7DtTJ5o5AAAARgAAAAkAJAAAAAAAAAAAAAAAAAAAAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAVBLBQYAAAAAAQABAFsAAACEAAAAAAA=
     upgradeData: 
     file_cachedStartup: {fileID: 0}
     data_cachedStartup: 
@@ -1602,6 +1613,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4029405559872618862, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
   m_PrefabInstance: {fileID: 1732702746}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1061530748 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4959566679046247321, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+  m_PrefabInstance: {fileID: 1732702746}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061530747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6a7f665e34fca4c8b4ee6be51be4c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1254037406
 GameObject:
   m_ObjectHideFlags: 0
@@ -2333,13 +2355,17 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
+      propertyPath: shouldGenerateLvl
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
       propertyPath: rooms.Array.data[0]
       value: 
-      objectReference: {fileID: 910032900}
+      objectReference: {fileID: 910032902}
     - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
       propertyPath: rooms.Array.data[1]
       value: 
-      objectReference: {fileID: 1061530747}
+      objectReference: {fileID: 1061530748}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2890,7 +2916,7 @@ PrefabInstance:
     - target: {fileID: 8158490158258709371, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: currentRoom
       value: 
-      objectReference: {fileID: 910032900}
+      objectReference: {fileID: 910032902}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

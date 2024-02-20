@@ -7,8 +7,7 @@ using Interfaces;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Serialization;
-
-
+using UnityEngine.Tilemaps;
 
 public class GameController : Singleton<GameController>
 {
@@ -61,7 +60,10 @@ public class GameController : Singleton<GameController>
     public int gameEventTickCount = 12;
 
     [Header("Rooms")]
-    public List<GameObject> rooms;
+    public List<RoomData> rooms;
+    public bool shouldGenerateLvl = true;
+    public List<RoomData> activesRoom = new List<RoomData>();
+    bool _hasLevelLoaded = false;
 
     [FormerlySerializedAs("TimeBell")] public AudioClip timeBell;
     [FormerlySerializedAs("CaughtBell")] public AudioClip caughtBell;
@@ -71,9 +73,13 @@ public class GameController : Singleton<GameController>
     private int _eventCount = 0;
     private float _eventTime = 0.0f;
 
+    public string mainObjectiveReference;
+    public int nbObjectives;
+
     private readonly EventDispatcher<int> _gameEventDispatcher = new ();
     private readonly EventDispatcher<TimeProgression> _gameProgressionEventDispatcher = new ();
     private readonly EventDispatcher<UserMessageData> _gameUserMessageEventDispatcher = new ();
+
 
 
     /// <summary>
@@ -89,16 +95,58 @@ public class GameController : Singleton<GameController>
         Debug.Log("Level Completed.");
     }
     
-    public void GetAllObjective()
+    public void SetObjectives()
     {
         var objectives = GameObject.FindGameObjectsWithTag("Interactible").Select(x => x.GetComponent<Interactible>()).ToList();
-        Debug.Log(objectives.Count);
+        Debug.Log(objectives.Count + " on map");
+        List<string> chosenRefs = new List<string>();
+        List<Interactible> rejected = new List<Interactible>();
         objectives.ForEach(o =>
         {
-            Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
-            Debug.Log(obj.phrase);
-            objectivesToComplete.Add(obj);
+
+            bool isMain = mainObjectiveReference.Equals(o.reference);
+            if (chosenRefs.Contains(o.reference))
+            {
+                o.SetInactive();
+            }
+            else if (isMain || (nbObjectives > 0 && UnityEngine.Random.Range(0, 100) > 75))
+            {
+                o.isMainObjective= isMain;
+                Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
+                objectivesToComplete.Add(obj);
+                chosenRefs.Add(o.reference);
+                nbObjectives--;
+            }
+            else if(!isMain)
+            {
+                rejected.Add(o);
+                o.SetInactive();
+            }
+            
         });
+
+        while(nbObjectives > 0 && rejected.Count > 0)
+        {
+            int r = UnityEngine.Random.Range(0, rejected.Count);
+            Interactible o = rejected.ElementAt(r);
+            rejected.RemoveAt(r);
+            if (chosenRefs.Contains(o.reference))
+            {
+                continue;
+            }
+
+            Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
+            objectivesToComplete.Add(obj);
+            chosenRefs.Add(o.reference);
+            nbObjectives--;
+        }
+
+        if(nbObjectives > 0)
+        {
+            Debug.Log("Can't add enough objectives");
+        }
+
+        Debug.Log("There is " + objectivesToComplete.Count + " Objectives");
         objectives.Sort((a, b) =>
         {
             if (a.isMainObjective) return 1;
@@ -257,21 +305,31 @@ public class GameController : Singleton<GameController>
     void Start()
     {
         _eventTime = gameEventTickTime;
-        
+
         //SubscribeToGameEvent(new TestEventReceiver());
-        HideOtherMaps();
-        GetAllObjective();
-        GenerateAStarGraph();
+        // Generate map
+        if(shouldGenerateLvl)
+        {
+            PlayerState.GetInstance().LockInput();
+            RoomData hall = LevelGenerator.GetInstance().Generate();
 
+            PlayerState.GetInstance().currentRoom = hall;
+            var start = hall.transform.Find("CustomPivot/Start");
+            PlayerState.GetInstance().GetPlayer().transform.position = start.transform.position;
+        }
+        else
+        {
+            OnLevelLoadComplete(rooms);
 
+        }
     }
 
     private void GenerateAStarGraph()
     {
+        Debug.Log("There is " + rooms.Count + " rooms to build");
         rooms.ForEach(room =>
         {
-            Debug.Log(room.name);
-            room.GetComponent<RoomData>().BuildGraph(room.transform.position);
+            room.BuildGraph(room.transform.position);
         });
         AstarPath.active.Scan();
     }
@@ -279,7 +337,9 @@ public class GameController : Singleton<GameController>
 
     private void HideOtherMaps()
     {
-        rooms.Where(obj => obj.name != PlayerState.GetInstance().currentRoom.name).ToList().ForEach(obj =>
+        var otherRooms = rooms.Where(obj => obj.name != PlayerState.GetInstance().currentRoom.name).ToList();
+        Debug.Log("Current player room is " + PlayerState.GetInstance().currentRoom.name + " there is " + otherRooms.Count + " rooms");
+        otherRooms.ForEach(obj =>
         {
             var renderers = obj.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)
@@ -290,11 +350,34 @@ public class GameController : Singleton<GameController>
                     c.a = 0f;
                     r.material.color = c;
                 }
+                else
+                {
+                    Debug.Log(r.gameObject.name);
+                }
             }
         });
     }
 
+    public void OnLevelLoadComplete(List<RoomData> rooms)
+    {
+        this.rooms = rooms;
+        Debug.Log("Level loaded with " + rooms.Count + " rooms");
+        GenerateAStarGraph();
+        HideOtherMaps();
+        SetObjectives();
+
+
+        OnRoomChange(rooms[0]);
+
+        PlayerState.GetInstance().UnlockInput();
+
+
+
+        _hasLevelLoaded = true;
+    }
+
     private void UpdateGameStatus(){
+        if(!_hasLevelLoaded) return;
         _eventTime += Time.deltaTime;
         if (_eventTime < gameEventTickTime)
             return;
@@ -336,5 +419,20 @@ public class GameController : Singleton<GameController>
     void Update()
     {
         UpdateGameStatus();
+    }
+
+    public void OnRoomChange(RoomData activeRoot)
+    {
+
+        activesRoom = activeRoot.GetConnectedRooms();
+        rooms.ForEach(r =>
+        {
+            r.gameObject.SetActive(activesRoom.Contains(r));
+        });
+    }
+
+    public bool IsLevelLoaded()
+    {
+        return _hasLevelLoaded;
     }
 }

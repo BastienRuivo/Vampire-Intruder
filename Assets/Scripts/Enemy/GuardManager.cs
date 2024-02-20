@@ -190,6 +190,10 @@ public class GuardManager : MonoBehaviour
     private IEnumerator UpdatePath()
     {
         _shouldUpdatePath = false;
+        while(!GameController.GetInstance().IsLevelLoaded())
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
         if (!_seeker.IsDone())
         {
             yield return null;
@@ -617,7 +621,7 @@ public class GuardManager : MonoBehaviour
     */
     private GameObject FindClosestNode()
     {
-        Node[] nodes = currentRoom.transform.Find("Nodes").GetComponentsInChildren<Node>();
+        Node[] nodes = currentRoom.transform.Find("CustomPivot/Nodes").GetComponentsInChildren<Node>();
 
         int closest = -1;
         float closestDist = 10e8f;
