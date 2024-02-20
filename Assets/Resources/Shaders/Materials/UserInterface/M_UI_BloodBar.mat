@@ -130,7 +130,7 @@ Material:
     - _Patern1Tiling: 0.65
     - _Patern2Speed: 0.047
     - _Patern2Tiling: 0.377
-    - _Progression: 0.8125
+    - _Progression: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SmoothnessTextureChannel: 0
