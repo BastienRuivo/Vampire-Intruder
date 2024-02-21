@@ -87,7 +87,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// </summary>
     public void PlaceHall()
     {
-        int selected = Random.Range(0, halls.Length - 1);
+        int rand = Random.Range(0, halls.Length);
+        int selected = rand;
         var instance = Instantiate(halls[selected]);
         roomToFill= new Queue<GameObject>();
         roomToFill.Enqueue(instance);
@@ -112,7 +113,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         //Debug.Log("Fill " + room.name + " with energy " + roomData.energy);
         // If energy is neg, then it's over
-        if (roomData.energy <= 0f) {
+        if (roomData.energy <= 0f)
+        {
             roomData.GetConnectors().Where(c => !c.isFilled).ToList().ForEach(c =>
             {
                 Transform go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? room.transform.Find(_walls) : room.transform.Find(_hiddenWalls);
@@ -133,6 +135,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 tm.SetTile(c.coordOnGrid, t);
                 c.SetActiveState(false);
             });
+            return;
         }
         // For all connectors of the room, try to place somtheing
         roomData.GetConnectors().Where(c => !c.isFilled).ToList().ForEach(c =>
@@ -411,7 +414,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         instanciatedRooms = new List<GameObject>();
         LoadData();
-        Random.InitState(249);
         PlaceHall();
         FillRoom(roomToFill.Dequeue(), startingEnergy);
 
