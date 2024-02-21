@@ -73,6 +73,7 @@ public class RoomData : MonoBehaviour
     private RoomData _collider;
     private RoomConnector[] _connectors;
     public float energy;
+    public List<GuardManager> guards;
 
     private void Awake()
     {

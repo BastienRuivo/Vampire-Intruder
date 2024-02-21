@@ -11,6 +11,10 @@ using Unity.VisualScripting;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 using Tools = DefaultNamespace.Tools;
+using Systems.Ability;
+using Interfaces;
+using JetBrains.Annotations;
+using System.Linq;
 
 public enum AlertStage
 {
@@ -20,18 +24,20 @@ public enum AlertStage
     Alerted = 3
 }
 
-public class GuardManager : MonoBehaviour
+public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>
 {
     public LayerMask visionMask;
-    public GameObject currentRoom;
-    private GameObject _player;
+    private RoomData _currentRoom;
     private PlayerController _playerController;
     public float guardVisionSpeed = 3f;
+
+    public string targetableTag = "Targetable";
 
     public enum AnimationState
     {
         IDLE = 0,
-        WALKING = 1
+        WALKING = 1,
+        EATEN
     }
 
     [Header("Alert")]
@@ -49,6 +55,9 @@ public class GuardManager : MonoBehaviour
     [Range(0.1f, 10f)] 
     public float outSight = 1.0f;
 
+    private List<Targetable> _targets = new List<Targetable>();
+    private List<Targetable> _ignoredTargets = new List<Targetable>();
+
     [Header("Guard dialogs")] 
     public string idleToSeenSomethingQuote;
     public string seenSomethingToSuspiciousQuote;
@@ -65,7 +74,7 @@ public class GuardManager : MonoBehaviour
     // if the target is not moving.
     public float timerRefresh = 2f;
     // Timer to compute a new path if the target is a moving target
-    public float timerRefreshPlayer = 0.2f;
+    public float timerRefreshTargetable = 0.2f;
     // total Timer to stay Idle when the guard is reaching a target, will be divided by the number of dir to check inside node
     public float timerWaitingBetweenNodes = 2f;
     // total timer to stay idle when the guard is seeking for player
@@ -89,12 +98,13 @@ public class GuardManager : MonoBehaviour
     public GameObject visionCone;
     private VisionConeController _visionConeController;
 
+    public Targetable currentTarget;
     // Target of pathfinding
-    private GameObject _target;
+    private GameObject _pathfindTarget;
     // Temporary target for pathfinding
-    private GameObject _tempTarget = null;
+    private GameObject _tempPathfindTarget = null;
     // Is following the path reversed
-    private bool _isPathReversed = false;
+    public bool isPathReversed = false;
     // Current guard path
     private Path _currentPath;
     // Id inside the path
@@ -123,6 +133,14 @@ public class GuardManager : MonoBehaviour
     private SpriteRenderer _guardRenderer;
     [FormerlySerializedAs("TraceResolution")] 
     public uint traceResolution = 128;
+
+    private AbilitySystemComponent _ascRef;
+
+    public Material glowEffect;
+
+    private VisionSystemController _visionSystemController;
+
+    
     
     
     private float _foVThetaMin;
@@ -136,16 +154,22 @@ public class GuardManager : MonoBehaviour
     private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
 
     private void Awake() {
-        _player = PlayerController.GetPlayer();
         alertStage = AlertStage.Idle;
         _previousAlertStage = alertStage;
         _currentAlert = alertTimer;
         _visionConeController = visionCone.GetComponent<VisionConeController>();
-        _playerController = _player.GetComponent<PlayerController>();
+        _ascRef = GetComponent<AbilitySystemComponent>();
+        _currentRoom = GetComponentInParent<RoomData>();
+        _currentRoom.guards.Add(this);
+        _visionSystemController = visionCone.GetComponent<VisionSystemController>();
+
+        _visionSystemController.OnOverlapChanged.Subscribe(this);
+
+        _playerController = PlayerState.GetInstance().GetPlayerController();
     }
     private void Start()
     {
-        _target = FindClosestNode();
+        _pathfindTarget = FindClosestNode();
         _seeker = GetComponent<Seeker>();
         _body = GetComponent<Rigidbody2D>();
 
@@ -159,6 +183,9 @@ public class GuardManager : MonoBehaviour
         _guardRenderer = GetComponent<SpriteRenderer>();
         
         _visionConeController.GetMaterial().SetTexture("_PlayerShadowMap", _playerController.GetVision().GetDepthMap());
+
+
+        _ascRef.GrantAbility<AGuardEaten>("Eaten");
     }
     private void Update()
     {
@@ -204,15 +231,15 @@ public class GuardManager : MonoBehaviour
             yield return null;
         }
 
-        if(_tempTarget != null)
+        if(_tempPathfindTarget != null)
         {
-            _seeker.StartPath(_body.position, _tempTarget.transform.position, OnPathComplete);
+            _seeker.StartPath(_body.position, _tempPathfindTarget.transform.position, OnPathComplete);
         }
         else
         {
-            _seeker.StartPath(_body.position, _target.transform.position, OnPathComplete);
+            _seeker.StartPath(_body.position, _pathfindTarget.transform.position, OnPathComplete);
         }
-        yield return new WaitForSeconds(_target.tag == "Player" ? timerRefreshPlayer : timerRefresh);
+        yield return new WaitForSeconds(_pathfindTarget.tag == "Targetable" ? timerRefreshTargetable : timerRefresh);
         _shouldUpdatePath = true;
     }
     /**
@@ -230,40 +257,58 @@ public class GuardManager : MonoBehaviour
         _currentPointInPath = 0;
     }
 
+    public bool HasSomethingInSight
+    {
+        get
+        {
+            //Debug.Log(_targets.Count + " > " + _ignoredTargets.Count);
+            return _targets.Count - _ignoredTargets.Count > 0;
+        }
+    }
+
     /**
      * Handle alert stage and vision cone computation
     */
     private void HandleVision()
     {
-        if (_visionConeController.HasRefreshability(_player.transform.position))
+        _visionConeController.GetMaterial().SetFloat(AlertRatio, _alertRatio);
+
+        //Debug.Log("HasSomethingInSight = " + HasSomethingInSight.ToString());
+        UpdateAlertStage(HasSomethingInSight);
+
+        HandleDialogs();
+
+
+        if (HasSomethingInSight && alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, currentTarget.transform.position) < caughtDistance)
         {
-            _visionConeController.Enable();
-            _visionConeController.GetMaterial().SetFloat(AlertRatio, _alertRatio);
-            if (_visionConeController.HasVisibility(_player.transform.position))
+            switch(currentTarget.targetType)
             {
-                UpdateAlertStage(true);
-                HandleDialogs();
-                if (alertStage == AlertStage.Alerted && Vector2.Distance(transform.position, _player.transform.position) < caughtDistance)
+                case Targetable.TargetType.PLAYER:
                 {
-                    GameController.GetGameMode().GetCaught();
+                        GameController.GetGameMode().GetCaught();
+                        break;
+                }
+                case Targetable.TargetType.ALERTER:
+                {
+                        _ignoredTargets.Add(currentTarget);
+                        currentTarget = FindClosestTarget();
+                        if(currentTarget == null)
+                        {
+                            _currentWaitingTimer = timerWaitingTempNodes;
+                            Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, currentTarget.gameObject);
+                            _directions = new List<Direction> {
+                                DirectionHelper.Previous(dir),
+                                dir,
+                                DirectionHelper.Next(dir)
+                            };
+                        }
+                        break;
                 }
             }
-            else
-            {
-                UpdateAlertStage(false);
-                HandleDialogs();
-            }
-            
-            //_AlertRatio
         }
-        else
-        {
-            _visionConeController.Disable();
-            UpdateAlertStage(false);
-            HandleDialogs();
-        }
+
     }
-    
+
     private void FixedUpdate()
     {
         FollowPath();
@@ -323,7 +368,7 @@ public class GuardManager : MonoBehaviour
         if (alertStage == AlertStage.Alerted) return;
 
         // Update the currentAlert timer
-        if(!playerInFOV && _currentAlert < alertTimer && _tempTarget == null)
+        if(!playerInFOV && _currentAlert < alertTimer && _tempPathfindTarget == null)
         {
             _currentAlert = Mathf.Min(_currentAlert + Time.deltaTime, alertTimer);
         }
@@ -332,38 +377,41 @@ public class GuardManager : MonoBehaviour
             _currentAlert = Mathf.Max(_currentAlert - Time.deltaTime, 0f);
         }
 
-        _alertRatio = 1f - _currentAlert / alertTimer;
+        _alertRatio = 1f - (_currentAlert / alertTimer);
+
         AlertStage newAlertStage = ComputeAlertStage(_alertRatio);
         // If the alert level is increasing, perform...
-        if(newAlertStage > alertStage)
+        if (newAlertStage > alertStage)
         {
             switch (newAlertStage)
             {
                 // If alerted, changer target to player and lock camera
                 case AlertStage.Alerted:
-                    CameraShake.GetInstance().Shake(0.2f);
                     _speed = spotSpeed;
                     //PlayerState.GetInstance().LockInput();
                     AudioManager.GetInstance().playClip(_spotSound, transform.position);
-                    _cameraPos = _player.transform.Find("Camera");
                     _speed = spotSpeed;
                     _currentWaitingTimer = 0f;
                     _fastNodeWaiting = false;
-                    Destroy(_tempTarget);
-                    _tempTarget = null;
-                    ChangeTarget(_player);
+                    Destroy(_tempPathfindTarget);
+                    _tempPathfindTarget = null;
+                    if(currentTarget.targetType == Targetable.TargetType.PLAYER)
+                    {
+                        CameraShake.GetInstance().Shake(0.2f);
+                    }
+                    ChangeTarget(currentTarget.gameObject);
                     break;
                 // If very sus, check the player position
                 case AlertStage.Suspicious:
                     // create Node at 25% between guard and player
                     CameraShake.GetInstance().Shake(0.02f);
                     GameObject nodeGO = Instantiate(nodePrefab);
-                    nodeGO.transform.position = Vector3.Lerp(_body.position, _player.transform.position, distancePercentageSuspicious);
+                    nodeGO.transform.position = Vector3.Lerp(_body.position, currentTarget.transform.position, distancePercentageSuspicious);
                     _currentWaitingTimer = 0;
                     _fastNodeWaiting = false;
                     SetTemporaryTarget(nodeGO);
                     Node node = nodeGO.GetComponent<Node>();
-                    Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, _player);
+                    Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, currentTarget.gameObject);
                     node.directionsToLook.Add(dir);
                     node.directionsToLook.Add(DirectionHelper.Previous(dir));
                     node.directionsToLook.Add(dir);
@@ -449,7 +497,7 @@ public class GuardManager : MonoBehaviour
     private void DebugStageAlert(float alertRatio)
     {
         //Debug.Log($"{_playerInRange} {_playerInFOV}");
-        _guardRenderer.color = Color.Lerp(Color.green, Color.red, alertRatio);
+        _guardRenderer.material.SetColor("_Color", Color.Lerp(Color.green, Color.red, alertRatio));
     }//todo replace with real animation.
 
     /**
@@ -485,43 +533,53 @@ public class GuardManager : MonoBehaviour
         if (_reachedEnd)
         {
             // If the temp target is not null, and the guard is at it, go back to the reak target after waiting a little
-            if(_tempTarget != null)
+            if(_tempPathfindTarget != null)
             {
-                Node node = _tempTarget.GetComponent<Node>();
+                Node node = _tempPathfindTarget.GetComponent<Node>();
                 _directions = node.directionsToLook;
-                ChangeTarget(_target);
+                ChangeTarget(_pathfindTarget);
                 _currentWaitingTimer = timerWaitingTempNodes;
                 _fastNodeWaiting = true;
-                Destroy(_tempTarget);
-                _tempTarget = null;
+                Destroy(_tempPathfindTarget);
+                _tempPathfindTarget = null;
             }
             else
             {
                 // If we're at the current target node, then wait a little and go to next target in path
-                Node node = _target.GetComponent<Node>();
+                Node node = _pathfindTarget.GetComponent<Node>();
                 if (node != null)
                 {
                     _directions = node.directionsToLook;
-                    if (node.isPathEnd) _isPathReversed = false;
-                    ChangeTarget(node.NextTarget(_isPathReversed));
+                    if (node.isPathEnd) isPathReversed = false;
+                    ChangeTarget(node.NextTarget(isPathReversed));
                     _currentWaitingTimer = timerWaitingBetweenNodes;
                     _fastNodeWaiting = false;
                 }
             }
             return;
         }
-        // Get current path in 
-        var visionTarget = _tempTarget == null? _target : _tempTarget;
-        bool canSeeTarget = NoWallToTarget(visionTarget);
+        float angle = 0f;
         Vector3 pathPos = _currentPath.vectorPath[_currentPointInPath];
         Vector2 dir = (new Vector2(pathPos.x, pathPos.y) - _body.position).normalized;
-        float angle = Tools.ComputeAngle(transform.position, canSeeTarget? visionTarget.transform.position : pathPos) * Mathf.Rad2Deg;
+        if (currentTarget != null && alertStage > AlertStage.Suspicious)
+        {
+            angle = Tools.ComputeAngle(transform.position, currentTarget.transform.position) * Mathf.Rad2Deg;
+        }
+        else
+        {
+            var visionTarget = _tempPathfindTarget == null ? _pathfindTarget : _tempPathfindTarget;
+            bool canSeeTarget = NoWallToTarget(visionTarget);
+            angle = Tools.ComputeAngle(transform.position, canSeeTarget ? visionTarget.transform.position : pathPos) * Mathf.Rad2Deg;
+
+        }
+        // Get current path in 
 
         // Change cone orientation
         LookAt(angle + 90f);
 
         Vector2 force = dir * _speed * Time.deltaTime;
         force.y *= 0.5f;
+
         if (_body.velocity.magnitude > 0)
         {
             _animator.SetFloat("xSpeed", _body.velocity.x);
@@ -550,7 +608,7 @@ public class GuardManager : MonoBehaviour
     */
     private void ChangeTarget(GameObject newTarget)
     {
-        _target = newTarget;
+        _pathfindTarget = newTarget;
         ForceResetPathfinding();
     }
 
@@ -560,7 +618,7 @@ public class GuardManager : MonoBehaviour
     */
     private void SetTemporaryTarget(GameObject tmp)
     {
-        _tempTarget = tmp;
+        _tempPathfindTarget = tmp;
         ForceResetPathfinding();
     }
 
@@ -626,7 +684,7 @@ public class GuardManager : MonoBehaviour
     */
     private GameObject FindClosestNode()
     {
-        Node[] nodes = currentRoom.transform.Find("CustomPivot/Nodes").GetComponentsInChildren<Node>();
+        Node[] nodes = _currentRoom.transform.Find("CustomPivot/Nodes").GetComponentsInChildren<Node>();
 
         int closest = -1;
         float closestDist = 10e8f;
@@ -668,6 +726,77 @@ public class GuardManager : MonoBehaviour
             SetAlpha(alpha);
             yield return null;
         }
+    }
+
+    public void CallForHelp()
+    {
+        _currentRoom.guards.ForEach(guard =>
+        {
+            // TODO : ISOMETRIC DISTANCE
+            if (guard == null || guard == this) return;
+            float dst = Vector2.Distance(transform.position, guard.transform.position);
+            Debug.Log("guard is at " + dst);
+            if (dst < 2f)
+            {
+                guard._currentAlert = 0f;
+                Debug.Log("Updating");
+                guard.UpdateAlertStage(true);
+                Debug.Log("New alert " + guard.alertStage.ToString());
+            }
+        });
+    }
+
+    public Animator GetAnimator()
+    {
+        return _animator;
+    }
+
+    public SpriteRenderer GetSpriteRenderer()
+    {
+        return _guardRenderer;
+    }
+
+    public void OnEvent(VisionSystemController.OverlapData context)
+    {
+        if(!context.Target.CompareTag("Targetable")) return;
+        Targetable targetable = context.Target.GetComponent<Targetable>();
+        if (!targetable.IsVisibleByGuard) return;
+        Debug.Log("Begin Overlaping ? " + context.BeginOverlap);
+        if(context.BeginOverlap)
+        {
+            _targets.Add(targetable);
+            if(targetable.targetType == Targetable.TargetType.PLAYER)
+            {
+                currentTarget = targetable;
+            }
+            else if(currentTarget == null || Vector2.Distance(_body.position, targetable.transform.position) < Vector2.Distance(_body.position, currentTarget.transform.position))
+            {
+                currentTarget = targetable;
+            }
+        }
+        else
+        {
+            _targets.Remove(targetable);
+            if(currentTarget == targetable)
+            {
+                currentTarget = FindClosestTarget();
+            }
+        }
+    }
+
+    public Targetable FindClosestTarget()
+    {
+        Targetable targetable = _targets.FirstOrDefault(x => !_ignoredTargets.Contains(x));
+        if(targetable == null) return null;
+        foreach (var target in _targets)
+        {
+            if (_ignoredTargets.Contains(target)) continue;
+            if (Vector2.Distance(_body.position, target.transform.position) < Vector2.Distance(_body.position, currentTarget.transform.position))
+            {
+                currentTarget = target;
+            }
+        }
+        return targetable;
     }
 }
 // CONE VISION
