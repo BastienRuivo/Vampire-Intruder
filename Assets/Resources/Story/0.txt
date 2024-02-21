@@ -1,0 +1,35 @@
+@@@Background Day C 2 Jessika Neutral 0 Elrik Neutral 1
+1 C Prince_Elrik Elrik Neutral 1
+C'est donc toi que l'on appelle Jessika ?\nTu es plus belle que ce que j'imaginais...
+2 S Jessika Jessika Smile 1 Elrik Neutral 0
+Ou... Oui, c'est moi !
+2 C Prince_Elrik Jessika Smile 0 Elrik Laugh 1
+Ha ha, ne soit pas si gênée !
+@@@Appear Ellena Neutral -1
+1 C Prince_Elrik Elrik Upset 1
+Oh... Mais Ellena !\nQue fais-tu là ?
+2 L Ellena Elrik Upset 0 Ellena Upset 1
+Je vois que je gêne... Je m'en vais !
+@@@Disappear Ellena
+1 L Jessika Jessika Smile 1
+Elle est partie...\nJe ne te félicite pas, Elric !
+@@@Background Narration L 0
+@@@Narration Narrateur
+Et c'est ainsi que Jessika rencontra Elric...\nEt qu'Ellena vit qu'Elric ne s'intéressait plus à elle !
+@@@Narration Narrateur
+Jessika aurait cru que celui lui faisait plaisir...\nMais non, Ellena est super vexée !\n Qu'est-ce que le Prince Elrik va bien pouvoir faire ?!
+@@@Background Evening C 2 Jessika Neutral 0 Elrik Neutral 1
+1 C Prince_Elrik Elrik Neutral 1
+Bon... Je vais y aller aussi...
+@@@Disappear Elrik
+@@@Appear Jasper Neutral -1
+@@@Appear Ellena Neutral 1
+1 R Ellena Ellena Laugh 1
+Ouf, il est parti...
+2 S Lord_Jasper Ellena Laugh 0 Jasper Laugh 1
+Ha ha ha ! Bien joué,\nma petite Ellena !
+@@@Background Night C 1 Elrik Upset 0
+@@@SetFrame 1
+1 C Prince_Elrik Elrik Upset 1
+Snif... Je suis seul au monde...
+@@@Next 1
