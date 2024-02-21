@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &6981011263566159946
+--- !u!1001 &1373235175198901770
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -9,29 +9,29 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
-      propertyPath: duration
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
-      propertyPath: reference
-      value: _Vampire_Hunt_Bible
-      objectReference: {fileID: 0}
-    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
-      propertyPath: isMainObjective
+      propertyPath: type
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: afterUse
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: reference
+      value: _ChestToOpen
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: objectivePhrase
-      value: Voler la bible des chasseurs de vampires
+      value: "Volez les indices comprom\xE9tant retenue dans un coffre"
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: replacementSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 73340f7f8bac4ad4a81de9c9816376ae, type: 3}
+      objectReference: {fileID: 21300000, guid: d1b7395fa974bc346841dec21e5fafc5, type: 3}
     - target: {fileID: 2581829258208804590, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: d3a0b3ca33470ae4d8e9f4c14213a90d, type: 3}
+      objectReference: {fileID: 21300000, guid: e001a8476c6b36049b7c4fce7ec79830, type: 3}
     - target: {fileID: 5107042125994788636, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -74,31 +74,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7286355327672963702, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_Size.x
-      value: 0.3512652
+      value: 0.64402163
       objectReference: {fileID: 0}
     - target: {fileID: 7286355327672963702, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_Size.y
-      value: 0.31841794
+      value: 0.45593295
       objectReference: {fileID: 0}
     - target: {fileID: 7286355327672963702, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_Offset.x
-      value: -0.016423643
+      value: -0.005393803
       objectReference: {fileID: 0}
     - target: {fileID: 7286355327672963702, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_Offset.y
-      value: 0.11341129
+      value: 0.12949811
       objectReference: {fileID: 0}
     - target: {fileID: 7286355327672963702, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 1.6
+      value: 1.8285714
       objectReference: {fileID: 0}
     - target: {fileID: 7286355327672963702, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 3.2
+      value: 3.6571429
       objectReference: {fileID: 0}
     - target: {fileID: 8962394357595514180, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: m_Name
-      value: Lectern
+      value: Chest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
