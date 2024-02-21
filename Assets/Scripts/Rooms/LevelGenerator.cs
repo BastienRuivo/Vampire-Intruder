@@ -66,9 +66,17 @@ public class LevelGenerator : Singleton<LevelGenerator>
         stockages = LoadRooms("Rooms/Stockages");
 
         Debug.Log("Halls has " + halls.Length + " rooms");
-        Debug.Log("Treasures has " + halls.Length + " rooms");
-        Debug.Log("Decorations has " + halls.Length + " rooms");
+        Debug.Log("Treasures has " + treasures.Length + " rooms");
         Debug.Log("Corridors has " + corridors.Length + " rooms");
+        Debug.Log("Libraries has " + libraries.Length + " rooms");
+        Debug.Log("Bedrooms has " + bedrooms.Length + " rooms");
+        Debug.Log("Offices has " + offices.Length + " rooms");
+        Debug.Log("Prisons has " + prisons.Length + " rooms");
+        Debug.Log("Livingrooms has " + livingrooms.Length + " rooms");
+        Debug.Log("Churches has " + churches.Length + " rooms");
+        Debug.Log("Stockages has " + stockages.Length + " rooms");
+    
+
 
         filter = new ContactFilter2D();
         filter.SetLayerMask(LayerMask.GetMask("RoomColl"));
@@ -104,7 +112,28 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         //Debug.Log("Fill " + room.name + " with energy " + roomData.energy);
         // If energy is neg, then it's over
-        if (roomData.energy <= 0f) return;
+        if (roomData.energy <= 0f) {
+            roomData.GetConnectors().Where(c => !c.isFilled).ToList().ForEach(c =>
+            {
+                Transform go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? room.transform.Find(_walls) : room.transform.Find(_hiddenWalls);
+                Tilemap tm = go.gameObject.GetComponent<Tilemap>();
+                Tile t;
+                switch (c.dir)
+                {
+                    case Direction.NORTH:
+                        t = replacement[2]; break;
+                    case Direction.EAST:
+                        t = replacement[3]; break;
+                    case Direction.SOUTH:
+                        t = replacement[0]; break;
+                    case Direction.WEST:
+                    default:
+                        t = replacement[1]; break;
+                }
+                tm.SetTile(c.coordOnGrid, t);
+                c.SetActiveState(false);
+            });
+        }
         // For all connectors of the room, try to place somtheing
         roomData.GetConnectors().Where(c => !c.isFilled).ToList().ForEach(c =>
         {
@@ -167,6 +196,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                         roomToFill.Enqueue(instance);
                         generated = true;
                         // Update new instance energy
+                        Debug.Log(roomType.ToString());
                         instance.GetComponent<RoomData>().energy = roomData.energy - RoomData.TypeCost[(int)roomType];
                         break;
                     }

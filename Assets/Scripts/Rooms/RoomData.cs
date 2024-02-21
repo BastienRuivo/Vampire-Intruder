@@ -29,8 +29,20 @@ public class RoomData : MonoBehaviour
         0.1f,
         // CORRIDOR ROOM COST
         0.2f,
-        // DECORATION COST
-        0.1f
+        // LIBRARY ROOM COST
+        0.3f,
+        // BEDROOM ROOM COST
+        0.1f,
+        // OFFICE ROOM COST
+        0.2f,
+        // PRISON ROOM COST
+        0.3f,
+        // LIVINGROOM ROOM COST
+        0.3f,
+        // CHURCH ROOM COST
+        0.1f,
+        // STOCKAGE ROOM COST
+        0.15f,
     };
     /// <summary>
     /// Type of room for procedural connection

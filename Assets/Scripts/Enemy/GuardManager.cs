@@ -550,7 +550,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                 if (node != null)
                 {
                     _directions = node.directionsToLook;
-                    if (node.isPathEnd) isPathReversed = false;
+                    if (node.isPathEnd) isPathReversed = !isPathReversed;
                     ChangeTarget(node.NextTarget(isPathReversed));
                     _currentWaitingTimer = timerWaitingBetweenNodes;
                     _fastNodeWaiting = false;
