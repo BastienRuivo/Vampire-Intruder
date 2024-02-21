@@ -463,15 +463,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   halls: []
   treasures: []
-  decorations: []
   corridors: []
+  libraries: []
+  bedrooms: []
+  offices: []
+  prisons: []
+  livingrooms: []
+  churches: []
+  stockages: []
   replacement:
   - {fileID: 11400000, guid: 4f365380174f3404299a0bc49edac725, type: 2}
   - {fileID: 11400000, guid: 274d6930c9cd82249963f9f44ca3dc59, type: 2}
   - {fileID: 11400000, guid: e3c8d5de2c4797b499092ae9c99efd4d, type: 2}
   - {fileID: 11400000, guid: 2eb1fb4eb747f4a4d847b4e1b573047e, type: 2}
   instanciatedRooms: []
-  startingEnergy: 2
+  startingEnergy: 0.41
 --- !u!1001 &1535210841
 PrefabInstance:
   m_ObjectHideFlags: 0
