@@ -18,10 +18,12 @@ GameObject:
   - component: {fileID: 682142937210105568}
   - component: {fileID: 8246016453338272551}
   - component: {fileID: 5501852411319690400}
+  - component: {fileID: 4725796350781721783}
   - component: {fileID: 8158490158258709371}
+  - component: {fileID: 1522063889718216843}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Player
+  m_TagString: Targetable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,8 +113,7 @@ MonoBehaviour:
   speed: 35
   playerCamera: {fileID: 0}
   speedZoom: 50
-  minZoom: 1
-  maxZoom: 10
+  currentZoom: 0
   directionPerso: 0
 --- !u!95 &5108974979676792213
 Animator:
@@ -247,6 +248,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visionSystemObject: {fileID: 4591153829319014629}
+--- !u!114 &4725796350781721783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5346408450746507161}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57e44231ce5a2c341bd7b00e10e6d75d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visionSystemObject: {fileID: 4591153829319014629}
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &8158490158258709371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,6 +275,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentRoom: {fileID: 0}
+--- !u!114 &1522063889718216843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5346408450746507161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15e78bf3ffd23a4ea2ea54b0d35c2fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetType: 0
 --- !u!1 &5447410217699041504
 GameObject:
   m_ObjectHideFlags: 0

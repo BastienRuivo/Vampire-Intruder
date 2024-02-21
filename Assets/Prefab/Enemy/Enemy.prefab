@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2047177989503012280}
   - component: {fileID: 3858773435294293573}
   - component: {fileID: 2301457930720864282}
+  - component: {fileID: 7592360832701791560}
   m_Layer: 9
   m_Name: Enemy
   m_TagString: Enemy
@@ -135,7 +136,8 @@ MonoBehaviour:
   visionMask:
     serializedVersion: 2
     m_Bits: 64
-  guardVisionSpeed: 3
+  guardVisionSpeed: 2
+  targetableTag: Targetable
   feedbackAnimator: {fileID: 2047237445904502220}
   alertStage: 0
   alertTimer: 2
@@ -150,19 +152,20 @@ MonoBehaviour:
     rat... Ou une chauve-souris ?..."
   seenSomethingToIdleQuote: "Bon, j'ai r\xEAv\xE9... J'ai vraiment besoin de dormir,
     moi... Je travaille trop !"
-  defaultSpeed: 500
+  defaultSpeed: 400
   nextPointDistance: 0.25
   timerRefresh: 2
-  timerRefreshPlayer: 0.1
+  timerRefreshTargetable: 0.2
   timerWaitingBetweenNodes: 3
   timerWaitingTempNodes: 1.5
   caughtDistance: 0.5
   nodePrefab: {fileID: 6393544510777605423, guid: 37de456b571d38b4ab66cfbde9b7c9d3, type: 3}
-  distancePercentageSuspicious: 0.66
-  spotSpeed: 2500
+  distancePercentageSuspicious: 0
+  spotSpeed: 2000
   camSpeed: 10
   _spotSound: {fileID: 8300000, guid: d10610c5cc10b1b43b578250baab23d6, type: 3}
   visionCone: {fileID: 2976086864853864014}
+  currentTarget: {fileID: 0}
   isPathReversed: 0
   traceResolution: 128
   glowEffect: {fileID: 0}
@@ -281,6 +284,19 @@ MonoBehaviour:
   activeAtStart: 0
   render: {fileID: 6180498148441204807}
   mat: {fileID: 2100000, guid: dcaee032ea75bea4d958dc891846c5c9, type: 2}
+--- !u!114 &7592360832701791560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2671610580363259081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15e78bf3ffd23a4ea2ea54b0d35c2fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetType: 1
 --- !u!1 &5541329228386690723
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,7 +521,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5462318061661815336, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: targetEntityTag
-      value: Player
+      value: Targetable
       objectReference: {fileID: 0}
     - target: {fileID: 7015659164972719840, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: m_Layer
