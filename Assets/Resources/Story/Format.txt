@@ -1,0 +1,33 @@
+Background:
+@@@Background backgroundName boxID NumberCharacters characterName expressionName characterPosition...
+
+Character apparition:
+@@@Appear characterName expressionName characterPosition
+
+Character disparition:
+@@@Disappear characterName
+
+Narration:
+@@@Narration name_name
+blablabla\nblabla\nbla
+
+Frame:
+@@@SetFrame frameID
+
+Dialog:
+NumberCharacters boxID name_name characterName expressionName isSpeaking...
+blablabla\nblabla
+
+Choice:
+@@@Choice blabla_blabla characterName expressionName NumberChoice nextDialogName JessikaLove ElricLove Phrase_phrase...
+
+Next Dialog:
+@@@Next nextDialogName
+
+Next Scene:
+@@@Scene runNumber levelNumber
+
+Characters: Jessika, Elrik, Jasper, Ellena
+Backgrounds: Narration, Day, Evening, Night
+Expressions: Neutral, Smile, Laugh, Upset, Angry, Surprise, Fear, Tears, Cry, Flush
+Boxes: Left, Right, Center, Shout, Think

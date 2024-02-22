@@ -27,4 +27,10 @@ public class PlayerState : Singleton<PlayerState>
     {
         return gameObject;
     }
+
+    public PlayerController GetPlayerController()
+    {
+        return GetComponent<PlayerController>();
+    }
+
 }

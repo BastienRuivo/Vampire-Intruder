@@ -1,0 +1,8 @@
+@@@Background Day C 2 Jessika Neutral 0 Elrik Neutral 0
+1 C Prince_Elric Elrik Neutral 1
+Ha ha ha, nous y voilà !\nMaintenant, choisis !
+1 T Jessika Elrik Neutral 0
+Oh là là, il me met la pression ce grand dadet, j'aime pas ça...
+1 C Prince_Elric Elrik Smile 1
+Alors, alors ?
+@@@Choice Mmmh..._Que_devrais-je_répondre_? Elrik Smile 4 2 10 5 Oh_Elric,_tu_me_plais_tant... 3 -5 -10 Ah_non,_va_t'en_! 2 10 10 Ha_ha_ha,_oui_!! 3 20 20 Jamais_de_la_vie,_manant!

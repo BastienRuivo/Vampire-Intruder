@@ -1,0 +1,7 @@
+@@@Disappear Elrik
+@@@Appear Elrik Neutral 0
+1 C Prince_Elrik Elrik Laugh 1
+Oh ho ho ho, ça alors !
+0 C Prince_Elrik
+Mais alors, que veux-tu faire ?
+@@@Choice Oh_là_là,_pourrais-je...? Elrik Smile 2 0 10 5 Viens,_on_baise_! 3 -5 -10 Oh_,_je_n'ose_pas_!

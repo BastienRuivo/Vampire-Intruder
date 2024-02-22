@@ -11,7 +11,13 @@ public class RoomData : MonoBehaviour
         HALL,
         TREASURE,
         CORRIDOR,
-        DECORATION,
+        LIBRARY,
+        BEDROOM,
+        OFFICE,
+        PRISON,
+        LIVINGROOM,
+        CHURCH,
+        STOCKAGE,
         NOONE
     }
 
@@ -67,6 +73,7 @@ public class RoomData : MonoBehaviour
     private RoomData _collider;
     private RoomConnector[] _connectors;
     public float energy;
+    public List<GuardManager> guards;
 
     private void Awake()
     {

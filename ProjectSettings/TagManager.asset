@@ -15,6 +15,7 @@ TagManager:
   - Node
   - WallChanger
   - Exit
+  - Targetable
   layers:
   - Default
   - TransparentFX
@@ -25,10 +26,12 @@ TagManager:
   - BlockingWalls
   - TinyWalls
   - RoomColl
-  - 
-  - 
-  - 
-  - 
+  - Enemy
+  - StoryText
+  - StoryUI
+  - StoryEffect
+  - StoryCharacter
+  - StoryBackground
   - 
   - 
   - 

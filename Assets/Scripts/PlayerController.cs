@@ -15,6 +15,13 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 {
     public GameObject visionObject;
     private VisionConeController _coneController;
+
+    enum VisionBehavior
+    {
+        KEYBOARD,
+        MOUSE,
+        TARGET
+    }
     
     [Header("Speed")]
     public float speed = 20f;
@@ -22,8 +29,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     [Header("Camera")]
     public Camera playerCamera;
     public float speedZoom = 10f;
-    public float minZoom = 1f;
-    public float maxZoom = 10f;
+    [Range(0.1f, 10f)] public float currentZoom;
 
     // private variables
     private Animator animator;
@@ -50,14 +56,14 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 
     public void BindVisionToMouse()
     {
-        _coneBehaviors[0].enabled = false;
-        _coneBehaviors[1].enabled = true;
+        _coneBehaviors[(int)VisionBehavior.KEYBOARD].enabled = false;
+        _coneBehaviors[(int)VisionBehavior.MOUSE].enabled = true;
     }
     
     public void UnbindVisionFromMouse()
     {
-        _coneBehaviors[0].enabled = true;
-        _coneBehaviors[1].enabled = false;
+        _coneBehaviors[(int)VisionBehavior.KEYBOARD].enabled = true;
+        _coneBehaviors[(int)VisionBehavior.MOUSE].enabled = false;
     }
 
     private void Awake()
@@ -87,7 +93,10 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
-        _ascRef.BindAbility("TP", KeyCode.E);
+        _ascRef.BindAbility("Blind", KeyCode.E);
+
+
+        playerCamera.orthographicSize = currentZoom;
     }
 
     // Start is called before the first frame update
@@ -107,8 +116,8 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         {
             return;
         }
-        float dzoom = speedZoom * Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 10.0f;
-        playerCamera.orthographicSize = Mathf.Clamp(playerCamera.orthographicSize - dzoom, minZoom, maxZoom);
+        playerCamera.orthographicSize = currentZoom;
+        //float dzoom = speedZoom * Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 10.0f;
     }
 
     void Move()
@@ -134,8 +143,12 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         if(rigidBody.velocity.magnitude > 0)
         {
             animator.SetInteger("state", (int)State.Walking);
-            animator.SetFloat("xSpeed", rigidBody.velocity.x);
-            animator.SetFloat("ySpeed", rigidBody.velocity.y);
+            Vector2 velocityMag = rigidBody.velocity;
+            velocityMag.y *= 2f;
+            velocityMag = velocityMag.normalized;
+
+            animator.SetFloat("xSpeed", velocityMag.x);
+            animator.SetFloat("ySpeed", velocityMag.y);
         }
         else
         {
@@ -147,15 +160,19 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     void Update()
     {
         ZoomCamera();
-        if (Input.GetMouseButtonDown((int)MouseButton.Right))
+        if(_ascRef.GetInputLock().IsOpened())
         {
-            BindVisionToMouse();
-        }
+            if (Input.GetMouseButtonDown((int)MouseButton.Right))
+            {
+                BindVisionToMouse();
+            }
 
-        if (Input.GetMouseButtonUp((int)MouseButton.Right))
-        {
-            UnbindVisionFromMouse();
+            if (Input.GetMouseButtonUp((int)MouseButton.Right))
+            {
+                UnbindVisionFromMouse();
+            }
         }
+       
     }
 
     private void FixedUpdate()
@@ -181,5 +198,19 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         {
             context.Target.GetComponent<GuardManager>().ExitPlayerSight();
         }
+    }
+
+    public void LockVision(Vector3 target)
+    {
+        _coneBehaviors[(int)VisionBehavior.KEYBOARD].enabled = false;
+        _coneBehaviors[(int)VisionBehavior.MOUSE].enabled = false;
+        _coneBehaviors[(int)VisionBehavior.TARGET].enabled = true;
+    }
+
+    public void UnlockVision()
+    {
+        _coneBehaviors[(int)VisionBehavior.KEYBOARD].enabled = false;
+        _coneBehaviors[(int)VisionBehavior.MOUSE].enabled = false;
+        _coneBehaviors[(int)VisionBehavior.TARGET].enabled = false;
     }
 }

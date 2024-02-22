@@ -8,10 +8,17 @@ using UnityEngine.Tilemaps;
 
 public class LevelGenerator : Singleton<LevelGenerator>
 {
+    
     public GameObject[] halls;
     public GameObject[] treasures;
-    public GameObject[] decorations;
     public GameObject[] corridors;
+    public GameObject[] libraries;
+    public GameObject[] bedrooms;
+    public GameObject[] offices;
+    public GameObject[] prisons;
+    public GameObject[] livingrooms;
+    public GameObject[] churches;
+    public GameObject[] stockages;
 
     public Tile[] replacement;
 
@@ -46,10 +53,17 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// </summary>
     public void LoadData()
     {
+        
         halls = LoadRooms("Rooms/Halls");
         treasures = LoadRooms("Rooms/Treasures");
-        decorations = LoadRooms("Rooms/Decorations");
         corridors = LoadRooms("Rooms/Corridors");
+        libraries = LoadRooms("Rooms/Libraries");
+        bedrooms = LoadRooms("Rooms/Bedrooms");
+        offices = LoadRooms("Rooms/Offices");
+        prisons = LoadRooms("Rooms/Prisons");
+        livingrooms = LoadRooms("Rooms/Livingrooms");
+        churches = LoadRooms("Rooms/Churches");
+        stockages = LoadRooms("Rooms/Stockages");
 
         Debug.Log("Halls has " + halls.Length + " rooms");
         Debug.Log("Treasures has " + halls.Length + " rooms");
@@ -286,9 +300,16 @@ public class LevelGenerator : Singleton<LevelGenerator>
         GameObject prefab = null;
         switch (type)
         {
+            case RoomData.Type.HALL: prefab = RandomOnArray(halls, connector.dir, forbidden); break;
             case RoomData.Type.TREASURE: prefab = RandomOnArray(treasures, connector.dir, forbidden); break;
-            case RoomData.Type.DECORATION: prefab = RandomOnArray(decorations, connector.dir, forbidden); break;
-            case RoomData.Type.CORRIDOR: prefab =  RandomOnArray(corridors, connector.dir, forbidden); break;
+            case RoomData.Type.CORRIDOR: prefab = RandomOnArray(corridors, connector.dir, forbidden); break;
+            case RoomData.Type.LIBRARY: prefab = RandomOnArray(libraries, connector.dir, forbidden); break;
+            case RoomData.Type.BEDROOM: prefab = RandomOnArray(bedrooms, connector.dir, forbidden); break;
+            case RoomData.Type.OFFICE: prefab = RandomOnArray(offices, connector.dir, forbidden); break;
+            case RoomData.Type.PRISON: prefab = RandomOnArray(prisons, connector.dir, forbidden); break;
+            case RoomData.Type.LIVINGROOM: prefab = RandomOnArray(livingrooms, connector.dir, forbidden); break;
+            case RoomData.Type.CHURCH: prefab = RandomOnArray(churches, connector.dir, forbidden); break;
+            case RoomData.Type.STOCKAGE: prefab = RandomOnArray(stockages, connector.dir, forbidden); break;
             default: Debug.Log("Achievement Get :: How did we get here ? Level Type Gen."); break;
         }
         if (prefab == null) return null;

@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 7192751528730435816}
   - component: {fileID: 4392471080563455129}
+  - component: {fileID: 9058328785464890695}
   m_Layer: 0
   m_Name: PlayerLure
-  m_TagString: Untagged
+  m_TagString: Targetable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84,3 +85,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &9058328785464890695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3382239988032080306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15e78bf3ffd23a4ea2ea54b0d35c2fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetType: 2
