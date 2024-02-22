@@ -190,11 +190,9 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 
     public void OnEvent(VisionSystemController.OverlapData context)
     {
-        Debug.Log("Tag ? " + context.Target.tag);
         if (!context.Target.CompareTag("Targetable")) return;
         Targetable target = context.Target.GetComponent<Targetable>();
         if (!target.IsVisibleByPlayer) return;
-        Debug.Log("Is visible by player ? " + target.targetType.ToString());
         GuardManager guard = target.GetComponent<GuardManager>();
         if (context.BeginOverlap)
         {
