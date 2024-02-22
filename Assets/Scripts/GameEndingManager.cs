@@ -44,7 +44,7 @@ public class GameEndingManager : MonoBehaviour
         {
             textObj.text = failureMessage;
             textObj.color = Color.red;
-            AppState.GetInstance().nbObjectifSkip++;
+            //AppState.GetInstance().nbObjectifSkip++;
         }
         victoryUI.SetActive(true);
         Time.timeScale = 0;
@@ -62,7 +62,7 @@ public class GameEndingManager : MonoBehaviour
 
         gameOverUI.SetActive(true);
         Time.timeScale = 0;
-        AppState.GetInstance().vie--;
+        //AppState.GetInstance().vie--;
     }
 
     public void nextLevelButton(){

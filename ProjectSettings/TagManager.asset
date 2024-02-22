@@ -27,9 +27,11 @@ TagManager:
   - TinyWalls
   - RoomColl
   - Enemy
-  - 
-  - 
-  - 
+  - StoryText
+  - StoryUI
+  - StoryEffect
+  - StoryCharacter
+  - StoryBackground
   - 
   - 
   - 
