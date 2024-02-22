@@ -90,7 +90,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _ObserverFieldOfView: 2.443461
-    - _ObserverMinAngle: 5.846853
+    - _ObserverMinAngle: 3.4906585
     - _ObserverViewDistance: 5.5
     - _OcclusionStrength: 1
     - _Parallax: 0.02
@@ -109,7 +109,7 @@ Material:
     - _ColorDetected: {r: 1, g: 0, b: 0, a: 0}
     - _ColorIdle: {r: 1, g: 0.9120868, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ObserverPosition: {r: -7.5485377, g: -7.3628917, b: 0, a: 0}
+    - _ObserverPosition: {r: 4.8456955, g: -5.303367, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &5545693062330464122
 MonoBehaviour:

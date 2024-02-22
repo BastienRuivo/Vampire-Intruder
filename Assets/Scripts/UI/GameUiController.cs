@@ -6,6 +6,7 @@ using Interfaces;
 using JetBrains.Annotations;
 using Systems.Ability;
 using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -13,6 +14,7 @@ using UnityEngine.UI;
 public class GameUiController : MonoBehaviour, 
     IEventObserver<TimeProgression>, IEventObserver<GameObject>, IEventObserver<GameController.UserMessageData>
 {
+    public GameObject jessika;
     [Header("Jessika's Quotes")] 
     public Color jessikaQuotationColor;
     public Color guardsQuotationColor;
@@ -26,6 +28,11 @@ public class GameUiController : MonoBehaviour,
     public GameObject objectivesPanel;
     public GameObject quotationTextBox;
     public GameObject levelLoadingPanel;
+    public GameObject primaryAbilityIndicator;
+    public GameObject secondaryAbilityIndicator;
+    public GameObject abilitySelector;
+    public GameObject abilitySelectorHintImage;
+    public GameObject abilitySelectorHintText;
 
     [Header("Objectives")]
     public float upSpeed;
@@ -41,6 +48,14 @@ public class GameUiController : MonoBehaviour,
     private bool _isObjectiveDisplayed;
     private IEnumerator _objectiveDisplayCoroutine;
     private IEnumerator _levelCompleteFade;
+
+    private AbilitySystemComponent _playerASC;
+    private GameUIAbilityIconController _abilityAIndicator;
+    private GameUIAbilityIconController _abilityEIndicator;
+    private GameUIAbilitySelectorController _abilitySelector;
+    
+    private readonly SmoothScalarValue _abilitySelectorOpacity = new (0);
+    private bool _hasLock = false;
 
     private struct MessageQueueElement
     {
@@ -64,12 +79,30 @@ public class GameUiController : MonoBehaviour,
     [CanBeNull] private IEnumerator _currentDialogRoutine = null;
     private MessageQueueElement _currentDialog;
 
+    private void Awake()
+    {
+        _playerASC = jessika.GetComponent<AbilitySystemComponent>();
+        _abilityAIndicator = primaryAbilityIndicator.GetComponent<GameUIAbilityIconController>();
+        _abilityEIndicator = secondaryAbilityIndicator.GetComponent<GameUIAbilityIconController>();
+        _abilitySelector = abilitySelector.GetComponent<GameUIAbilitySelectorController>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         GameController.GetGameMode().SubscribeToGameProgressionEvent(this);
         GameController.GetGameMode().SubscribeToGameUserMessageEvent(this);
-        PlayerController.GetPlayer().GetComponent<AbilitySystemComponent>().SubscribeToStatChanges(this);
+        _playerASC.SubscribeToStatChanges(this);
+        
+        _abilityAIndicator.SetAbilitySystemComponent(_playerASC);
+        _abilityAIndicator.SetAbilityTag(_playerASC.GetAbilityByBinding(KeyCode.Q));
+        _abilityEIndicator.SetAbilitySystemComponent(_playerASC);
+        _abilityEIndicator.SetAbilityTag(_playerASC.GetAbilityByBinding(KeyCode.E));
+
+        _abilitySelector.SetAbilitySystemComponent(_playerASC);
+        _abilitySelector.UpdateAbilityUIBase();
+        _abilitySelector.SetOpacity(0);
+        
         _objectiveDownY = objectivesPanel.transform.localPosition.y;
         _objectiveUpY = _objectiveDownY * objectivesHeightOnScreen;
         _isObjectiveDisplayed = false;
@@ -93,7 +126,36 @@ public class GameUiController : MonoBehaviour,
             StartCoroutine(_objectiveDisplayCoroutine);
         }
 
+        _abilitySelector.SetOpacity(_abilitySelectorOpacity.UpdateGetValue());
+        _abilityEIndicator.SetOpacity(1 - _abilitySelectorOpacity.GetValue());
+        
+        TextMeshProUGUI hintText = abilitySelectorHintText.GetComponent<TextMeshProUGUI>();
+        Color hintTxtCol = hintText.color;
+        hintTxtCol.a = 1 - _abilitySelectorOpacity.GetValue();
+        hintText.color = hintTxtCol;
+            
+        Image hintImg = abilitySelectorHintImage.GetComponent<Image>();
+        Color hintImgCol = hintImg.color;
+        hintImgCol.a = 1 - _abilitySelectorOpacity.GetValue();
+        hintImg.color = hintImgCol;
+        
+        if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        {
+            if (!_hasLock)
+            {
+                _abilitySelectorOpacity.RetargetValue(1);
+                _playerASC.GetInputLock().Take();
+                _hasLock = true;
+            }
+        }
 
+        if (_hasLock && Input.GetMouseButtonDown(0))
+        {
+            _abilitySelectorOpacity.RetargetValue(0);
+            _playerASC.GetInputLock().Release();
+            _abilityEIndicator.SetAbilityTag(_playerASC.GetAbilityByBinding(KeyCode.E));
+            _hasLock = false;
+        }
     }
 
     IEnumerator DisplayObjective()
@@ -237,7 +299,7 @@ public class GameUiController : MonoBehaviour,
         float blood = ascRef.QueryStat("Blood");
         float maxBlood = ascRef.QueryStat("BloodMax");
         float bloodRatio = blood / maxBlood;
-        Debug.Log("Blood (L + ) ratio is " + bloodRatio);
+        //Debug.Log("Blood (L + ) ratio is " + bloodRatio);
         
         bloodRatio = bloodRatio > 0? bloodRatio : 0.0f;
         

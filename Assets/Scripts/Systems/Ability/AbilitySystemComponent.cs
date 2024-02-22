@@ -178,6 +178,18 @@ namespace Systems.Ability
         }
         
         /// <param name="name">name/tag associated with this stat.</param>
+        /// <returns>The base cooldown of an ability.</returns>
+        public float QueryAbilityCooldownBase(string name)
+        {
+            if (!_abilities.ContainsKey(name))
+            {
+                Debug.LogError($"Attempted to query state data from unknown ability with name \"{name}\"");
+                return -1; //TODO throw exception here
+            }
+            return _abilities[name].GetAbility().GetCooldown();
+        }
+        
+        /// <param name="name">name/tag associated with this stat.</param>
         /// <returns>the remaining charges if the ability is a consumable, else returns -1.</returns>
         public int QueryAbilityCharges(string name)
         {
@@ -207,6 +219,43 @@ namespace Systems.Ability
             
             return 0.0f;
         }
+        
+        /// <param name="name">name/tag associated with this stat.</param>
+        /// <returns>The icon of an ability.</returns>
+        public string QueryAbilityUIIcon(string name)
+        {
+            if (!_abilities.ContainsKey(name))
+            {
+                Debug.LogError($"Attempted to query UI data from unknown ability with name \"{name}\"");
+                return ""; //TODO throw exception here
+            }
+            return _abilities[name].GetAbility().GetIcon();
+        }
+        
+        /// <param name="name">name/tag associated with this stat.</param>
+        /// <returns>The UI name of an ability.</returns>
+        public string QueryAbilityUIName(string name)
+        {
+            if (!_abilities.ContainsKey(name))
+            {
+                Debug.LogError($"Attempted to query state UI from unknown ability with name \"{name}\"");
+                return ""; //TODO throw exception here
+            }
+            return _abilities[name].GetAbility().GetUIName();
+        }
+        
+        /// <param name="name">name/tag associated with this stat.</param>
+        /// <returns>The UI description of an ability.</returns>
+        public string QueryAbilityUIDescription(string name)
+        {
+            if (!_abilities.ContainsKey(name))
+            {
+                Debug.LogError($"Attempted to query state UI from unknown ability with name \"{name}\"");
+                return ""; //TODO throw exception here
+            }
+            return _abilities[name].GetAbility().GetDescription();
+        }
+
 
         /// <summary>
         /// Grand an ability, given by its class, to the game object.
@@ -289,6 +338,16 @@ namespace Systems.Ability
             _abilities[_keyBindings[code]].Bind(KeyCode.None);
             
             _keyBindings.Remove(code);
+        }
+
+        public string GetAbilityByBinding(KeyCode code)
+        {
+            if (_keyBindings.TryGetValue(code, out var binding))
+            {
+                return binding;
+            }
+
+            return null;
         }
         
         /// <returns>returns a set of name with all the abilities granted to the game object.</returns>

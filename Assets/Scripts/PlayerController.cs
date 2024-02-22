@@ -1,4 +1,5 @@
 using System;
+using DefaultNamespace;
 using Interfaces;
 using Systems.Ability;
 using Systems.Ability.Abilities;
@@ -76,11 +77,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _coneBehaviors = GetComponents<InputToVisionSystemBehavior>();
         
         visionObject.GetComponent<VisionSystemController>().OnOverlapChanged.Subscribe(this);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
+        
         //Defines statistics the ASC will work with.
         _ascRef.DefineStat("Blood", baseValue:100.0f, lowerRange:-15.0f);
         _ascRef.DefineStat("BloodMax", baseValue:100.0f, lowerRange:1.0f);
@@ -100,6 +97,12 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 
 
         playerCamera.orthographicSize = currentZoom;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
     }
 
     public VisionConeController GetVision()

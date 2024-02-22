@@ -16,6 +16,10 @@ namespace Systems.Ability.Abilities
             RefundOnCancel = true;
 
             ApplyCostsOnTrigger = false;
+            
+            IconPath = "Graphics/Sprite/UI/T_AbilityIcon_TP";
+            UIName = "Téléportation";
+            AbilityDescription = ""; //todo description
         }
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {

@@ -192,6 +192,10 @@ PrefabInstance:
       value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: currentZoom
+      value: 2.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 1778883379}
@@ -221,6 +225,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 278151730553816329, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 1136042326454276427, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: jessika
+      value: 
+      objectReference: {fileID: 1420147015}
     - target: {fileID: 1213378312484885871, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalPosition.z
       value: 1
@@ -308,6 +320,10 @@ PrefabInstance:
     - target: {fileID: 2915469743349763609, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3304333379299717837, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 170
       objectReference: {fileID: 0}
     - target: {fileID: 3384381392872209346, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_Name
@@ -463,15 +479,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   halls: []
   treasures: []
-  decorations: []
   corridors: []
+  libraries: []
+  bedrooms: []
+  offices: []
+  prisons: []
+  livingrooms: []
+  churches: []
+  stockages: []
   replacement:
   - {fileID: 11400000, guid: 4f365380174f3404299a0bc49edac725, type: 2}
   - {fileID: 11400000, guid: 274d6930c9cd82249963f9f44ca3dc59, type: 2}
   - {fileID: 11400000, guid: e3c8d5de2c4797b499092ae9c99efd4d, type: 2}
   - {fileID: 11400000, guid: 2eb1fb4eb747f4a4d847b4e1b573047e, type: 2}
   instanciatedRooms: []
-  startingEnergy: 2
+  startingEnergy: 0.5
 --- !u!1001 &1535210841
 PrefabInstance:
   m_ObjectHideFlags: 0

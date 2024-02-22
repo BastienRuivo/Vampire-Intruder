@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-711508057611512696
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 7
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -20,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_UI_BloodBar
-  m_Shader: {fileID: -6465566751694194690, guid: c80bf6f84b8e98445be990f6ec6dbd98, type: 3}
+  m_Name: M_UI_BottomScreenShadow_Half
+  m_Shader: {fileID: -6465566751694194690, guid: ce9c89f62f3e3724e873b145fd9e4d30, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -72,30 +59,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_6e0f26f7df654ae29b4e0da4c59b500a_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_8ad0486ddd3a407b8000ec1198f782d5_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_93e0f8eb68c34d04987323e2e1a03c2d_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_990b20c701ea41dbb3d77fa3d66814cb_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_a60ef7e01e5241c9aa2217642fb32b9c_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_cee4958f31e249deb83a0a84ccbb1a02_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 6a62fa4b3616e854d80b8720b709b63d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -112,25 +75,18 @@ Material:
     m_Floats:
     - _BUILTIN_QueueControl: 0
     - _BUILTIN_QueueOffset: 0
-    - _BarThickness: 4
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EffectTileSIze: 80
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Opacity: 1
+    - _Opacity: 0.75
     - _Parallax: 0.02
-    - _Patern1Speed: 0.27
-    - _Patern1Tiling: 0.65
-    - _Patern2Speed: 0.047
-    - _Patern2Tiling: 0.377
-    - _Progression: 0.875
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SmoothnessTextureChannel: 0
@@ -139,17 +95,23 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BarColor: {r: 0.9622642, g: 0.25498807, b: 0.21605544, a: 0}
-    - _BarColorLow: {r: 0.11698109, g: 0.0542839, b: 0.02008543, a: 1}
-    - _BarSize: {r: 200, g: 30, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GainColor: {r: 0, g: 0, b: 0, a: 0}
-    - _LooseColor: {r: 0, g: 0, b: 0, a: 0}
-    - _Patern1Direction: {r: 0.95, g: -0.1, b: 0, a: 0}
-    - _Patern2Direction: {r: 0.1, g: 0.95, b: 0, a: 0}
   m_BuildTextureStacks: []
---- !u!114 &1461880419626206083
+--- !u!114 &3256594458876185672
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!114 &7619616451463260778
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

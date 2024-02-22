@@ -18,6 +18,12 @@ namespace Systems.Ability
 
         protected float Cooldown = -1.0f;
 
+        protected string IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Dummy";
+
+        protected string UIName = "Name me";
+
+        protected string AbilityDescription = "You were supposed to be the chosen one, to bring information to the player, not leave him in darkness.";
+
         /// <summary>
         /// Create a game object instance of a prefab from resource path as a resource of this ability.
         /// Resources will be automatically cleanup up by the ability system at the end of this ability
@@ -102,6 +108,21 @@ namespace Systems.Ability
         public float GetCooldown()
         {
             return Cooldown;
+        }
+
+        public string GetIcon()
+        {
+            return IconPath;
+        }
+
+        public string GetUIName()
+        {
+            return UIName;
+        }
+
+        public string GetDescription()
+        {
+            return AbilityDescription;
         }
         
         /// <summary>
