@@ -136,6 +136,14 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2487885219397157561, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2487885219397157561, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2487885219397157561, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -176,16 +184,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2648584114762012359, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: fov
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 2648584114762012359, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: traceCount
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 2648584114762012359, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: visionDecal
       value: 
       objectReference: {fileID: 1323723674}
     - target: {fileID: 4057089643898844632, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: m_Size.x
-      value: 0.85
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 4057089643898844632, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: m_Size.y
-      value: 0.85
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4057089643898844632, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: m_Offset.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: speed
@@ -319,7 +339,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6314951935213739636, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6584938855459847236, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -396,7 +416,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
       propertyPath: nbObjectives
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
       propertyPath: rooms.Array.data[0]
@@ -408,7 +428,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
       propertyPath: mainObjectiveReference
-      value: _Vampire_Hunt_Bible
+      value: _bookShelf
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -485,7 +505,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e3c8d5de2c4797b499092ae9c99efd4d, type: 2}
   - {fileID: 11400000, guid: 2eb1fb4eb747f4a4d847b4e1b573047e, type: 2}
   instanciatedRooms: []
-  startingEnergy: 0.21
+  startingEnergy: 0.41
 --- !u!1001 &1535210841
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -753,6 +773,18 @@ PrefabInstance:
     - target: {fileID: 8227247970801157163, guid: 43daeebd7af71b64eb3c4a7493fc604b, type: 3}
       propertyPath: showGraphs
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8227247970801157163, guid: 43daeebd7af71b64eb3c4a7493fc604b, type: 3}
+      propertyPath: maxFrameTime
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8227247970801157163, guid: 43daeebd7af71b64eb3c4a7493fc604b, type: 3}
+      propertyPath: logPathResults
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8227247970801157163, guid: 43daeebd7af71b64eb3c4a7493fc604b, type: 3}
+      propertyPath: colorSettings._SolidColor.a
+      value: 0.3529412
       objectReference: {fileID: 0}
     - target: {fileID: 8820591230956964755, guid: 43daeebd7af71b64eb3c4a7493fc604b, type: 3}
       propertyPath: m_LocalPosition.x

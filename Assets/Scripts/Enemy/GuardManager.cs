@@ -504,7 +504,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     {
         if (_currentPath == null)
         {
-            Debug.Log("Current path is null !!");
             return;
         }
 
