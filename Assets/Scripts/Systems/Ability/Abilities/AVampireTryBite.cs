@@ -12,6 +12,7 @@ namespace Systems.Ability.Abilities
         public AVampireTryBite()
         {
             Cooldown = 0.5f;
+            IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Bite";
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)

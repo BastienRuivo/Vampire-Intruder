@@ -321,6 +321,7 @@ MonoBehaviour:
   cooldownIndicator: {fileID: 5100022742979968142}
   cooldownTextIndicator: {fileID: 5610435188181146208}
   keyBindingIndicator: {fileID: 94950868227641303}
+  showKeyBinding: 1
 --- !u!1 &5610435188181146208
 GameObject:
   m_ObjectHideFlags: 0

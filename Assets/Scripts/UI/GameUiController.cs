@@ -52,6 +52,8 @@ public class GameUiController : MonoBehaviour,
     private GameUIAbilityIconController _abilityEIndicator;
     private GameUIAbilitySelectorController _abilitySelector;
     
+    private readonly SmoothScalarValue _abilitySelectorOpacity = new (0);
+    private bool _hasLock = false;
 
     private struct MessageQueueElement
     {
@@ -97,6 +99,7 @@ public class GameUiController : MonoBehaviour,
 
         _abilitySelector.SetAbilitySystemComponent(_playerASC);
         _abilitySelector.UpdateAbilityUIBase();
+        _abilitySelector.SetOpacity(0);
         
         _objectiveDownY = objectivesPanel.transform.localPosition.y;
         _objectiveUpY = _objectiveDownY * objectivesHeightOnScreen;
@@ -121,7 +124,22 @@ public class GameUiController : MonoBehaviour,
             StartCoroutine(_objectiveDisplayCoroutine);
         }
 
+        _abilitySelector.SetOpacity(_abilitySelectorOpacity.UpdateGetValue());
+        _abilityEIndicator.SetOpacity(1 - _abilitySelectorOpacity.GetValue());
+        
+        if (!_hasLock && Input.GetAxis("Mouse ScrollWheel") != 0)
+        {
+            _abilitySelectorOpacity.RetargetValue(1);
+            _playerASC.GetInputLock().Take();
+            _hasLock = true;
+        }
 
+        if (_hasLock && Input.GetMouseButtonDown(0))
+        {
+            _abilitySelectorOpacity.RetargetValue(0);
+            _playerASC.GetInputLock().Release();
+            _hasLock = false;
+        }
     }
 
     IEnumerator DisplayObjective()

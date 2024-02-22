@@ -62,7 +62,7 @@ namespace UI
             Image cooldownIcon = cooldownIndicator.GetComponent<Image>();
             Color cdCol = cooldownIcon.color;
             cdCol.a = alpha;
-            abilityIcon.color = cdCol;
+            cooldownIcon.color = cdCol;
 
             TextMeshProUGUI cooldownText = cooldownTextIndicator.GetComponent<TextMeshProUGUI>();
             Color cdTxtCol = cooldownText.color;
@@ -79,11 +79,17 @@ namespace UI
         {
             if (highlight)
             {
-                GetComponent<Image>().color =Color.yellow;
+                Image t = GetComponent<Image>();
+                Color col = Color.yellow;
+                col.a = t.color.a;
+                t.color = col;
             }
             else
             {
-                GetComponent<Image>().color =Color.black;
+                Image t = GetComponent<Image>();
+                Color col = Color.black;
+                col.a = t.color.a;
+                t.color = col;
             }
         }
     

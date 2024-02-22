@@ -25,10 +25,16 @@ namespace Systems.Ability.Abilities
             //Specify if costs should automatically applied by the ability when triggered
             //ApplyCostsOnTrigger = false;  //true by default, abilities costs will be apply at the end instead,
                                             //or manually using the CommitAbility() function.
+                                            
+            IconPath = "Graphics/Sprite/UI/T_AbilityIcon_BloodSupply";
+            UIName = "Poche de sang";
+            AbilityDescription = "";
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
+            GameController.GetGameMode().MessageToUser(new GameController.UserMessageData(GameController.UserMessageData.MessageToUserSenderType.Player, 
+                "Pensez a donnez votre sang."));
             yield return null;
         }
 

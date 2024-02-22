@@ -24,6 +24,7 @@ public class GameUIAbilitySelectorController : MonoBehaviour
     private string[] _abilities;
     private AbilitySystemComponent _ASC;
     private uint _abilityIndex = 0;
+    private static readonly int Opacity = Shader.PropertyToID("_Opacity");
 
     public void SetAbilitySystemComponent(AbilitySystemComponent asc)
     {
@@ -67,13 +68,49 @@ public class GameUIAbilitySelectorController : MonoBehaviour
 
     public void SetOpacity(float alpha)
     {
-
         for (uint i = 0; i < _abilities.Length; i++)
         {
             abilitiesIcons[i].GetComponent<GameUIAbilityIconController>().SetOpacity(alpha);
         }
         
+        Image img;
+        TextMeshProUGUI txt;
+        Color col;
         
+        img = background[0].GetComponent<Image>();
+        col = img.color;
+        col.a = alpha * 0.75f;
+        img.color = col;
+
+        for (uint i = 1; i < background.Length; i++)
+        {
+            background[i].GetComponent<Image>().material.SetFloat(Opacity, alpha * 0.75f);
+        }
+
+        img = abilityImageIcon.GetComponent<Image>();
+        col = img.color;
+        col.a = alpha;
+        img.color = col;
+
+        txt = abilityName.GetComponent<TextMeshProUGUI>();
+        col = txt.color;
+        col.a = alpha;
+        txt.color = col;
+        
+        txt = abilityBloodCost.GetComponent<TextMeshProUGUI>();
+        col = txt.color;
+        col.a = alpha;
+        txt.color = col;
+        
+        txt = abilityCooldown.GetComponent<TextMeshProUGUI>();
+        col = txt.color;
+        col.a = alpha;
+        txt.color = col;
+        
+        txt = abilityDescription.GetComponent<TextMeshProUGUI>();
+        col = txt.color;
+        col.a = alpha;
+        txt.color = col;
     }
     
     // Start is called before the first frame update
@@ -92,10 +129,8 @@ public class GameUIAbilitySelectorController : MonoBehaviour
             if (_abilityIndex < (_abilities.Length - 1))
             {
                 abilitiesIcons[_abilityIndex++].GetComponent<GameUIAbilityIconController>().SetHighlight(false);
-                GameUIAbilityIconController ability =
-                    abilitiesIcons[_abilityIndex].GetComponent<GameUIAbilityIconController>();
-                ability.SetHighlight(true);
-                _ASC.BindAbility(ability.GetAbilityTag(), KeyCode.E);
+                _ASC.BindAbility( abilitiesIcons[_abilityIndex].GetComponent<GameUIAbilityIconController>().GetAbilityTag(), KeyCode.E);
+                UpdateAbilityUIBase();
             }
         }
         else if (scrollAmount < 0f)
@@ -103,10 +138,8 @@ public class GameUIAbilitySelectorController : MonoBehaviour
             if (_abilityIndex > 0)
             {
                 abilitiesIcons[_abilityIndex--].GetComponent<GameUIAbilityIconController>().SetHighlight(false);
-                GameUIAbilityIconController ability =
-                    abilitiesIcons[_abilityIndex].GetComponent<GameUIAbilityIconController>();
-                ability.SetHighlight(true);
-                _ASC.BindAbility(ability.GetAbilityTag(), KeyCode.E);
+                _ASC.BindAbility( abilitiesIcons[_abilityIndex].GetComponent<GameUIAbilityIconController>().GetAbilityTag(), KeyCode.E);
+                UpdateAbilityUIBase();
             }
         }
     }
