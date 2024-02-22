@@ -427,6 +427,10 @@ public class GameController : Singleton<GameController>
         rooms.ForEach(r =>
         {
             r.gameObject.SetActive(activesRoom.Contains(r));
+            r.guards.ForEach(g =>
+            {
+                g.AskPathUpdate();
+            });
         });
     }
 

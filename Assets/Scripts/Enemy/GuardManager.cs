@@ -175,9 +175,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
         _speed = defaultSpeed;
 
-        _updatePathCoroutine = UpdatePath();
-        StartCoroutine(_updatePathCoroutine);
-
         _animator = GetComponent<Animator>();
         
         _guardRenderer = GetComponent<SpriteRenderer>();
@@ -191,7 +188,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     {
         if (GameState.GetInstance().status != 0) return;
 
-        if (_shouldUpdatePath)
+        if (_shouldUpdatePath && GameController.GetInstance().IsLevelLoaded())
         {
             _updatePathCoroutine = UpdatePath();
             StartCoroutine(_updatePathCoroutine);
@@ -505,7 +502,11 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     */
     private void FollowPath()
     {
-        if (_currentPath == null) return;
+        if (_currentPath == null)
+        {
+            Debug.Log("Current path is null !!");
+            return;
+        }
 
         // If we're waiting at a node
         if (_currentWaitingTimer > 0)
@@ -808,6 +809,11 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             currentTarget = _playerController.GetComponent<Targetable>();
             UpdateAlertStage(true);
         }
+    }
+
+    public void AskPathUpdate()
+    {
+        _shouldUpdatePath = true;
     }
 }
 // CONE VISION
