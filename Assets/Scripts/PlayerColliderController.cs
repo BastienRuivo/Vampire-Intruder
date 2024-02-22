@@ -48,7 +48,11 @@ public class PlayerColliderController : MonoBehaviour
             Debug.Log("Exit a wall changer zone");
             // Get Tilemap of collision
             if(exitLock == 1)
-                collision.gameObject.GetComponentInParent<RoomConnector>().Exit();
+            {
+                RoomConnector connector = collision.gameObject.GetComponentInParent<RoomConnector>();
+                if(connector != null) connector.Exit();
+
+            }
             exitLock--;
         }
 
