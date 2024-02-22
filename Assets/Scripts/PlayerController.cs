@@ -187,13 +187,17 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 
     public void OnEvent(VisionSystemController.OverlapData context)
     {
+        if (!context.Target.CompareTag("Targetable")) return;
+        Targetable target = context.Target.GetComponent<Targetable>();
+        if (!target.IsVisibleByPlayer) return;
+        GuardManager guard = target.GetComponent<GuardManager>();
         if (context.BeginOverlap)
         {
-            context.Target.GetComponent<GuardManager>().EnterPlayerSigth();
+            guard.EnterPlayerSigth();
         }
-        else
+        else if(guard.alertStage != AlertStage.Alerted)
         {
-            context.Target.GetComponent<GuardManager>().ExitPlayerSight();
+            guard.ExitPlayerSight();
         }
     }
 
@@ -210,4 +214,6 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _coneBehaviors[(int)VisionBehavior.MOUSE].enabled = false;
         _coneBehaviors[(int)VisionBehavior.TARGET].enabled = false;
     }
+
+
 }

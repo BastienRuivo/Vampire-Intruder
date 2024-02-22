@@ -43,4 +43,12 @@ public class Targetable : MonoBehaviour
             return _isVisible && (targetType == TargetType.PLAYER || targetType == TargetType.ALERTER);
         }
     }
+
+    public bool IsVisibleByPlayer
+    {
+        get
+        {
+            return _isVisible && targetType == TargetType.ENEMY;
+        }
+    }
 }
