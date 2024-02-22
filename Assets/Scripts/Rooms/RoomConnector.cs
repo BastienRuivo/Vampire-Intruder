@@ -101,7 +101,7 @@ public class RoomConnector : MonoBehaviour
                 continue;
             }
             Color c = renderer.material.color;
-            if(renderer.material.name.Contains(defaultMtl.name) || renderer.material.name.Contains("glow"))
+            if(renderer.material.name.Contains(defaultMtl.name) || renderer.material.name.Contains("Glow"))
             {
                 c.a = value * defaultMtl.color.a;
             }
