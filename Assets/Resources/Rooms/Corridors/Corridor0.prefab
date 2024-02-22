@@ -29036,7 +29036,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: allowedBranch.Array.size
-      value: 3
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: allowedBranch.Array.data[0]
@@ -29051,19 +29051,51 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: allowedBranch.Array.data[3]
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: allowedBranch.Array.data[4]
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: allowedBranch.Array.data[5]
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: allowedBranch.Array.data[6]
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: branchPercentage.Array.size
-      value: 3
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: branchPercentage.Array.data[0]
-      value: 33
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: branchPercentage.Array.data[1]
-      value: 66
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: branchPercentage.Array.data[2]
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: branchPercentage.Array.data[3]
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: branchPercentage.Array.data[4]
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: branchPercentage.Array.data[5]
+      value: 87
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: branchPercentage.Array.data[6]
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6063007115537425984, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}

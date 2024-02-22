@@ -25167,11 +25167,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4852316493375949212, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
   m_PrefabInstance: {fileID: 7174648545757295495}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &6061618571498584215 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4003217586873928464, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
+--- !u!114 &2821374761581292128 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4951410592992516583, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
   m_PrefabInstance: {fileID: 7174648545757295495}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6a7f665e34fca4c8b4ee6be51be4c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7880732328474000011 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1066373010459707660, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
@@ -25192,7 +25198,7 @@ PrefabInstance:
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: currentRoom
       value: 
-      objectReference: {fileID: 6061618571498584215}
+      objectReference: {fileID: 2821374761581292128}
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: targetWalls
       value: 
@@ -25208,6 +25214,22 @@ PrefabInstance:
     - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: coordOnGrid.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: allowedBranch.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: allowedBranch.Array.data[0]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: branchPercentage.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 536002214089399188, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
+      propertyPath: branchPercentage.Array.data[0]
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6063007115537425984, guid: 285e35ba1b26ab24a83ddcd8970060d3, type: 3}
       propertyPath: m_Size.x
