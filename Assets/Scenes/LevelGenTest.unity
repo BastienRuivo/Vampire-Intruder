@@ -189,11 +189,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: speed
-      value: 70
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: currentZoom
-      value: 1.8
+      value: 2.1
       objectReference: {fileID: 0}
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: playerCamera
@@ -316,6 +316,10 @@ PrefabInstance:
     - target: {fileID: 3384381392872209346, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_Name
       value: GameUserInterface
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314951935213739636, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6584938855459847236, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -481,7 +485,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e3c8d5de2c4797b499092ae9c99efd4d, type: 2}
   - {fileID: 11400000, guid: 2eb1fb4eb747f4a4d847b4e1b573047e, type: 2}
   instanciatedRooms: []
-  startingEnergy: 0.1
+  startingEnergy: 0.21
 --- !u!1001 &1535210841
 PrefabInstance:
   m_ObjectHideFlags: 0

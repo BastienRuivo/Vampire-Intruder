@@ -739,6 +739,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             if (dst < 2f)
             {
                 guard._currentAlert = 0f;
+                guard.currentTarget = _playerController.GetComponent<Targetable>();
                 Debug.Log("Updating");
                 guard.UpdateAlertStage(true);
                 Debug.Log("New alert " + guard.alertStage.ToString());
@@ -797,6 +798,16 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             }
         }
         return targetable;
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Targetable") && collision.gameObject.GetComponent<Targetable>().targetType == Targetable.TargetType.PLAYER)
+        {
+            _currentAlert = 0.49f;
+            currentTarget = _playerController.GetComponent<Targetable>();
+            UpdateAlertStage(true);
+        }
     }
 }
 // CONE VISION

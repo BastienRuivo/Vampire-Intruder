@@ -363,12 +363,10 @@ public class GameController : Singleton<GameController>
         this.rooms = rooms;
         Debug.Log("Level loaded with " + rooms.Count + " rooms");
         GenerateAStarGraph();
-        //HideOtherMaps();
+        HideOtherMaps();
         SetObjectives();
 
-
-        
-        //OnRoomChange(rooms[0]);
+        OnRoomChange(rooms[0]);
 
         PlayerState.GetInstance().UnlockInput();
 
