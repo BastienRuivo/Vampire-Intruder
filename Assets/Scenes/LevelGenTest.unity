@@ -321,6 +321,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3116406942805699110, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.44482422
+      objectReference: {fileID: 0}
     - target: {fileID: 3304333379299717837, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 170
@@ -328,6 +332,22 @@ PrefabInstance:
     - target: {fileID: 3384381392872209346, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_Name
       value: GameUserInterface
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160038320768464199, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160038320768464199, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160038320768464199, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1280
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160038320768464199, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 6584938855459847236, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalPosition.z
