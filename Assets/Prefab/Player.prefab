@@ -418,7 +418,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
       propertyPath: fov
-      value: 140
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
+      propertyPath: traceCount
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 4098457778146461731, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
       propertyPath: viewDistance

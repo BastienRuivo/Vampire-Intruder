@@ -89,15 +89,15 @@ Material:
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _ObserverFieldOfView: 2.443461
-    - _ObserverMinAngle: 3.4906585
+    - _ObserverFieldOfView: 2.0943952
+    - _ObserverMinAngle: 5.915421
     - _ObserverViewDistance: 5.5
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SamplesDistance: 0.05
-    - _SmoothSampling: 1
+    - _SmoothSampling: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -109,7 +109,7 @@ Material:
     - _ColorDetected: {r: 1, g: 0, b: 0, a: 0}
     - _ColorIdle: {r: 1, g: 0.9120868, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ObserverPosition: {r: 4.8456955, g: -5.303367, b: 0, a: 0}
+    - _ObserverPosition: {r: -3.814082, g: -3.0807261, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &5545693062330464122
 MonoBehaviour:

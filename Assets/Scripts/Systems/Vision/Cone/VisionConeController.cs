@@ -214,7 +214,7 @@ namespace Systems.Vision.Cone
         public float viewDistance = 3.5f;
         public LayerMask visionCollisionLayerMask;
         [Header("Performance settings")] 
-        [Range(1,128)] public uint traceCount = 64;
+        [Range(1,256)] public uint traceCount = 64;
         public float refreshDistance = 3.5f;
         [Header("Cone visual")]
         public GameObject visionDecal;
