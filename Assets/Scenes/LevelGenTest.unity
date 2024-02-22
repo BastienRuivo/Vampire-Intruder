@@ -192,6 +192,10 @@ PrefabInstance:
       value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: currentZoom
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 1778883379}
