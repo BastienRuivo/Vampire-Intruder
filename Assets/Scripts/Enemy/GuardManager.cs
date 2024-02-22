@@ -183,6 +183,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
 
         _ascRef.GrantAbility<AGuardEaten>("Eaten");
+        SetAlpha(0f);
     }
     private void Update()
     {
@@ -313,8 +314,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
     public void EnterPlayerSigth()
     {
-        return; //todo fix enemy visibility
-
+        Debug.Log("Guard is entering player sight");
         if(_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);
@@ -324,7 +324,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     }
     public void ExitPlayerSight()
     {
-        return; //todo fix enemy visibility
+        Debug.Log("Guard is leaving player sight");
         if (_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);
@@ -395,6 +395,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                     if(currentTarget.targetType == Targetable.TargetType.PLAYER)
                     {
                         CameraShake.GetInstance().Shake(0.2f);
+                        EnterPlayerSigth();
                     }
                     ChangeTarget(currentTarget.gameObject);
                     break;
@@ -493,8 +494,9 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     
     private void DebugStageAlert(float alertRatio)
     {
-        //Debug.Log($"{_playerInRange} {_playerInFOV}");
-        _guardRenderer.material.SetColor("_Color", Color.Lerp(Color.green, Color.red, alertRatio));
+        Color col = Color.Lerp(Color.green, Color.red, alertRatio);
+        col.a = _guardRenderer.color.a;
+        _guardRenderer.color = col;
     }//todo replace with real animation.
 
     /**
@@ -721,7 +723,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
     public IEnumerator AlphaDecrement()
     {
-        for(float alpha = _guardRenderer.color.a; alpha > 0.0f; alpha += Time.deltaTime * outSight)
+        for(float alpha = _guardRenderer.color.a; alpha > 0.0f; alpha -= Time.deltaTime * outSight)
         {
             SetAlpha(alpha);
             yield return null;
@@ -762,7 +764,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         if(!context.Target.CompareTag("Targetable")) return;
         Targetable targetable = context.Target.GetComponent<Targetable>();
         if (!targetable.IsVisibleByGuard) return;
-        Debug.Log("Begin Overlaping ? " + context.BeginOverlap);
         if(context.BeginOverlap)
         {
             _targets.Add(targetable);
