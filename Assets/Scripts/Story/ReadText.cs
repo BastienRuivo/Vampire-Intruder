@@ -7,7 +7,7 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Read and print a story dialog
@@ -116,14 +116,1171 @@ public class ReadText : Singleton<ReadText>
 
 		logTextBoxes = new List<GameObject>();
 
-		Initialize("0");
+		chooseDialog();
+	}
+
+	private void chooseDialog()
+	{
+		string dialogName = "0";
+
+		AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+
+		int runNumber = appState.getRunNumber();
+		int levelNumber = appState.getLevelNumber();
+		int princeMercy = appState.getPrinceMercy();
+		int mainObjectiveSkip = appState.getMainObjectiveSkip();
+		int currentJessikaLove = appState.getJessikaLove();
+		int currentElrikLove = appState.getElrikLove();
+		bool hasMainObjectiveFailed = appState.getMainObjectiveFailed();
+		bool hasTimeFailed = appState.getTimeFailed();
+		bool hasGuardFailed = appState.getGuardFailed();
+		float guardKilledPercent = appState.getGuardsKilledPercent();
+		float secondaryObjectivesPercent = appState.getSecondaryObjectivesAchievedPercent();
+		bool hasAlreadyKilled = appState.getAlreadyKilled();
+		bool hasAlreadySecondary = appState.getAlreadySecondary();
+
+		// Run 0
+		if (runNumber == 0)
+		{
+			// Before Level 0
+			if (levelNumber == 0)
+			{
+                dialogName = "Run0/Start"; // -> Run 0 Level 0 Scene
+            }
+
+			// Before Level 1 (level 0 ended)
+			else
+			{
+				// Fail
+				if (hasMainObjectiveFailed)
+				{
+					dialogName = "Run0/Level0/FailObjective"; // -> Run0/GameOver -> GameOver Scene
+				}
+				else if (hasTimeFailed)
+				{
+                    dialogName = "Run0/Level0/FailTime"; // -> Run0/GameOver -> GameOver Scene
+                }
+				else if (hasGuardFailed)
+				{
+					dialogName = "Run0/Level0/FailGuard"; // -> Run0/GameOver -> GameOver Scene
+                }
+
+				// Success
+				else
+				{
+					if (guardKilledPercent > 0.0f)
+					{
+						dialogName = "Run0/Level0/Killed"; // -> Run0/Level0/End -> Run0 Level1 Scene
+                        appState.setAlreadyKilled();
+                    }
+					else
+					{
+						dialogName = "Run0/Level0/Success"; // -> Run0/Level0/End -> Run0 Level1 Scene
+                    }
+				}
+			}
+		}
+
+		// End Run 0 + Start Run 1
+		else if (runNumber == 1)
+		{
+			// End Run 0 Level 1
+			if (levelNumber == 0)
+			{
+                // Fail
+                if (hasMainObjectiveFailed)
+                {
+                    dialogName = "Run0/Level1/FailObjective"; // -> Run0/GameOver -> GameOver Scene
+                }
+                else if (hasTimeFailed)
+                {
+                    dialogName = "Run0/Level1/FailTime"; // -> Run0/GameOver -> GameOver Scene
+                }
+                else if (hasGuardFailed)
+                {
+                    dialogName = "Run0/Level1/FailGuard"; // -> Run0/GameOver -> GameOver Scene
+                }
+
+                // Success
+                else
+                {
+                    if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                    {
+                        dialogName = "Run0/Level1/FirstKilled"; // -> Run0/Level1/End -> Run1/Start -> Run 1 Level 0 Scene
+                        appState.setAlreadyKilled();
+
+                    }
+                    else if (guardKilledPercent > 0.5f)
+                    {
+                        dialogName = "Run0/Level1/Killed"; // -> Run0/Level1/End -> Run1/Start -> Run 1 Level 0 Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run0/Level1/Success"; // -> Run0/Level1/End -> Run1/Start -> Run 1 Level 0 Scene
+                    }
+                }
+            }
+
+			// End Run 1 Level 0
+			else
+			{
+                // Fail
+                if (hasMainObjectiveFailed)
+                {
+                    dialogName = "Run1/Level0/FailObjective"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                }
+                else if (hasTimeFailed)
+                {
+                    dialogName = "Run1/Level0/FailTime"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                }
+                else if (hasGuardFailed)
+                {
+                    dialogName = "Run1/Level0/FailGuard"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                }
+
+                // Success
+                else
+                {
+					// First secondary objectives
+					if (secondaryObjectivesPercent > 0.0f && !hasAlreadySecondary)
+					{
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run1/Level0/FirstKilledFirstObjetives"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run1/Level0/KilledFirstObjectives"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run1/Level0/StealthObjectives"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run1/Level0/SuccessFirstObjectives"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                        }
+						appState.setAlreadySecondary();
+                    }
+                    
+					// No secondary objectives
+                    else
+                    {
+						if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+						{
+							dialogName = "Run1/Level0/FirstKilled"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+							appState.setAlreadyKilled();
+
+						}
+						else if (guardKilledPercent >= 0.5f)
+						{
+							dialogName = "Run1/Level0/Killed"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+						}
+						else if (guardKilledPercent <= 0.1f)
+						{
+							dialogName = "Run1/Level0/Stealth"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+						}
+						else
+						{
+							dialogName = "Run1/Level0/Success"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+						}
+                    }
+                }
+            }
+		}
+
+        // End Run 1 + Start Run 2
+        else if (runNumber == 2)
+        {
+            // End Run 1 Level 1
+            if (levelNumber == 0)
+            {
+				// Fail
+
+				// Main objective
+				if (hasMainObjectiveFailed)
+				{
+					if (mainObjectiveSkip == 2)
+					{
+						dialogName = "Run1/Level1/FailObjective2"; // -> GameOver Scene
+					}
+					else
+					{
+						dialogName = "Run1/Level1/FailObjective"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                    }
+				}
+
+				else if (hasTimeFailed || hasGuardFailed)
+				{
+
+					// Second fail
+					if (princeMercy == 1)
+					{
+						if (hasTimeFailed)
+						{
+							dialogName = "Run1/Level1/FailTime2"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+						else if (hasGuardFailed)
+						{
+							dialogName = "Run1/Level1/FailGuard2"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+					}
+
+					// First fail
+					else
+					{
+						if (hasTimeFailed)
+						{
+							dialogName = "Run1/Level1/FailTime"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+						else if (hasGuardFailed)
+						{
+							dialogName = "Run1/Level1/FailGuard"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+					}
+				}
+
+
+				// Success
+				else
+				{
+                    // First secondary objectives
+                    if (secondaryObjectivesPercent > 0.0f && !hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run1/Level1/FirstKilledFirstObjetives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run1/Level1/KilledFirstObjectives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run1/Level1/StealthFirstObjectives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run1/Level1/SuccessFirstObjectives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                        appState.setAlreadySecondary();
+                    }
+
+					// Good secondary objectives
+					else if (secondaryObjectivesPercent > 0.5f && hasAlreadySecondary)
+					{
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run1/Level1/FirstKilledObjetives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run1/Level1/KilledObjectives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run1/Level1/StealthObjectives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run1/Level1/SuccessObjectives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                    }
+
+                    // Neutral secondary objectives
+                    else
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run1/Level1/FirstKilled"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run1/Level1/Killed"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run1/Level1/Stealth"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run1/Level1/Success"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                    }
+                }
+            }
+
+            // End Run 2 Level 0
+            else
+            {
+                // Fail
+
+                // Main objective
+                if (hasMainObjectiveFailed)
+                {
+                    if (mainObjectiveSkip == 2)
+                    {
+                        dialogName = "Run2/Level0/FailObjective2"; // -> Run2/GameOver -> GameOver Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run2/Level0/FailObjective"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                    }
+                }
+
+                else if (hasTimeFailed || hasGuardFailed)
+                {
+
+                    // Third fail
+                    if (princeMercy == 0)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run2/Level0/FailTime3"; // -> Run2/GameOver -> GameOver Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run2/Level0/FailGuard3"; // -> Run2/GameOver -> GameOver Scene
+                        }
+                    }
+
+                    // Second fail
+                    else if (princeMercy == 1)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run2/Level0/FailTime2"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run2/Level0/FailGuard2"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                    }
+
+                    // First fail
+                    else
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run2/Level0/FailTime"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run2/Level0/FailGuard"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                    }
+                }
+
+                // Success
+                else
+                {
+                    // First secondary objectives
+                    if (secondaryObjectivesPercent > 0.0f && !hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run2/Level0/FirstKilledFirstObjetives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run2/Level0/KilledFirstObjectives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run2/Level0/StealthFirstObjectives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run2/Level0/SuccessFirstObjectives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        appState.setAlreadySecondary();
+                    }
+
+                    // Good secondary objectives
+                    else if (secondaryObjectivesPercent > 0.5f && hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run2/Level0/FirstKilledObjetives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run2/Level0/KilledObjectives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run2/Level0/StealthObjectives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run2/Level0/SuccessObjectives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                    }
+
+                    // Neutral secondary objectives
+                    else
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run2/Level0/FirstKilled"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run2/Level0/Killed"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run2/Level0/Stealth"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run2/Level0/Success"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                    }
+                }
+            }
+        }
+
+        // End Run 2 + Start Run 3
+        else if (runNumber == 3)
+        {
+            // End Run 2 Level 1
+            if (levelNumber == 0)
+            {
+                // Fail
+
+                // Main objective
+                if (hasMainObjectiveFailed)
+                {
+                    if (mainObjectiveSkip == 2)
+                    {
+                        dialogName = "Run2/Level1/FailObjective2"; // -> Run2/GameOver -> GameOver Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run2/Level1/FailObjective"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                    }
+                }
+
+                else if (hasTimeFailed || hasGuardFailed)
+                {
+
+                    // Third fail
+                    if (princeMercy == 0)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run2/Level1/FailTime3"; // -> Run2/GameOver -> GameOver Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run2/Level1/FailGuard3"; // -> Run2/GameOver -> GameOver Scene
+                        }
+                    }
+
+                    // Second fail
+                    else if (princeMercy == 1)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run2/Level1/FailTime2"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run2/Level1/FailGuard2"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                    }
+
+                    // First fail
+                    else
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run2/Level1/FailTime"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run2/Level1/FailGuard"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                    }
+                }
+
+
+                // Success
+                else
+                {
+                    // First secondary objectives
+                    if (secondaryObjectivesPercent > 0.0f && !hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run2/Level1/FirstKilledFirstObjetives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run2/Level1/KilledFirstObjectives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run2/Level1/StealthFirstObjectives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run2/Level1/SuccessFirstObjectives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        appState.setAlreadySecondary();
+                    }
+
+                    // Good secondary objectives
+                    else if (secondaryObjectivesPercent > 0.5f && hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run2/Level1/FirstKilledObjetives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run2/Level1/KilledObjectives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run2/Level1/StealthObjectives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run2/Level1/SuccessObjectives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                    }
+
+                    // Neutral secondary objectives
+                    else
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run2/Level1/FirstKilled"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run2/Level1/Killed"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run2/Level1/Stealth"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run2/Level1/Success"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                    }
+                }
+            }
+
+            // End Run 3 Level 0
+            else
+            {
+                // Fail
+
+                // Main objective
+                if (hasMainObjectiveFailed)
+                {
+                    if (mainObjectiveSkip == 2)
+                    {
+                        dialogName = "Run3/Level0/FailObjective2"; // -> Run3/GameOver -> GameOver Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run3/Level0/FailObjective"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                    }
+                }
+
+                else if (hasTimeFailed || hasGuardFailed)
+                {
+
+                    // Third fail
+                    if (princeMercy == 0)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run3/Level0/FailTime3"; // -> Run3/GameOver -> GameOver Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run3/Level0/FailGuard3"; // -> Run3/GameOver -> GameOver Scene
+                        }
+                    }
+
+                    // Second fail
+                    else if (princeMercy == 1)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run3/Level0/FailTime2"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run3/Level0/FailGuard2"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                    }
+
+                    // First fail
+                    else
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run3/Level0/FailTime"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run3/Level0/FailGuard"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                    }
+                }
+
+                // Success
+                else
+                {
+                    // First secondary objectives
+                    if (secondaryObjectivesPercent > 0.0f && !hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run3/Level0/FirstKilledFirstObjetives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run3/Level0/KilledFirstObjectives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run3/Level0/StealthFirstObjectives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run3/Level0/SuccessFirstObjectives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        appState.setAlreadySecondary();
+                    }
+
+                    // Good secondary objectives
+                    else if (secondaryObjectivesPercent > 0.5f && hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run3/Level0/FirstKilledObjetives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run3/Level0/KilledObjectives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run3/Level0/StealthObjectives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run2/Level0/SuccessObjectives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                    }
+
+                    // Neutral secondary objectives
+                    else
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run3/Level0/FirstKilled"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run3/Level0/Killed"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run3/Level0/Stealth"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run3/Level0/Success"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                    }
+                }
+            }
+        }
+
+        // End Run 3 + Start Run 4
+        else if (runNumber == 4)
+        {
+            // End Run 3 Level 1
+            if (levelNumber == 0)
+            {
+                string storyPath = "Bad/";
+                if (currentJessikaLove < 50)
+                {
+                    storyPath = "Neutral/";
+                }
+
+                // Fail
+
+                // Main objective
+                if (hasMainObjectiveFailed)
+                {
+                    if (mainObjectiveSkip == 2)
+                    {
+                        dialogName = "Run3/Level1/" + storyPath + "FailObjective2"; // -> Run3/GameOver -> GameOver Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run3/Level1/" + storyPath + "FailObjective"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                }
+
+                else if (hasTimeFailed || hasGuardFailed)
+                {
+
+                    // Third fail
+                    if (princeMercy == 0)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailTime3"; // -> Run3/GameOver -> GameOver Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailGuard3"; // -> Run3/GameOver -> GameOver Scene
+                        }
+                    }
+
+                    // Second fail
+                    else if (princeMercy == 1)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailTime2"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailGuard2"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                    }
+
+                    // First fail
+                    else
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailTime"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailGuard"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                    }
+                }
+
+
+                // Success
+                else
+                {
+                    // First secondary objectives
+                    if (secondaryObjectivesPercent > 0.0f && !hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FirstKilledFirstObjetives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "KilledFirstObjectives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "StealthFirstObjectives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "SuccessFirstObjectives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        appState.setAlreadySecondary();
+                    }
+
+                    // Good secondary objectives
+                    else if (secondaryObjectivesPercent > 0.5f && hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FirstKilledObjetives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "KilledObjectives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "StealthObjectives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "SuccessObjectives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                    }
+
+                    // Neutral secondary objectives
+                    else
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FirstKilled"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "Killed"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "Stealth"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "Success"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                    }
+                }
+            }
+
+            // End Run 4 Level 0
+            else
+            {
+                // Fail
+
+                // Main objective
+                if (hasMainObjectiveFailed)
+                {
+                    if (mainObjectiveSkip == 2)
+                    {
+                        dialogName = "Run4/Level0/FailObjective2"; // -> Run4/GameOver -> GameOver Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run4/Level0/FailObjective"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                    }
+                }
+
+                else if (hasTimeFailed || hasGuardFailed)
+                {
+
+                    // Third fail
+                    if (princeMercy == 0)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run4/Level0/FailTime3"; // -> Run4/GameOver -> GameOver Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run4/Level0/FailGuard3"; // -> Run4/GameOver -> GameOver Scene
+                        }
+                    }
+
+                    // Second fail
+                    else if (princeMercy == 1)
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run4/Level0/FailTime2"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run4/Level0/FailGuard2"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                    }
+
+                    // First fail
+                    else
+                    {
+                        if (hasTimeFailed)
+                        {
+                            dialogName = "Run4/Level0/FailTime"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else if (hasGuardFailed)
+                        {
+                            dialogName = "Run4/Level0/FailGuard"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                    }
+                }
+
+                // Success
+                else
+                {
+                    // First secondary objectives
+                    if (secondaryObjectivesPercent > 0.0f && !hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run4/Level0/FirstKilledFirstObjetives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run4/Level0/KilledFirstObjectives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run4/Level0/StealthFirstObjectives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run4/Level0/SuccessFirstObjectives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        appState.setAlreadySecondary();
+                    }
+
+                    // Good secondary objectives
+                    else if (secondaryObjectivesPercent > 0.5f && hasAlreadySecondary)
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run4/Level0/FirstKilledObjetives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run4/Level0/KilledObjectives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run4/Level0/StealthObjectives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run4/Level0/SuccessObjectives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                    }
+
+                    // Neutral secondary objectives
+                    else
+                    {
+                        if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                        {
+                            dialogName = "Run4/Level0/FirstKilled"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                            appState.setAlreadyKilled();
+
+                        }
+                        else if (guardKilledPercent >= 0.5f)
+                        {
+                            dialogName = "Run4/Level0/Killed"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else if (guardKilledPercent <= 0.1f)
+                        {
+                            dialogName = "Run4/Level0/Stealth"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else
+                        {
+                            dialogName = "Run4/Level0/Success"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                    }
+                }
+            }
+        }
+
+        // End Run 4 + End Game
+        else if (runNumber == 5)
+        {
+            string storyPath = "Neutral1/";
+            if (currentJessikaLove > 50)
+            {
+                storyPath = "Bad/";
+            }
+            else if (currentElrikLove > 50)
+            {
+                if (guardKilledPercent > 0.5f)
+                {
+                    storyPath = "Good2/";
+                }
+                else if (guardKilledPercent < 0.1f)
+                {
+                    storyPath = "Good1/";
+                }
+                else
+                {
+                    storyPath = "Neutral2/";
+                }
+            }
+
+            // Fail
+
+            // Main objective
+            if (hasMainObjectiveFailed)
+            {
+                if (mainObjectiveSkip == 2)
+                {
+                    dialogName = "Run4/Level1/" + storyPath + "FailObjective2"; // -> Run4/GameOver GameOver Scene
+                }
+                else
+                {
+                    dialogName = "Run4/Level1/" + storyPath + "FailObjective"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                }
+            }
+
+            else if (hasTimeFailed || hasGuardFailed)
+            {
+
+                // Third fail
+                if (princeMercy == 0)
+                {
+                    if (hasTimeFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailTime3"; // -> Run4/GameOver -> GameOver Scene
+                    }
+                    else if (hasGuardFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailGuard3"; // -> Run4/GameOver -> GameOver Scene
+                    }
+                }
+
+                // Second fail
+                else if (princeMercy == 1)
+                {
+                    if (hasTimeFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailTime2"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else if (hasGuardFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailGuard2"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                }
+
+                // First fail
+                else
+                {
+                    if (hasTimeFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailTime"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else if (hasGuardFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailGuard"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                }
+            }
+
+
+            // Success
+            else
+            {
+                // First secondary objectives
+                if (secondaryObjectivesPercent > 0.0f && !hasAlreadySecondary)
+                {
+                    if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FirstKilledFirstObjetives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        appState.setAlreadyKilled();
+
+                    }
+                    else if (guardKilledPercent >= 0.5f)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "KilledFirstObjectives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else if (guardKilledPercent <= 0.1f)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "StealthFirstObjectives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "SuccessFirstObjectives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    appState.setAlreadySecondary();
+                }
+
+                // Good secondary objectives
+                else if (secondaryObjectivesPercent > 0.5f && hasAlreadySecondary)
+                {
+                    if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FirstKilledObjetives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        appState.setAlreadyKilled();
+
+                    }
+                    else if (guardKilledPercent >= 0.5f)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "KilledObjectives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else if (guardKilledPercent <= 0.1f)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "StealthObjectives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "SuccessObjectives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                }
+
+                // Neutral secondary objectives
+                else
+                {
+                    if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FirstKilled"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        appState.setAlreadyKilled();
+
+                    }
+                    else if (guardKilledPercent >= 0.5f)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "Killed"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else if (guardKilledPercent <= 0.1f)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "Stealth"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "Success"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                }
+            }
+        }
+
+        Initialize(dialogName);
 	}
 
 	/// <summary>
 	/// Initialize the dialog (delete everything but the log)
 	/// </summary>
 	/// <param name="dialog">The new dialog to load</param>
-	public void Initialize(string dialog) {
+	private void Initialize(string dialog) {
 
 		// Reset the different variables
 		if (lines != null) Array.Clear(lines, 0, lines.Length);
@@ -301,7 +1458,7 @@ public class ReadText : Singleton<ReadText>
     /// <summary>
     /// Load and print the next dialog line, or end the current dialog line if not finished
     /// </summary>
-    void NextLine()
+    private void NextLine()
 	{
 		// If the current line is finished, load the next line
 		if (!textBoxPhraseObject.GetComponent<LoadText>().GetLoadText())
@@ -331,8 +1488,14 @@ public class ReadText : Singleton<ReadText>
 				/////// SCENE CHANGES ///////
 				/////////////////////////////
 
+                // Scene change
+                if (mots[0] == "@@@Scene")
+                {
+                    SceneManager.LoadScene("LevelGenTest");
+                }
+
 				// Character disappearing command
-				if (mots[0] == "@@@Disappear")
+				else if (mots[0] == "@@@Disappear")
 				{
 					string characterName = mots[1];
 					CharacterDisappear(possibleCharacters[characterName]);
@@ -563,7 +1726,7 @@ public class ReadText : Singleton<ReadText>
     /// <param name="name">The character speaking name</param>
     /// <param name="phrase">The spoken phrase</param>
     /// <param name="textBoxID">The text box sprite ID</param>
-    void CreateLog(string[] narrationLines, string name, string phrase, int textBoxID)
+    private void CreateLog(string[] narrationLines, string name, string phrase, int textBoxID)
 	{
 
 		float height = 0.0f;
@@ -671,7 +1834,7 @@ public class ReadText : Singleton<ReadText>
 	/// Make the character disappear
 	/// </summary>
 	/// <param name="character">The character ID</param>
-	void CharacterDisappear(int character)
+	private void CharacterDisappear(int character)
 	{
 		// Fade In Out animation
 		charactersObjects[character].GetComponent<FadeInOut>().LaunchFadeOut();
@@ -683,7 +1846,7 @@ public class ReadText : Singleton<ReadText>
 	/// <param name="character"></param>
 	/// <param name="position"></param>
 	/// <param name="idExpression"></param>
-	void CharacterAppear(int character, float position, int idExpression)
+	private void CharacterAppear(int character, float position, int idExpression)
 	{
 		// Change the character position
 		charactersObjects[character].transform.position = originalCharactersObjects[character].transform.position
@@ -827,7 +1990,7 @@ public class ReadText : Singleton<ReadText>
     /// </summary>
     /// <param name="lines">The narration lines</param>
     /// <returns>The animation coroutine</returns>
-    IEnumerator SetNarration(string[] lines)
+    private IEnumerator SetNarration(string[] lines)
 	{
 		// Launch the animation
 		fadingProtect = true;
@@ -883,7 +2046,7 @@ public class ReadText : Singleton<ReadText>
     /// <summary>
     /// Load the dialog file
     /// </summary>
-    void LoadDialog(string filename)
+    private void LoadDialog(string filename)
 	{
         // The dialog path
         string path = "Assets/Resources/Story/" + filename + ".txt";
@@ -1059,7 +2222,7 @@ public class ReadText : Singleton<ReadText>
     /// <param name="ErikLove">The quantity of Erik's love of this choice</param>
     /// <param name="nextDialog">The next dialog after this choice</param>
     /// <param name="autoMode">If the auto mode was on or not</param>
-    void makeChoice()
+    private void makeChoice()
 	{
 		// Get the choice parameters
 		string buttonName = EventSystem.current.currentSelectedGameObject.name;
@@ -1107,7 +2270,7 @@ public class ReadText : Singleton<ReadText>
 	/// </summary>
 	/// <param name="trans">The RectTransform to give the size to</param>
 	/// <param name="newSize">The new size to give</param>
-    public void SetSize(RectTransform trans, Vector2 newSize)
+    private void SetSize(RectTransform trans, Vector2 newSize)
 	{
 		Vector2 oldSize = trans.rect.size;
 		Vector2 deltaSize = newSize - oldSize;
@@ -1121,7 +2284,7 @@ public class ReadText : Singleton<ReadText>
     /// </summary>
     /// <param name="trans">The RectTransform to give the size to</param>
     /// <param name="height">The new height to give</param>
-    public void SetHeight(RectTransform trans, float height)
+    private void SetHeight(RectTransform trans, float height)
 	{
 		SetSize(trans, new Vector2(trans.rect.size.x, height));
 	}

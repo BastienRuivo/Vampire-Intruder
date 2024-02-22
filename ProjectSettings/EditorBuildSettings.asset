@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Devroom.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Story.unity
+    guid: 89fd94679b3a7ff4f99fd6610ad40157
+  - enabled: 1
+    path: Assets/Scenes/LevelGenTest.unity
+    guid: be3b02747292c32439d1e8b483802917
   m_configObjects: {}

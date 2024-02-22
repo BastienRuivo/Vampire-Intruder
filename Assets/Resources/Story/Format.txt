@@ -24,6 +24,9 @@ Choice:
 Next Dialog:
 @@@Next nextDialogName
 
+Next Scene:
+@@@Scene runNumber levelNumber
+
 Characters: Jessika, Elrik, Jasper, Ellena
 Backgrounds: Narration, Day, Evening, Night
 Expressions: Neutral, Smile, Laugh, Upset, Angry, Surprise, Fear, Tears, Cry, Flush
