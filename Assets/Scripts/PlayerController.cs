@@ -70,11 +70,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _coneBehaviors = GetComponents<InputToVisionSystemBehavior>();
         
         visionObject.GetComponent<VisionSystemController>().OnOverlapChanged.Subscribe(this);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
+        
         //Defines statistics the ASC will work with.
         _ascRef.DefineStat("Blood", baseValue:100.0f, lowerRange:-15.0f);
         _ascRef.DefineStat("BloodMax", baseValue:100.0f, lowerRange:1.0f);
@@ -91,6 +87,12 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
         _ascRef.BindAbility("TP", KeyCode.E);
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
     }
 
     public VisionConeController GetVision()

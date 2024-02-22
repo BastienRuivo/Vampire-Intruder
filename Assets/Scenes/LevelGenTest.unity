@@ -221,6 +221,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1136042326454276427, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: jessika
+      value: 
+      objectReference: {fileID: 1420147015}
     - target: {fileID: 1213378312484885871, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalPosition.z
       value: 1

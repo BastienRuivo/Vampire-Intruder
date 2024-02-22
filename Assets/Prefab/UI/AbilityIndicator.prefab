@@ -317,6 +317,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01af57a1e91275145a51ef38ea75c36b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  abilityIconIndicator: {fileID: 1931973037593590192}
+  cooldownIndicator: {fileID: 5100022742979968142}
+  cooldownTextIndicator: {fileID: 5610435188181146208}
+  keyBindingIndicator: {fileID: 94950868227641303}
 --- !u!1 &5610435188181146208
 GameObject:
   m_ObjectHideFlags: 0
