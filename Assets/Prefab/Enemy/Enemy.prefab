@@ -284,6 +284,7 @@ MonoBehaviour:
   activeAtStart: 0
   render: {fileID: 6180498148441204807}
   mat: {fileID: 2100000, guid: dcaee032ea75bea4d958dc891846c5c9, type: 2}
+  defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!114 &7592360832701791560
 MonoBehaviour:
   m_ObjectHideFlags: 0

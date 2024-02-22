@@ -2356,6 +2356,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: e4fae1baabc2dc440a0113b2830f3b83, type: 3}
     - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
+      propertyPath: nbObjectives
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
       propertyPath: rooms.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -2369,6 +2373,22 @@ PrefabInstance:
       objectReference: {fileID: 910032902}
     - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
       propertyPath: rooms.Array.data[1]
+      value: 
+      objectReference: {fileID: 1061530748}
+    - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
+      propertyPath: activesRoom.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
+      propertyPath: mainObjectiveReference
+      value: _GetCaisse
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
+      propertyPath: activesRoom.Array.data[0]
+      value: 
+      objectReference: {fileID: 910032902}
+    - target: {fileID: 7433975258528184725, guid: 1091fa39a76805d4a9f13856a4361495, type: 3}
+      propertyPath: activesRoom.Array.data[1]
       value: 
       objectReference: {fileID: 1061530748}
     m_RemovedComponents: []
@@ -5154,8 +5174,12 @@ PrefabInstance:
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 1869480005872892075, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+      propertyPath: reference
+      value: _GetCaisseuh
+      objectReference: {fileID: 0}
+    - target: {fileID: 1869480005872892075, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: isMainObjective
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3060506969895527326, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: m_CompositePaths.m_Paths.Array.size
@@ -6061,6 +6085,10 @@ PrefabInstance:
       propertyPath: m_ColliderPaths.Array.data[0].m_ColliderPaths.Array.data[0].Array.data[29].Y
       value: 45546876
       objectReference: {fileID: 0}
+    - target: {fileID: 3266030974588386977, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+      propertyPath: downSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3335226445634943013, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -6068,6 +6096,10 @@ PrefabInstance:
     - target: {fileID: 4029405559872618862, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: m_Name
       value: First
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352651901302494027, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.37
       objectReference: {fileID: 0}
     - target: {fileID: 6790622339952153203, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6108,6 +6140,18 @@ PrefabInstance:
     - target: {fileID: 6790622339952153203, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6999248447448150522, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+      propertyPath: upSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6999248447448150522, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+      propertyPath: maxAlpha
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6999248447448150522, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
+      propertyPath: downSpeed
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6385,6 +6429,10 @@ PrefabInstance:
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: speed
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
+      propertyPath: currentZoom
+      value: 2.1
       objectReference: {fileID: 0}
     - target: {fileID: 5183016661438614911, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: playerCamera

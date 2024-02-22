@@ -29,6 +29,7 @@ public class Interactible : MonoBehaviour
     public string reference;
     public string objectivePhrase;
     public bool isMainObjective;
+    public Color passiveGlowColor;
     public Color glowColor;
     public Color startColor;
     public Color endColor;
@@ -36,6 +37,8 @@ public class Interactible : MonoBehaviour
     private SpriteRenderer _clock;
     private SpriteRenderer _keyTooltip;
     private SpriteRenderer _icon;
+
+    private Glow[] _glows;
 
     [Header("Timer")]
     public float duration;
@@ -52,19 +55,17 @@ public class Interactible : MonoBehaviour
 
     private SpriteRenderer _spriteRenderer;
 
+
     private void Start()
     {
         _currentTime = duration;
         _isActive = true;
-        _spriteRenderer= GetComponent<SpriteRenderer>();
-        Color col = _spriteRenderer.color;
-        col.a = 1f;
-        _spriteRenderer.color = col;
-        _spriteRenderer.material.SetColor("_Color", _spriteRenderer.color);
-        _spriteRenderer.material.SetColor("_GlowColor", glowColor);
         _clock = transform.Find("Clock").GetComponent<SpriteRenderer>();
         _keyTooltip = transform.Find("Key").GetComponent<SpriteRenderer>();
         _icon = transform.Find("Icon").GetComponent<SpriteRenderer>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+
+        _glows = GetComponents<Glow>();
 
         _clock.material.SetColor("_Start_Color", startColor);
         _clock.material.SetColor("_End_Color", endColor);
@@ -76,17 +77,24 @@ public class Interactible : MonoBehaviour
         _isColliding= true;
         if (_isActive)
         {
+            _glows[1].Deactivate();
+            _glows[0].Activate();
             DisplayTooltips(true);
-            if(reference.Length > 0) GameController.GetInstance().UpdateObjective(reference, GameController.ObjectiveEvent.IN_RANGE);
+            if (reference.Length > 0) GameController.GetInstance().UpdateObjective(reference, GameController.ObjectiveEvent.IN_RANGE);
         }
     }
 
     public void EndCollision()
     {
         _isColliding= false;
-        DisplayTooltips(false);
         if (_isActive)
+        {
+            _glows[0].Deactivate();
+            _glows[1].Activate();
+            DisplayTooltips(false);
             if (reference.Length > 0) GameController.GetInstance().UpdateObjective(reference, GameController.ObjectiveEvent.OUT_RANGE);
+        }
+            
     }
 
     public void DisplayTooltips(bool showTooltips)
@@ -100,16 +108,7 @@ public class Interactible : MonoBehaviour
     {
         if (!_isActive) return;
         var axis = Input.GetAxis("Interact");
-
-        if(_isColliding)
-        {
-            float t = Mathf.PingPong(Time.time, 0.5f);
-            _spriteRenderer.material.SetFloat("_t", t);
-        }
-        else
-        {
-            _spriteRenderer.material.SetFloat("_t", 0f);
-        }
+        
 
         if (type == InteractibleType.TIMER_LOCKED)
         {
@@ -141,7 +140,7 @@ public class Interactible : MonoBehaviour
             }
             if(_clock != null)
             {
-                _clock.GetComponent<SpriteRenderer>().material.SetFloat("_t", 1f - _currentTime / duration);
+                _clock.material.SetFloat("_t", 1f - _currentTime / duration);
             }
         }
         else
@@ -155,13 +154,14 @@ public class Interactible : MonoBehaviour
     {
         PlayerState.GetInstance().UnlockInput();
         _isActive = false;
-        _spriteRenderer.material.SetFloat("_t", 0f);
         DisplayTooltips(false);
+        _glows[0].Deactivate();
+        _glows[1].Deactivate();
         if (reference.Length > 0) GameController.GetInstance().UpdateObjective(reference, GameController.ObjectiveEvent.COMPLETE);
         switch (afterUse)
         {
             case AfterUse.REPLACE_SPRITE:
-                GetComponent<SpriteRenderer>().sprite = replacementSprite;
+                _spriteRenderer.sprite = replacementSprite;
                 break;
 
             case AfterUse.DISAPPEAR:
@@ -184,5 +184,6 @@ public class Interactible : MonoBehaviour
     public void SetActive()
     {
         _isActive = true;
+        _glows[0].Activate();
     }
 }

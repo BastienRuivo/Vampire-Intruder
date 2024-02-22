@@ -116,6 +116,7 @@ public class GameController : Singleton<GameController>
                 objectivesToComplete.Add(obj);
                 chosenRefs.Add(o.reference);
                 nbObjectives--;
+                o.SetActive();
             }
             else if(!isMain)
             {
