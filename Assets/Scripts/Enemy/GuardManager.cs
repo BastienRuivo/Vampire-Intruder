@@ -739,6 +739,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             if (dst < 2f)
             {
                 guard._currentAlert = 0f;
+                guard.currentTarget = PlayerState.GetInstance().GetComponent<Targetable>();
                 Debug.Log("Updating");
                 guard.UpdateAlertStage(true);
                 Debug.Log("New alert " + guard.alertStage.ToString());

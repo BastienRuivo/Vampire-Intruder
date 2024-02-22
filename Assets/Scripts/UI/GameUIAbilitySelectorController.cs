@@ -14,6 +14,9 @@ public class GameUIAbilitySelectorController : MonoBehaviour
     public GameObject abilityBloodCost;
     public GameObject abilityCooldown;
     public GameObject abilityDescription;
+    public GameObject confirmHintIcon;
+    public GameObject confirmHintText;
+    
     
     [Header("Background")] 
     public GameObject[] background; 
@@ -108,6 +111,16 @@ public class GameUIAbilitySelectorController : MonoBehaviour
         txt.color = col;
         
         txt = abilityDescription.GetComponent<TextMeshProUGUI>();
+        col = txt.color;
+        col.a = alpha;
+        txt.color = col;
+        
+        img = confirmHintIcon.GetComponent<Image>();
+        col = img.color;
+        col.a = alpha;
+        img.color = col;
+        
+        txt = confirmHintText.GetComponent<TextMeshProUGUI>();
         col = txt.color;
         col.a = alpha;
         txt.color = col;

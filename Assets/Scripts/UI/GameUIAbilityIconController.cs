@@ -39,7 +39,7 @@ namespace UI
                 UpdateAbilityUIBase();
         }
 
-        private void UpdateAbilityUIBase()
+        public void UpdateAbilityUIBase()
         {
             Texture2D tex = Resources.Load<Texture2D>(_ASC.QueryAbilityUIIcon(_abilityTag));
             Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));

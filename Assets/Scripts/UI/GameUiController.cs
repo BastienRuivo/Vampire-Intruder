@@ -31,6 +31,8 @@ public class GameUiController : MonoBehaviour,
     public GameObject primaryAbilityIndicator;
     public GameObject secondaryAbilityIndicator;
     public GameObject abilitySelector;
+    public GameObject abilitySelectorHintImage;
+    public GameObject abilitySelectorHintText;
 
     [Header("Objectives")]
     public float upSpeed;
@@ -127,17 +129,31 @@ public class GameUiController : MonoBehaviour,
         _abilitySelector.SetOpacity(_abilitySelectorOpacity.UpdateGetValue());
         _abilityEIndicator.SetOpacity(1 - _abilitySelectorOpacity.GetValue());
         
-        if (!_hasLock && Input.GetAxis("Mouse ScrollWheel") != 0)
+        TextMeshProUGUI hintText = abilitySelectorHintText.GetComponent<TextMeshProUGUI>();
+        Color hintTxtCol = hintText.color;
+        hintTxtCol.a = 1 - _abilitySelectorOpacity.GetValue();
+        hintText.color = hintTxtCol;
+            
+        Image hintImg = abilitySelectorHintImage.GetComponent<Image>();
+        Color hintImgCol = hintImg.color;
+        hintImgCol.a = 1 - _abilitySelectorOpacity.GetValue();
+        hintImg.color = hintImgCol;
+        
+        if (Input.GetAxis("Mouse ScrollWheel") != 0)
         {
-            _abilitySelectorOpacity.RetargetValue(1);
-            _playerASC.GetInputLock().Take();
-            _hasLock = true;
+            if (!_hasLock)
+            {
+                _abilitySelectorOpacity.RetargetValue(1);
+                _playerASC.GetInputLock().Take();
+                _hasLock = true;
+            }
         }
 
         if (_hasLock && Input.GetMouseButtonDown(0))
         {
             _abilitySelectorOpacity.RetargetValue(0);
             _playerASC.GetInputLock().Release();
+            _abilityEIndicator.SetAbilityTag(_playerASC.GetAbilityByBinding(KeyCode.E));
             _hasLock = false;
         }
     }
