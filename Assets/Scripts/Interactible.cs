@@ -56,9 +56,12 @@ public class Interactible : MonoBehaviour
     {
         _currentTime = duration;
         _isActive = true;
-
         _spriteRenderer= GetComponent<SpriteRenderer>();
-        _spriteRenderer.material.SetColor("_Color", glowColor);
+        Color col = _spriteRenderer.color;
+        col.a = 1f;
+        _spriteRenderer.color = col;
+        _spriteRenderer.material.SetColor("_Color", _spriteRenderer.color);
+        _spriteRenderer.material.SetColor("_GlowColor", glowColor);
         _clock = transform.Find("Clock").GetComponent<SpriteRenderer>();
         _keyTooltip = transform.Find("Key").GetComponent<SpriteRenderer>();
         _icon = transform.Find("Icon").GetComponent<SpriteRenderer>();
