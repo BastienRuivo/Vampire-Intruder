@@ -84,8 +84,9 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         
         //Grant ability. For consumable ones this will just increment the available charge count if the ability has already been granted.
         _ascRef.GrantAbility<AEffectVampireStatClamp>("_StatClamp");
-        _ascRef.GrantAbility<AEffectVampireBite>("Bite");
         _ascRef.GrantAbility<AEffectVampireThirst>("Thirst");
+        _ascRef.GrantAbility<AEffectVampireBite>("Bite");
+        _ascRef.GrantAbility<AEffectVampireInvisibility>("EInvisibility");
         _ascRef.GrantAbility<AVampireBite>("TryBite");
         _ascRef.GrantAbility<AVampireTeleportation>("TP");
         _ascRef.GrantAbility<AVampireBlind>("Blind");
