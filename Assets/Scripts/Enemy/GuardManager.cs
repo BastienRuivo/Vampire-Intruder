@@ -25,7 +25,7 @@ public enum AlertStage
     Alerted = 3
 }
 
-public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>
+public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>, IEventObserver<Targetable>
 {
     public LayerMask visionMask;
     private RoomData _currentRoom;
@@ -153,6 +153,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     
     private Animator _animator;
     private Transform _cameraPos;
+    private int _ignoredTargetsLeaved = 0;
     private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
 
     private void Awake() {
@@ -264,7 +265,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         get
         {
             //Debug.Log(_targets.Count + " > " + _ignoredTargets.Count);
-            return _targets.Count - _ignoredTargets.Count > 0;
+            return _targets.Count - (_ignoredTargets.Count - _ignoredTargetsLeaved) > 0;
         }
     }
 
@@ -321,7 +322,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                         }
 
                         alertStage = AlertStage.Suspicious;
-                        _currentWaitingTimer = 0.1f;
+                        _currentWaitingTimer = timerWaitingBetweenNodes * 2f;
                         break;
                 }
             }
@@ -792,7 +793,12 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         if (!targetable.IsVisibleByGuard) return;
         if(context.BeginOverlap)
         {
+            Debug.Log(targetable.name + "is entering guard sight");
             _targets.Add(targetable);
+            if(_ignoredTargets.Contains(targetable))
+            {
+                _ignoredTargetsLeaved--;
+            }
             if(targetable.targetType == Targetable.TargetType.PLAYER)
             {
                 currentTarget = targetable;
@@ -804,8 +810,13 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         }
         else
         {
+            Debug.Log(targetable.name + "is leaving guard sight");
             _targets.Remove(targetable);
-            if(currentTarget == targetable)
+            if (_ignoredTargets.Contains(targetable))
+            {
+                _ignoredTargetsLeaved++;
+            }
+            if (currentTarget == targetable)
             {
                 currentTarget = FindClosestTarget();
             }
@@ -831,7 +842,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     {
         if (collision.gameObject.CompareTag("Targetable") && collision.gameObject.GetComponent<Targetable>().targetType == Targetable.TargetType.PLAYER)
         {
-            _currentAlert = 0.49f;
+            _currentAlert = Mathf.Min(0.493f, _currentAlert);
             currentTarget = _playerController.GetComponent<Targetable>();
             UpdateAlertStage(true);
         }
@@ -840,6 +851,11 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     public void AskPathUpdate()
     {
         _shouldUpdatePath = true;
+    }
+
+    public void OnEvent(Targetable context)
+    {
+        _ignoredTargets.Remove(context);
     }
 }
 // CONE VISION
