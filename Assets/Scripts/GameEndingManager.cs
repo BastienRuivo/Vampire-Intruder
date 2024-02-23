@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class GameEndingManager : MonoBehaviour
 {
     public enum GameOverState{
@@ -43,6 +44,7 @@ public class GameEndingManager : MonoBehaviour
             }
         }
 
+        Debug.Log("Total secondary objectives: " + totalSeconds);
         AppState.GetInstance().setTotalSecondaryObjectivesInCurrentScene(totalSeconds);
         AppState.GetInstance().setSecondaryObjectivesAchievedInCurrentScene(achievedSeconds);
 
@@ -58,14 +60,16 @@ public class GameEndingManager : MonoBehaviour
         {
             AppState.GetInstance().endLevel(false,false,false,false);
         }
-        Time.timeScale = 0;
+        
+        SceneManager.LoadScene("Story");
 
     }
 
     public void onPlayerDeath(GameOverState gameOverState){
         if(gameOverState == GameOverState.Caught)
         {
-            AppState.GetInstance().endLevel(false,true,false,false);
+            
+            AppState.GetInstance().endLevel(false,false,true,false);
         } 
         else if(gameOverState == GameOverState.Dead)
         {
@@ -73,8 +77,10 @@ public class GameEndingManager : MonoBehaviour
         } 
         else if(gameOverState == GameOverState.TimeEnd)
         {
-            AppState.GetInstance().endLevel(false,false,true,false);
+            AppState.GetInstance().endLevel(false,true,false,false);
         }
+
+        SceneManager.LoadScene("Story");
     }
 
     public void nextLevelButton(){

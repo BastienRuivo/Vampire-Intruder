@@ -11,14 +11,13 @@ namespace Systems.Ability.Abilities
         {
             //Add the ability stat costs here.
             AbilityCosts.Add("Blood", -25.0f); //todo balance
-            AppState.GetInstance().addGuardKilledInCurrentScene();
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
             //Debug.Log("Vampire is draining blood...");
             PlayerController player = avatar.GetComponent<PlayerController>();
-
+            AppState.GetInstance().addGuardKilledInCurrentScene();
             //todo play animation
 
             //Lock Input

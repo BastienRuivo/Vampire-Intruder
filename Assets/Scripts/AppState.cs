@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class AppState : Singleton<AppState>
 {
+    private void Awake() {
+        DontDestroyOnLoad(this.gameObject);
+    }
     /////////////////////////
     /////// VARIABLES ///////
     /////////////////////////
@@ -50,6 +53,9 @@ public class AppState : Singleton<AppState>
     private int secondaryObjectivesAchievedInCurrentScene = 0;  
     private int totalSecondaryObjectivesInCurrentScene = 0; 
 
+    //LevelGenerator parameters
+    private int startingEnergy;
+
     /////////////////////////////////
     /////// LEVEL MANAGEMENTS ///////
     /////////////////////////////////
@@ -87,6 +93,8 @@ public class AppState : Singleton<AppState>
     /// <param name="bloodFailed">If the player lost because of a blood</param>
     public void endLevel(bool mainObjectiveAchieved, bool timeFailed, bool guardFailed, bool bloodFailed)
     {
+
+        Debug.Log("End of level " + levelNumber + " with guardKilledInCurrentScene: " + guardKilledInCurrentScene + " and totalGuardsInCurrentScene: " + totalGuardsInCurrentScene + " and secondaryObjectivesAchievedInCurrentScene: " + secondaryObjectivesAchievedInCurrentScene + " and totalSecondaryObjectivesInCurrentScene: " + totalSecondaryObjectivesInCurrentScene);
         // Prince Mercies
         if (timeFailed || guardFailed || bloodFailed)
         {

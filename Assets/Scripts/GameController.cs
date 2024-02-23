@@ -382,7 +382,7 @@ public class GameController : Singleton<GameController>
         this.rooms = rooms;
         Debug.Log("Level loaded with " + rooms.Count + " rooms");
         GenerateAStarGraph();
-        
+        countGard();
         HideOtherMaps();
         SetObjectives();
 
