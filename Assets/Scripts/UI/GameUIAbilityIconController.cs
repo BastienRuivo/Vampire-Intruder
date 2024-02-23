@@ -11,6 +11,7 @@ namespace UI
         public GameObject cooldownIndicator;
         public GameObject cooldownTextIndicator;
         public GameObject keyBindingIndicator;
+        public GameObject chargesTextIndicator;
 
         public bool showKeyBinding = true;
         
@@ -45,6 +46,16 @@ namespace UI
             Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
             abilityIconIndicator.GetComponent<Image>().sprite =sprite;
+            
+            int charges = _ASC.QueryAbilityCharges(_abilityTag);
+            if (charges >= 0)
+            {
+                chargesTextIndicator.SetActive(true);
+            }
+            else
+            {
+                chargesTextIndicator.SetActive(false);
+            }
         }
         
         public void SetOpacity(float alpha)
@@ -73,6 +84,11 @@ namespace UI
             Color kbCol = keyBindingIcon.color;
             kbCol.a = alpha;
             keyBindingIcon.color = kbCol;
+
+            TextMeshProUGUI chargesText = chargesTextIndicator.GetComponent<TextMeshProUGUI>();
+            Color chargesTxtCol = chargesText.color;
+            chargesTxtCol.a = alpha;
+            chargesText.color = chargesTxtCol;
         }
 
         public void SetHighlight(bool highlight)
@@ -116,6 +132,16 @@ namespace UI
             else
             {
                 cooldownIndicator.SetActive(false);
+            }
+
+            int charges = _ASC.QueryAbilityCharges(_abilityTag);
+            if (charges > 0)
+            {
+                chargesTextIndicator.GetComponent<TextMeshProUGUI>().SetText(charges.ToString());
+            }
+            if (charges == 0)
+            {
+                chargesTextIndicator.GetComponent<TextMeshProUGUI>().SetText("0");
             }
         }
     }

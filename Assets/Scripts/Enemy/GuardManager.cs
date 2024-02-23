@@ -25,7 +25,7 @@ public enum AlertStage
     Alerted = 3
 }
 
-public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>
+public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>, IEventObserver<Targetable>
 {
     public LayerMask visionMask;
     private RoomData _currentRoom;
@@ -100,6 +100,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     private VisionConeController _visionConeController;
 
     public Targetable currentTarget;
+    private GameObject _oldTarget;
     // Target of pathfinding
     private GameObject _pathfindTarget;
     // Temporary target for pathfinding
@@ -152,6 +153,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     
     private Animator _animator;
     private Transform _cameraPos;
+    private int _ignoredTargetsLeaved = 0;
     private static readonly int AlertRatio = Shader.PropertyToID("_AlertRatio");
 
     private void Awake() {
@@ -263,7 +265,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         get
         {
             //Debug.Log(_targets.Count + " > " + _ignoredTargets.Count);
-            return _targets.Count - _ignoredTargets.Count > 0;
+            return _targets.Count - (_ignoredTargets.Count - _ignoredTargetsLeaved) > 0;
         }
     }
 
@@ -292,17 +294,35 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                 case Targetable.TargetType.ALERTER:
                 {
                         _ignoredTargets.Add(currentTarget);
-                        currentTarget = FindClosestTarget();
-                        if(currentTarget == null)
+                        var newTarget = FindClosestTarget();
+                        if(newTarget != null || currentTarget != null)
                         {
                             _currentWaitingTimer = timerWaitingTempNodes;
-                            Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, currentTarget.gameObject);
+                            Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, newTarget == null ? currentTarget.gameObject : newTarget.gameObject);
                             _directions = new List<Direction> {
                                 DirectionHelper.Previous(dir),
                                 dir,
                                 DirectionHelper.Next(dir)
                             };
                         }
+
+                        currentTarget = newTarget;
+
+                        if (currentTarget == null)
+                        {
+                            if (_oldTarget != null)
+                            {
+                                ChangeTarget(_oldTarget);
+                            }
+                            else
+                            {
+                                ChangeTarget(FindClosestNode());
+                            }
+                            _speed = defaultSpeed;
+                        }
+
+                        alertStage = AlertStage.Suspicious;
+                        _currentWaitingTimer = timerWaitingBetweenNodes * 2f;
                         break;
                 }
             }
@@ -400,7 +420,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                         CameraShake.GetInstance().Shake(0.2f);
                         EnterPlayerSigth();
                     }
-                    ChangeTarget(currentTarget.gameObject);
+                    ChangeTarget(currentTarget.gameObject, false);
                     break;
                 // If very sus, check the player position
                 case AlertStage.Suspicious:
@@ -611,9 +631,13 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
      * Change the path target and reset path
      * @param newTarget the new target where we want the guard to go
     */
-    private void ChangeTarget(GameObject newTarget)
+    private void ChangeTarget(GameObject newTarget, bool rememberTarget = true)
     {
         _pathfindTarget = newTarget;
+        if (rememberTarget)
+        {
+            _oldTarget = newTarget;
+        }
         ForceResetPathfinding();
     }
 
@@ -769,7 +793,12 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         if (!targetable.IsVisibleByGuard) return;
         if(context.BeginOverlap)
         {
+            Debug.Log(targetable.name + "is entering guard sight");
             _targets.Add(targetable);
+            if(_ignoredTargets.Contains(targetable))
+            {
+                _ignoredTargetsLeaved--;
+            }
             if(targetable.targetType == Targetable.TargetType.PLAYER)
             {
                 currentTarget = targetable;
@@ -781,8 +810,13 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         }
         else
         {
+            Debug.Log(targetable.name + "is leaving guard sight");
             _targets.Remove(targetable);
-            if(currentTarget == targetable)
+            if (_ignoredTargets.Contains(targetable))
+            {
+                _ignoredTargetsLeaved++;
+            }
+            if (currentTarget == targetable)
             {
                 currentTarget = FindClosestTarget();
             }
@@ -808,7 +842,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     {
         if (collision.gameObject.CompareTag("Targetable") && collision.gameObject.GetComponent<Targetable>().targetType == Targetable.TargetType.PLAYER)
         {
-            _currentAlert = 0.49f;
+            _currentAlert = Mathf.Min(0.493f, _currentAlert);
             currentTarget = _playerController.GetComponent<Targetable>();
             UpdateAlertStage(true);
         }
@@ -817,6 +851,11 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     public void AskPathUpdate()
     {
         _shouldUpdatePath = true;
+    }
+
+    public void OnEvent(Targetable context)
+    {
+        _ignoredTargets.Remove(context);
     }
 }
 // CONE VISION

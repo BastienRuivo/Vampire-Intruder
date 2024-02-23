@@ -129,7 +129,7 @@ public class GameUIAbilitySelectorController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _abilities = new[] { "TP","Blind", "Invisibility", "Sedate" };
+        _abilities = new[] { "TP","Blind", "Invisibility", "Lure", "Sedate", "BloodPack" };
     }
 
     // Update is called once per frame
@@ -142,6 +142,8 @@ public class GameUIAbilitySelectorController : MonoBehaviour
             if (_abilityIndex < (_abilities.Length - 1))
             {
                 abilitiesIcons[_abilityIndex++].GetComponent<GameUIAbilityIconController>().SetHighlight(false);
+                _ASC.CancelAbility(_ASC.GetAbilityByBinding(KeyCode.E));
+                _ASC.GetComponent<PlayerController>().UnbindVisionFromMouse();
                 _ASC.BindAbility( abilitiesIcons[_abilityIndex].GetComponent<GameUIAbilityIconController>().GetAbilityTag(), KeyCode.E);
                 UpdateAbilityUIBase();
             }
