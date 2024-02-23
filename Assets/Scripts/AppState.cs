@@ -46,7 +46,6 @@ public class AppState : Singleton<AppState>
     private bool hasAlreadyKilled = false;
     private bool hasAlreadySecondary = false;
 
-
     //CurrentScene parameters
     private int guardKilledInCurrentScene = 0; 
     private int totalGuardsInCurrentScene = 0; 
@@ -55,6 +54,40 @@ public class AppState : Singleton<AppState>
 
     //LevelGenerator parameters
     private int startingEnergy;
+
+    //////////////////////////
+    /////// INITIALIZE ///////
+    //////////////////////////
+
+    public void Initialize()
+    {
+        // App State
+        princeMercy = 3;
+        mainObjectiveSkip = 2;
+        levelNumber = 0;
+        runNumber = 0;
+
+        // Abilities
+        abilities["Teleportation"] = false;
+        abilities["Decieving"] = false;
+        abilities["Cataract"] = false;
+        abilities["Invisibility"] = false;
+        items["Sedative"] = 0;
+        items["BloodPouch"] = 0;
+
+        // Story
+        JessikaLove = 0;
+        ElrikLove = 0;
+        hasMainObjectiveFailed = false;
+        hasTimeFailed = false;
+        hasGuardFailed = false;
+        guardKilled = 0;
+        secondaryObjectivesAchieved = 0;
+        totalGuards = 0;
+        totalSecondaryObjectives = 0;
+        hasAlreadyKilled = false;
+        hasAlreadySecondary = false;
+    }
 
     /////////////////////////////////
     /////// LEVEL MANAGEMENTS ///////

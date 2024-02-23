@@ -1,4 +1,4 @@
-@@@Background Day C 2 Jessika Neutral 0 Elrik Neutral 1
+@@@Background Night C 2 Jessika Neutral 0 Elrik Neutral 1
 1 C Prince_Elrik Elrik Neutral 1
 C'est donc toi que l'on appelle Jessika ?\nTu es plus belle que ce que j'imaginais...
 2 S Jessika Jessika Smile 1 Elrik Neutral 0
@@ -11,7 +11,7 @@ Oh... Mais Ellena !\nQue fais-tu là ?
 2 L Ellena Elrik Upset 0 Ellena Upset 1
 Je vois que je gêne... Je m'en vais !
 @@@Disappear Ellena
-1 L Jessika Jessika Smile 1
+1 J Jessika Jessika Smile 1
 Elle est partie...\nJe ne te félicite pas, Elric !
 @@@Background Narration L 0
 @@@Narration Narrateur

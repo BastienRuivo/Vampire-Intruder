@@ -37,6 +37,9 @@ public class ReadText : Singleton<ReadText>
 	public GameObject[] framesObjects;              // The different frames effects we can put on the background (Black = 0, Sepia = 1);
 	public GameObject choicePanelObject;			// The GameObject containing the different choices
 	public GameObject choiceObject;					// The choice button object
+    public GameObject saveQuestionObject;           // The saveQuestion to make appear
+    public GameObject continueObject;               // The continue button to make appear
+    public GameObject backObject;                   // The back button to make disappear
 
 	// Private dialog objects
 	private string[] lines;							// All the different printed phrases
@@ -105,7 +108,7 @@ public class ReadText : Singleton<ReadText>
         };
         possibleTextBoxes = new SortedDictionary<char, int>
         {
-            {'L', 0}, {'R', 1}, {'C', 2}, {'S', 3}, {'T', 4 }
+            {'L', 0}, {'R', 1}, {'C', 2}, {'S', 3}, {'T', 4 }, {'J',  5}
         };
 
 		// Make all the characters invisible
@@ -1274,6 +1277,7 @@ public class ReadText : Singleton<ReadText>
         }
 
         Initialize(dialogName);
+        //Initialize("0");
 	}
 
 	/// <summary>
@@ -1333,7 +1337,8 @@ public class ReadText : Singleton<ReadText>
 			// Conditions: mouse click or auto time exceeded, no log screen, no ongoing fading animations
 			if ((Input.GetMouseButtonDown(0) || (Time.time - startTime > printingTime
 				&& GetComponent<StoryButtonManager>().getAuto()))
-				&& !GetComponent<StoryButtonManager>().getLog() && !fadingProtect)
+				&& !GetComponent<StoryButtonManager>().getLog()
+				&& !GetComponent<StoryButtonManager>().getSave() && !fadingProtect)
 			{
 				// If a narration is ongoing, destroy all the narration lines
 				if (isNarration)
@@ -1374,7 +1379,7 @@ public class ReadText : Singleton<ReadText>
 						EventSystem.current.SetSelectedGameObject(null);
 					}
 					// If it's not another button, go to the next line
-					else if (name != "Log" && name != "Skip" && name != "Close")
+					else if (name != "Log" && name != "Skip" && name != "Close" && name != "Saves" && name != "Back")
 					{
 						NextLine();
 					}
@@ -1491,7 +1496,10 @@ public class ReadText : Singleton<ReadText>
                 // Scene change
                 if (mots[0] == "@@@Scene")
                 {
-                    SceneManager.LoadScene("LevelGenTest");
+                    int scene = int.Parse(mots[1]);
+                    int level = int.Parse(mots[2]);
+
+                    StartCoroutine(ChangeScene(scene, level));
                 }
 
 				// Character disappearing command
@@ -1665,7 +1673,7 @@ public class ReadText : Singleton<ReadText>
 					}
 
 					// Log
-					CreateLog(narrationLines, names[currentLineNumber], "", 5);
+					CreateLog(narrationLines, names[currentLineNumber], "", 6);
 
 					// Launch the narration animation
 					narrationCoroutine = StartCoroutine(SetNarration(narrationLines));
@@ -2262,7 +2270,10 @@ public class ReadText : Singleton<ReadText>
         yield return new WaitUntil(() => blackObject.GetComponent<Image>().color.a == 1.0f);
         fadingIn = false;
 
+        #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
+        #endif
+        Application.Quit();
     }
 
 	/// <summary>
@@ -2297,4 +2308,61 @@ public class ReadText : Singleton<ReadText>
 	{
 		return logHeight;
 	}
+
+    /// <summary>
+    /// Before charging a new game scene, ask for the saving
+    /// </summary>
+    private IEnumerator ChangeScene(int scene, int level)
+    {
+        fadingProtect = true;
+
+        fadingIn = true;
+        yield return new WaitUntil(() => blackObject.GetComponent<Image>().color.a == 1.0f);
+        fadingIn = false;
+
+        // New infiltration game level
+        if (scene != -1)
+        {
+            GetComponent<StoryButtonManager>().OnSaveClicked();
+            saveQuestionObject.SetActive(true);
+            continueObject.SetActive(true);
+        }
+        else
+        {
+            switch (level)
+            {
+                case 0:
+                    SceneManager.LoadScene("GameOver");
+                    break;
+                case 1:
+                    SceneManager.LoadScene("BadEnd");
+                    break;
+                case 2:
+                    SceneManager.LoadScene("NeutralEnd1");
+                    break;
+                case 3:
+                    SceneManager.LoadScene("NeutralEnd2");
+                    break;
+                case 4:
+                    SceneManager.LoadScene("GoodEnd1");
+                    break;
+                case 5:
+                    SceneManager.LoadScene("GoodEnd2");
+                    break;
+            }
+
+        }
+    }
+
+    /// <summary>
+    /// Continue on to the next scene
+    /// </summary>
+    public void OnContinueClicked()
+    {
+        saveQuestionObject.SetActive(false);
+        continueObject.SetActive(false);
+        GetComponent<StoryButtonManager>().OnBackClicked();
+
+        SceneManager.LoadScene("LevelGenTest");
+    }
 }
