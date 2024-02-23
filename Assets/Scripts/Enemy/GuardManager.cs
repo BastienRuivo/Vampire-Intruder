@@ -100,6 +100,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     private VisionConeController _visionConeController;
 
     public Targetable currentTarget;
+    private GameObject _oldTarget;
     // Target of pathfinding
     private GameObject _pathfindTarget;
     // Temporary target for pathfinding
@@ -292,17 +293,35 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                 case Targetable.TargetType.ALERTER:
                 {
                         _ignoredTargets.Add(currentTarget);
-                        currentTarget = FindClosestTarget();
-                        if(currentTarget == null)
+                        var newTarget = FindClosestTarget();
+                        if(newTarget != null || currentTarget != null)
                         {
                             _currentWaitingTimer = timerWaitingTempNodes;
-                            Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, currentTarget.gameObject);
+                            Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, newTarget == null ? currentTarget.gameObject : newTarget.gameObject);
                             _directions = new List<Direction> {
                                 DirectionHelper.Previous(dir),
                                 dir,
                                 DirectionHelper.Next(dir)
                             };
                         }
+
+                        currentTarget = newTarget;
+
+                        if (currentTarget == null)
+                        {
+                            if (_oldTarget != null)
+                            {
+                                ChangeTarget(_oldTarget);
+                            }
+                            else
+                            {
+                                ChangeTarget(FindClosestNode());
+                            }
+                            _speed = defaultSpeed;
+                        }
+
+                        alertStage = AlertStage.Suspicious;
+                        _currentWaitingTimer = 0.1f;
                         break;
                 }
             }
@@ -400,7 +419,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                         CameraShake.GetInstance().Shake(0.2f);
                         EnterPlayerSigth();
                     }
-                    ChangeTarget(currentTarget.gameObject);
+                    ChangeTarget(currentTarget.gameObject, false);
                     break;
                 // If very sus, check the player position
                 case AlertStage.Suspicious:
@@ -611,9 +630,13 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
      * Change the path target and reset path
      * @param newTarget the new target where we want the guard to go
     */
-    private void ChangeTarget(GameObject newTarget)
+    private void ChangeTarget(GameObject newTarget, bool rememberTarget = true)
     {
         _pathfindTarget = newTarget;
+        if (rememberTarget)
+        {
+            _oldTarget = newTarget;
+        }
         ForceResetPathfinding();
     }
 

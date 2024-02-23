@@ -16,8 +16,9 @@ namespace Systems.Ability
         /// </summary>
         /// <param name="ability">The ability spawning the actor.</param>
         /// <param name="path">The Asset path of the object to load</param>
+        /// <param name="asAbilityResource">If the object should be considered as an ability's resource I.E. have the life time of the ability.</param>
         /// <returns>a game object instanced from asset path.</returns>
-        public GameObject InstanceGameObject(Ability ability, string path)
+        public GameObject InstanceGameObject(Ability ability, string path, bool asAbilityResource = true)
         {
             if(ability == null)
                 return null;
@@ -25,7 +26,8 @@ namespace Systems.Ability
             if (grantedAbility == null)
                 return null;
             GameObject instance = Instantiate(Resources.Load<GameObject>(path));
-            grantedAbility.Resources.AddFirst(instance);
+            if(asAbilityResource)
+                grantedAbility.Resources.AddFirst(instance);
             return instance;
         }
 
