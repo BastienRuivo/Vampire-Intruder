@@ -29,15 +29,25 @@ public class AppState : Singleton<AppState>
     // Story parameters
     private int JessikaLove = 0;
     private int ElrikLove = 0;
+
     private bool hasMainObjectiveFailed = false;
     private bool hasTimeFailed = false;
     private bool hasGuardFailed = false;
+
     private int guardKilled = 0;
-    private int secondaryObjectivesAchieved = 0;
     private int totalGuards = 0;
+    private int secondaryObjectivesAchieved = 0;
     private int totalSecondaryObjectives = 0;
+
     private bool hasAlreadyKilled = false;
     private bool hasAlreadySecondary = false;
+
+
+    //CurrentScene parameters
+    private int guardKilledInCurrentScene = 0; 
+    private int totalGuardsInCurrentScene = 0; //done
+    private int secondaryObjectivesAchievedInCurrentScene = 0;  
+    private int totalSecondaryObjectivesInCurrentScene = 0;
 
     /////////////////////////////////
     /////// LEVEL MANAGEMENTS ///////
@@ -71,27 +81,27 @@ public class AppState : Singleton<AppState>
     /// End a level, getting the new state and giving new items
     /// </summary>
     /// <param name="mainObjectiveAchieved">If the main objective was complete</param>
-    /// <param name="secondaryAchieved">The number of secondary objectives achived</param>
     /// <param name="timeFailed">If the player lost because of the time</param>
     /// <param name="guardFailed">If the player lost because of a guard</param>
-    /// <param name="kills">The number of guards killed</param>
-    public void endLevel(bool mainObjectiveAchieved, int secondaryAchieved, bool timeFailed,
-        bool guardFailed, int kills, int guards, int secondary)
+    /// <param name="bloodFailed">If the player lost because of a blood</param>
+    public void endLevel(bool mainObjectiveAchieved, bool timeFailed, bool guardFailed, bool bloodFailed)
     {
         // Prince Mercies
         if (timeFailed || guardFailed)
         {
             decreasePrinceMercy();
         }
+        else
+        {
+            if (mainObjectiveAchieved)
+            {
+                decreasePrinceMercy();
+            }
+        }
         hasTimeFailed = timeFailed;
         hasGuardFailed = guardFailed;
         
-        // Main objectives skip
-        if (!mainObjectiveAchieved)
-        {
-            decreaseMainObjectiveSkip();
-        }
-        hasMainObjectiveFailed = !mainObjectiveAchieved;
+
 
         // Guards kills
         guardKilled += kills;

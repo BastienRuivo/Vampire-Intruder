@@ -30,39 +30,36 @@ public class GameEndingManager : MonoBehaviour
 
     public void onPlayerExtraction(){
         var main = GameController.GetInstance().objectivesToComplete.Find(o => o.isMain);
+        AudioManager.GetInstance().playClip(_bell, transform.position);
         if(main == null){
             Debug.LogError("No main objective found");
             return;
         }
-        var textObj = victoryUI.GetComponentInChildren<Text>();
         if (main.state == GameController.ObjectiveState.DONE)
         {
-            textObj.text = successMessage;
-            textObj.color = Color.green;
+            AppState.GetInstance().endLevel(true,false,false,false);
         }
         else
         {
-            textObj.text = failureMessage;
-            textObj.color = Color.red;
-            //AppState.GetInstance().nbObjectifSkip++;
+            AppState.GetInstance().endLevel(false,false,false,false);
         }
-        victoryUI.SetActive(true);
         Time.timeScale = 0;
-        AudioManager.GetInstance().playClip(_bell, transform.position);
+
     }
 
     public void onPlayerDeath(GameOverState gameOverState){
-        if(gameOverState == GameOverState.Caught){
-            text.text = "You have been caught!";
-        } else if(gameOverState == GameOverState.Dead){
-            text.text = "You are dead!";
-        } else if(gameOverState == GameOverState.TimeEnd){
-            text.text = "Time is over!";
+        if(gameOverState == GameOverState.Caught)
+        {
+            AppState.GetInstance().endLevel(false,true,false,false);
+        } 
+        else if(gameOverState == GameOverState.Dead)
+        {
+            AppState.GetInstance().endLevel(false,false,false,true);
+        } 
+        else if(gameOverState == GameOverState.TimeEnd)
+        {
+            AppState.GetInstance().endLevel(false,false,true,false);
         }
-
-        gameOverUI.SetActive(true);
-        Time.timeScale = 0;
-        //AppState.GetInstance().vie--;
     }
 
     public void nextLevelButton(){

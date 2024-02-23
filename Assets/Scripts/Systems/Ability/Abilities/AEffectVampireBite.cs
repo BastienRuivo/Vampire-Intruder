@@ -11,6 +11,7 @@ namespace Systems.Ability.Abilities
         {
             //Add the ability stat costs here.
             AbilityCosts.Add("Blood", -25.0f); //todo balance
+            AppState.getInstance().guardKilledInCurrentScene++;
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)

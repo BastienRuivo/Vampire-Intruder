@@ -382,6 +382,7 @@ public class GameController : Singleton<GameController>
         this.rooms = rooms;
         Debug.Log("Level loaded with " + rooms.Count + " rooms");
         GenerateAStarGraph();
+        
         HideOtherMaps();
         SetObjectives();
 
@@ -392,6 +393,15 @@ public class GameController : Singleton<GameController>
 
 
         _hasLevelLoaded = true;
+    }
+
+    private void countGard(){
+        int count = 0;
+        foreach (RoomData room in rooms)
+        {
+            count += room.guards.Count;
+        }
+        AppState.GetInstance().totalGuardsInCurrentScene = count;
     }
 
     private void UpdateGameStatus(){
