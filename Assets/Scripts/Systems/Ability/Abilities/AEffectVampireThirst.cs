@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class AVampireThirst : Ability
+    public class AEffectVampireThirst : Ability
     {
-        public AVampireThirst()
+        public AEffectVampireThirst()
         {
             //Specify if ability triggers itself on a specific context
             SelfTriggeringAbility = true; //false by default.
@@ -19,7 +19,7 @@ namespace Systems.Ability.Abilities
             //call the endgame
             //todo call the endgame from :
             //GameController.GetGameMode().
-            
+            GameController.GetGameMode().GetDesiccated();
             yield return null; //at the end if ability does run on a single tick (no yield return before).
         }
 

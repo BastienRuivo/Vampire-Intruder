@@ -83,13 +83,14 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _ascRef.DefineStat("BloodMax", baseValue:100.0f, lowerRange:1.0f);
         
         //Grant ability. For consumable ones this will just increment the available charge count if the ability has already been granted.
-        _ascRef.GrantAbility<AEffectStatClamp>("_StatClamp");
+        _ascRef.GrantAbility<AEffectVampireStatClamp>("_StatClamp");
         _ascRef.GrantAbility<AEffectVampireBite>("Bite");
-        _ascRef.GrantAbility<AVampireTryBite>("TryBite");
-        _ascRef.GrantAbility<AVampireThirst>("Thirst");
-        _ascRef.GrantAbility<ATeleportation>("TP");
-        _ascRef.GrantAbility<ADash>("Dash");
-        _ascRef.GrantAbility<ABlind>("Blind");
+        _ascRef.GrantAbility<AEffectVampireThirst>("Thirst");
+        _ascRef.GrantAbility<AVampireBite>("TryBite");
+        _ascRef.GrantAbility<AVampireTeleportation>("TP");
+        _ascRef.GrantAbility<AVampireBlind>("Blind");
+        _ascRef.GrantAbility<AVampireSedate>("Sedate");
+        _ascRef.GrantAbility<AVampireInvisibility>("Invisibility");
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);

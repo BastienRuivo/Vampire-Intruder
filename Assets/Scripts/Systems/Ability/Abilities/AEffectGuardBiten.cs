@@ -4,7 +4,7 @@ using Systems.Ability;
 using Systems.Ability.Abilities;
 using UnityEngine;
 
-public class AGuardEaten : Ability
+public class AEffectGuardBiten : Ability
 {
     public override IEnumerator OnAbilityTriggered(GameObject avatar)
     {

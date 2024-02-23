@@ -167,7 +167,7 @@ public class GameController : Singleton<GameController>
         GameEndingManager.instance.onPlayerDeath(GameEndingManager.GameOverState.TimeEnd);
         Debug.Log("Level failed (time is up).");
     }
-    
+
     /// <summary>
     /// End the level on player getting caught by a guard.
     /// </summary>
@@ -179,6 +179,24 @@ public class GameController : Singleton<GameController>
         {
             AudioManager.GetInstance().playClip(caughtBell, transform.position);
             GameEndingManager.instance.onPlayerDeath(GameEndingManager.GameOverState.Caught);
+        }
+        else
+        {
+            Debug.LogError("GameEndingManager instance is null!");
+        }
+    }
+
+    /// <summary>
+    /// End the level on player getting out of blood
+    /// </summary>
+    public void GetDesiccated()
+    {
+        // Vérifiez si l'instance de GameEndingManager existe avant d'y accéder
+        GetGameState().status = GameStatus.Ended;
+        if (GameEndingManager.instance != null)
+        {
+            AudioManager.GetInstance().playClip(caughtBell, transform.position);
+            GameEndingManager.instance.onPlayerDeath(GameEndingManager.GameOverState.Dead);
         }
         else
         {

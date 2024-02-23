@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class AEffectStatClamp : Ability
+    public class AEffectVampireStatClamp : Ability
     {
-        public AEffectStatClamp()
+        public AEffectVampireStatClamp()
         {
             //Specify if ability triggers itself on a specific context
             SelfTriggeringAbility = true; //false by default.

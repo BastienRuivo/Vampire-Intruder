@@ -129,7 +129,7 @@ public class GameUIAbilitySelectorController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _abilities = new[] { "TP","Blind" };
+        _abilities = new[] { "TP","Blind", "Invisibility", "Sedate" };
     }
 
     // Update is called once per frame

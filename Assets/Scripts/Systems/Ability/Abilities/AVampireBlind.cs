@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class ABlind : Ability
+    public class AVampireBlind : Ability
     {
-         public ABlind()
+         public AVampireBlind()
         {
             //Specify if ability is a consumable object.
             //ConsumableAbility = true; //false by default.
@@ -85,20 +85,7 @@ namespace Systems.Ability.Abilities
             
             if (target != null)
             {
-                CommitAbility(avatar);
-
-                GuardManager guardController = cursorController.currentTarget.GetComponent<GuardManager>();
-                DestroyResource(avatar, cursor);
-
-                float baseFOV = guardController.GetVision().fov;
-                float baseViewDistance = guardController.GetVision().viewDistance;
-                guardController.GetVision().fov = 70;
-                guardController.GetVision().viewDistance = 1.5f;
-
-                yield return new WaitForSeconds(5.0f);
-
-                guardController.GetVision().fov = baseFOV;
-                guardController.GetVision().viewDistance = baseViewDistance;
+                GetAbilitySystemComponent(cursorController.currentTarget).TriggerAbility("Blind");
             }
             
             //yield return null; //at the end if ability does run on a single tick (no yield return before).

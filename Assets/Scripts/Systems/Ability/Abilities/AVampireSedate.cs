@@ -1,25 +1,44 @@
 ﻿using System.Collections;
-using JetBrains.Annotations;
-using Systems.Ability;
 using Systems.Ability.Aiming;
 using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class AVampireTryBite : Ability
+    public class AVampireSedate : Ability
     {
-        public AVampireTryBite()
+        public AVampireSedate()
         {
-            Cooldown = 0.5f;
-            IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Bite";
-        }
+            //Specify if ability is a consumable object.
+            ConsumableAbility = true; //false by default.
+            
+            //Specify if ability triggers itself on a specific context
+            //SelfTriggeringAbility = true; //false by default.
+            
+            //Specify if ability's costs should be refunded in case of the ability being canceled
+            //RefundOnCancel = false; //true by default.
+
+            //Specify the ability cooldown.
+            Cooldown = 0.5f; //-1 aka cooldown disabled by default.
+            
+            //Add the ability stat costs here.
+            //AbilityCosts.Add("Blood", 50.0f);
+
+            //Specify if costs should automatically applied by the ability when triggered
+            ApplyCostsOnTrigger = false;    //true by default, abilities costs will be apply at the end instead,
+                                            //or manually using the CommitAbility() function.
+                                          
+            IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Sedation";
+            UIName = "Sédatif";
+            AbilityDescription = "Endor un ennemi pendant une longue durée. Approchez-vous d’un garde pour le " +
+                                 "neutraliser mais faites attention, vous ne pouvez sédater un garde s’il se doute " +
+                                 "de quelque chose.";
+        }   
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
             GameObject cursor = InstanceResource(avatar, "Abilities/Aiming/MouseAimLock");
-            PlayerController player = avatar.GetComponent<PlayerController>();
-            player.BindVisionToMouse();
+            avatar.GetComponent<PlayerController>().BindVisionToMouse();
 
             GameObject target = null;
             if (cursor != null)
@@ -66,14 +85,19 @@ namespace Systems.Ability.Abilities
                 }
             }
             
-            player.UnbindVisionFromMouse();
+            avatar.GetComponent<PlayerController>().UnbindVisionFromMouse();
             
             if (target != null)
             {
                 avatar.transform.position = target.transform.position;
-                GetAbilitySystemComponent(avatar).TriggerAbility("Bite");
-                GetAbilitySystemComponent(target).TriggerAbility("Eaten");
-                player.LockVision(avatar.transform.position);
+                GetAbilitySystemComponent(target).TriggerAbility("Sedate");
+                LockInput(avatar);
+            
+                yield return new WaitForSeconds(1.0f);
+            }
+            else
+            {
+                CancelAbility(avatar);
             }
             
             yield return null;
@@ -81,7 +105,6 @@ namespace Systems.Ability.Abilities
 
         public override bool ShouldAbilityTrigger(GameObject avatar)
         {
-            //implementation required only when SelfTriggeringAbility = true
             throw new System.NotImplementedException();
         }
     }
