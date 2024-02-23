@@ -20,7 +20,7 @@ namespace Systems.Ability.Abilities
             //Cooldown = 1.0f; //-1 aka cooldown disabled by default.
             
             //Add the ability stat costs here.
-            AbilityCosts.Add("Blood", +50.0f);
+            AbilityCosts.Add("Blood", -50.0f);
 
             //Specify if costs should automatically applied by the ability when triggered
             //ApplyCostsOnTrigger = false;  //true by default, abilities costs will be apply at the end instead,
