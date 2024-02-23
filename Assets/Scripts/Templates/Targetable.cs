@@ -1,3 +1,4 @@
+using DefaultNamespace;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ public class Targetable : MonoBehaviour
     public TargetType targetType = TargetType.NOONE;
     private bool _isVisible = true;
     public static string TargetableTag = "Targetable";
+
+    public readonly EventDispatcher<Targetable> dispatcher = new EventDispatcher<Targetable>();
 
     public void ActivateVisibility()
     {
@@ -51,5 +54,10 @@ public class Targetable : MonoBehaviour
         {
             return _isVisible && targetType == TargetType.ENEMY;
         }
+    }
+
+    private void OnDestroy()
+    {
+        dispatcher.BroadcastEvent(this);
     }
 }
