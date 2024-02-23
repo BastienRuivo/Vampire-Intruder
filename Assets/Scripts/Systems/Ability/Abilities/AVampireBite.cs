@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class AVampireTryBite : Ability
+    public class AVampireBite : Ability
     {
-        public AVampireTryBite()
+        public AVampireBite()
         {
             Cooldown = 0.5f;
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Bite";

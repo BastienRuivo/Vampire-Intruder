@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class ATeleportation : Ability
+    public class AVampireTeleportation : Ability
     {
-        public ATeleportation()
+        public AVampireTeleportation()
         {
             Cooldown = 5.0f;
             
