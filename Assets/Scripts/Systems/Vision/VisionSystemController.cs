@@ -8,8 +8,6 @@ namespace Systems.Vision
 {
     public class VisionSystemController : MonoBehaviour
     {
-        public string targetEntityTag;
-        
         [Header("performance")]
         public float refreshDistance;
         public float disabledRefreshTime = 0.5f;
@@ -76,7 +74,7 @@ namespace Systems.Vision
             if(size == 0) return;
 
             bool shouldRefresh = false;
-            IEnumerable<Collider2D> targets = _collider2DBuff.Where(target => target != null && target.gameObject.CompareTag(targetEntityTag));
+            IEnumerable<Collider2D> targets = _collider2DBuff.Where(target => target != null && target.gameObject.CompareTag(Targetable.TargetableTag));
             foreach (Collider2D target in targets)
             {
                 bool hadKnown = _inCollisionObjects.Contains(target.gameObject);

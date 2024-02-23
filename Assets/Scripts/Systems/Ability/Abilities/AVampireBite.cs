@@ -18,7 +18,8 @@ namespace Systems.Ability.Abilities
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
             GameObject cursor = InstanceResource(avatar, "Abilities/Aiming/MouseAimLock");
-            avatar.GetComponent<PlayerController>().BindVisionToMouse();
+            PlayerController player = avatar.GetComponent<PlayerController>();
+            player.BindVisionToMouse();
 
             GameObject target = null;
             if (cursor != null)
@@ -65,7 +66,7 @@ namespace Systems.Ability.Abilities
                 }
             }
             
-            avatar.GetComponent<PlayerController>().UnbindVisionFromMouse();
+            player.UnbindVisionFromMouse();
             
             if (target != null)
             {
@@ -73,6 +74,7 @@ namespace Systems.Ability.Abilities
                 GetAbilitySystemComponent(avatar).CancelAbility("Invisibility");
                 GetAbilitySystemComponent(avatar).TriggerAbility("Bite");
                 GetAbilitySystemComponent(target).TriggerAbility("Eaten");
+                player.LockVision(avatar.transform.position);
             }
             
             yield return null;

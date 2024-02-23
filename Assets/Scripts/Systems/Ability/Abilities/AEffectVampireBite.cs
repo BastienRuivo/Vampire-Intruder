@@ -16,14 +16,17 @@ namespace Systems.Ability.Abilities
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
             //Debug.Log("Vampire is draining blood...");
-            
+            PlayerController player = avatar.GetComponent<PlayerController>();
+
             //todo play animation
-            
+
             //Lock Input
             LockInput(avatar);
             
             //wait for a period of time;
             yield return new WaitForSeconds(eatTime);
+
+            player.UnlockVision();
             
             //Debug.Log("Vampire is done drinking...");
 
