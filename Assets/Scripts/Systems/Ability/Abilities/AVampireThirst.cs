@@ -19,7 +19,7 @@ namespace Systems.Ability.Abilities
             //call the endgame
             //todo call the endgame from :
             //GameController.GetGameMode().
-            
+            GameController.GetGameMode().GetDesiccated();
             yield return null; //at the end if ability does run on a single tick (no yield return before).
         }
 
