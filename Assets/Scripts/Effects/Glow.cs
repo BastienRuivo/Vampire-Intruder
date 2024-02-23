@@ -16,7 +16,7 @@ public class Glow : MonoBehaviour
 
     public Renderer render;
     public Material mat;
-    private Material _originMat;
+    public Material defaultMat;
 
 
     private void Start()
@@ -40,14 +40,13 @@ public class Glow : MonoBehaviour
 
         render.material.SetColor("_Color", render.material.color);
         render.material.SetColor("_GlowColor", effectColor);
-        render.material.SetFloat("_t", _currentTime);
+        render.material.SetFloat("_t", _currentTime * maxAlpha);
 
     }
 
     public void Activate()
     {
         enabled = true;
-        _originMat = render.material;
         render.material = mat;
         render.material.SetColor("_Color", render.material.color);
         render.material.SetColor("_GlowColor", effectColor);
@@ -59,6 +58,6 @@ public class Glow : MonoBehaviour
     public void Deactivate()
     {
         enabled = false;
-        render.material = _originMat;
+        render.material = defaultMat;
     }
 }

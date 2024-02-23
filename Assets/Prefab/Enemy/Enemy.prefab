@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 7592360832701791560}
   m_Layer: 9
   m_Name: Enemy
-  m_TagString: Enemy
+  m_TagString: Targetable
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,8 +107,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 10
-  m_LinearDrag: 1.5
-  m_AngularDrag: 0.05
+  m_LinearDrag: 2
+  m_AngularDrag: 0.1
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -284,6 +284,7 @@ MonoBehaviour:
   activeAtStart: 0
   render: {fileID: 6180498148441204807}
   mat: {fileID: 2100000, guid: dcaee032ea75bea4d958dc891846c5c9, type: 2}
+  defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!114 &7592360832701791560
 MonoBehaviour:
   m_ObjectHideFlags: 0

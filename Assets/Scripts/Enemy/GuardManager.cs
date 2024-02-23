@@ -175,9 +175,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
         _speed = defaultSpeed;
 
-        _updatePathCoroutine = UpdatePath();
-        StartCoroutine(_updatePathCoroutine);
-
         _animator = GetComponent<Animator>();
         
         _guardRenderer = GetComponent<SpriteRenderer>();
@@ -186,12 +183,13 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
 
         _ascRef.GrantAbility<AGuardEaten>("Eaten");
+        SetAlpha(0f);
     }
     private void Update()
     {
         if (GameState.GetInstance().status != 0) return;
 
-        if (_shouldUpdatePath)
+        if (_shouldUpdatePath && GameController.GetInstance().IsLevelLoaded())
         {
             _updatePathCoroutine = UpdatePath();
             StartCoroutine(_updatePathCoroutine);
@@ -316,8 +314,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
     public void EnterPlayerSigth()
     {
-        return; //todo fix enemy visibility
-
+        Debug.Log("Guard is entering player sight");
         if(_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);
@@ -327,7 +324,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     }
     public void ExitPlayerSight()
     {
-        return; //todo fix enemy visibility
+        Debug.Log("Guard is leaving player sight");
         if (_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);
@@ -398,6 +395,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                     if(currentTarget.targetType == Targetable.TargetType.PLAYER)
                     {
                         CameraShake.GetInstance().Shake(0.2f);
+                        EnterPlayerSigth();
                     }
                     ChangeTarget(currentTarget.gameObject);
                     break;
@@ -496,8 +494,9 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     
     private void DebugStageAlert(float alertRatio)
     {
-        //Debug.Log($"{_playerInRange} {_playerInFOV}");
-        _guardRenderer.material.SetColor("_Color", Color.Lerp(Color.green, Color.red, alertRatio));
+        Color col = Color.Lerp(Color.green, Color.red, alertRatio);
+        col.a = _guardRenderer.color.a;
+        _guardRenderer.color = col;
     }//todo replace with real animation.
 
     /**
@@ -505,7 +504,10 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     */
     private void FollowPath()
     {
-        if (_currentPath == null) return;
+        if (_currentPath == null)
+        {
+            return;
+        }
 
         // If we're waiting at a node
         if (_currentWaitingTimer > 0)
@@ -550,7 +552,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                 if (node != null)
                 {
                     _directions = node.directionsToLook;
-                    if (node.isPathEnd) isPathReversed = false;
+                    if (node.isPathEnd) isPathReversed = !isPathReversed;
                     ChangeTarget(node.NextTarget(isPathReversed));
                     _currentWaitingTimer = timerWaitingBetweenNodes;
                     _fastNodeWaiting = false;
@@ -721,7 +723,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
     public IEnumerator AlphaDecrement()
     {
-        for(float alpha = _guardRenderer.color.a; alpha > 0.0f; alpha += Time.deltaTime * outSight)
+        for(float alpha = _guardRenderer.color.a; alpha > 0.0f; alpha -= Time.deltaTime * outSight)
         {
             SetAlpha(alpha);
             yield return null;
@@ -762,7 +764,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         if(!context.Target.CompareTag("Targetable")) return;
         Targetable targetable = context.Target.GetComponent<Targetable>();
         if (!targetable.IsVisibleByGuard) return;
-        Debug.Log("Begin Overlaping ? " + context.BeginOverlap);
         if(context.BeginOverlap)
         {
             _targets.Add(targetable);
@@ -798,6 +799,21 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             }
         }
         return targetable;
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Targetable") && collision.gameObject.GetComponent<Targetable>().targetType == Targetable.TargetType.PLAYER)
+        {
+            _currentAlert = 0.49f;
+            currentTarget = _playerController.GetComponent<Targetable>();
+            UpdateAlertStage(true);
+        }
+    }
+
+    public void AskPathUpdate()
+    {
+        _shouldUpdatePath = true;
     }
 }
 // CONE VISION

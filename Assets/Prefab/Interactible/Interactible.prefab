@@ -264,6 +264,8 @@ GameObject:
   - component: {fileID: 2581829258208804590}
   - component: {fileID: 7286355327672963702}
   - component: {fileID: 1541939039910489340}
+  - component: {fileID: 2433332018954054390}
+  - component: {fileID: 7905497585279673773}
   m_Layer: 0
   m_Name: Interactible
   m_TagString: Interactible
@@ -309,7 +311,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dcaee032ea75bea4d958dc891846c5c9, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -404,9 +406,50 @@ MonoBehaviour:
   reference: _Null
   objectivePhrase: "Caisse pars d\xE9faut, elle est Null."
   isMainObjective: 0
+  passiveGlowColor: {r: 1, g: 1, b: 1, a: 1}
   glowColor: {r: 1, g: 0.9184297, b: 0, a: 1}
   startColor: {r: 1, g: 0.15299131, b: 0, a: 1}
   endColor: {r: 0.48181283, g: 1, b: 0, a: 1}
   duration: 10
   _currentTime: 0
   _isActive: 0
+--- !u!114 &2433332018954054390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8962394357595514180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 820b8291709b7984c9d7d36efd112e68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upSpeed: 1
+  downSpeed: 1.5
+  maxAlpha: 0.5
+  effectColor: {r: 1, g: 0.84606725, b: 0, a: 1}
+  activeAtStart: 0
+  render: {fileID: 2581829258208804590}
+  mat: {fileID: 2100000, guid: dcaee032ea75bea4d958dc891846c5c9, type: 2}
+  defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+--- !u!114 &7905497585279673773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8962394357595514180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 820b8291709b7984c9d7d36efd112e68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upSpeed: 0.5
+  downSpeed: 1
+  maxAlpha: 0.1
+  effectColor: {r: 1, g: 1, b: 1, a: 1}
+  activeAtStart: 0
+  render: {fileID: 2581829258208804590}
+  mat: {fileID: 2100000, guid: dcaee032ea75bea4d958dc891846c5c9, type: 2}
+  defaultMat: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}

@@ -116,6 +116,7 @@ public class GameController : Singleton<GameController>
                 objectivesToComplete.Add(obj);
                 chosenRefs.Add(o.reference);
                 nbObjectives--;
+                o.SetActive();
             }
             else if(!isMain)
             {
@@ -366,7 +367,6 @@ public class GameController : Singleton<GameController>
         HideOtherMaps();
         SetObjectives();
 
-
         OnRoomChange(rooms[0]);
 
         PlayerState.GetInstance().UnlockInput();
@@ -428,6 +428,10 @@ public class GameController : Singleton<GameController>
         rooms.ForEach(r =>
         {
             r.gameObject.SetActive(activesRoom.Contains(r));
+            r.guards.ForEach(g =>
+            {
+                g.AskPathUpdate();
+            });
         });
     }
 

@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefab/UI.meta
 guid: d61ab298d565b7548b900133e2cef5de
+========
+guid: 4e367e6d5a6e90c48a633406f6202c17
+>>>>>>>> 9c2ae8b1413076ceed9e887d040ae8fb8afa1273:Assets/Resources/Graphics/Sprite/HouseHold.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
