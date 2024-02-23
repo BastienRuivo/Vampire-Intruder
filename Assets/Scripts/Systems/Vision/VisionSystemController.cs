@@ -21,6 +21,20 @@ namespace Systems.Vision
         private Collider2D[] _collider2DBuff;
         private HashSet<GameObject> _inCollisionObjects = new ();
 
+        private bool _isEnabled = true;
+
+        private void OnEnable()
+        {
+            _isEnabled = true;
+            _shapeController.Enable();
+        }
+
+        private void OnDisable()
+        {
+            _isEnabled = false;
+            _shapeController.Disable();
+        }
+
         public readonly EventDispatcher<OverlapData> OnOverlapChanged = new EventDispatcher<OverlapData>();
         public struct OverlapData
         {
@@ -47,6 +61,8 @@ namespace Systems.Vision
 
         private void Update()
         {
+            if(!_isEnabled)
+                return;
             if (!_shapeController.IsEnabled())
             {
                 _updateTimer += Time.deltaTime;

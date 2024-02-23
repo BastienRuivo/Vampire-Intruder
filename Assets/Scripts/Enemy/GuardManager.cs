@@ -15,6 +15,7 @@ using Systems.Ability;
 using Interfaces;
 using JetBrains.Annotations;
 using System.Linq;
+using Systems.Ability.Abilities;
 
 public enum AlertStage
 {
@@ -182,7 +183,9 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         _visionConeController.GetMaterial().SetTexture("_PlayerShadowMap", _playerController.GetVision().GetDepthMap());
 
 
-        _ascRef.GrantAbility<AGuardEaten>("Eaten");
+        _ascRef.GrantAbility<AEffectGuardBiten>("Eaten");
+        _ascRef.GrantAbility<AEffectGuardBlinded>("Blind");
+        _ascRef.GrantAbility<AEffectGuardSedated>("Sedate");
         SetAlpha(0f);
     }
     private void Update()
