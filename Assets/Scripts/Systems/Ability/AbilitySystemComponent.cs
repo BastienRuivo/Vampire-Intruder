@@ -200,9 +200,8 @@ namespace Systems.Ability
                 Debug.LogError($"Attempted to query state data from unknown ability with name \"{name}\"");
                 return -1; //TODO throw exception here
             }
-            if(_abilities[name].HasCharge())
-                return _abilities[name].GetRemainingCharges();
-            return -1;
+
+            return _abilities[name].GetRemainingCharges();
         }
 
         /// <param name="name">name/tag associated with this stat.</param>
