@@ -7,11 +7,17 @@ namespace Systems.Ability.Aiming
         public float aimDistance = 3.5f;
         public GameObject owner;
         public Vector3 currentTarget;
+        private Vector3 _lastValidTarget;
 
         [Header("Collisions")] 
-        public bool collide = false;
+        public bool blockVisionToWall = false;
+        public bool canGoInAnotherRoom = false;
         public LayerMask visionMask;
+        public LayerMask floorMask;
         public float collisionRadius = 0.25f;
+
+        public RoomData currentRoom;
+
 
         [Header("Visual")] 
         public GameObject worldReferenceParticle;
@@ -27,6 +33,9 @@ namespace Systems.Ability.Aiming
         {
             _camera = Camera.main;
             _isCameraNotNull = _camera != null;
+
+            _lastValidTarget = owner.transform.position;
+            currentRoom = PlayerState.GetInstance().currentRoom;
         }
 
         // Update is called once per frame
@@ -43,10 +52,20 @@ namespace Systems.Ability.Aiming
             if (delta.magnitude > aimDistance)
                 delta = deltaNormalized * aimDistance;
 
-            if(!collide)
+            if(!blockVisionToWall)
                 hit = Physics2D.CircleCast(owner.transform.position + delta, collisionRadius, Vector2.zero, 0,visionMask);
 
-            if (collide || hit.collider != null)
+            RaycastHit2D floor = Physics2D.CircleCast(owner.transform.position + delta, 0.001f, Vector2.zero, 0, floorMask);
+            RoomData cRoom = null;
+            bool isAnotherRoom = false;
+            if (floor.collider != null)
+            {
+                cRoom = floor.collider.GetComponentInParent<RoomData>();
+                isAnotherRoom = !cRoom.name.Equals(PlayerState.GetInstance().currentRoom.name);
+            }
+
+
+            if (blockVisionToWall)
             {
                 hit = Physics2D.Raycast(owner.transform.position, deltaNormalized, delta.magnitude, visionMask);
                 if (hit.collider != null)
@@ -55,7 +74,16 @@ namespace Systems.Ability.Aiming
                 }
             }
 
-            currentTarget = owner.transform.position + delta;
+            if (blockVisionToWall || hit.collider == null && (floor.collider != null && (!isAnotherRoom || canGoInAnotherRoom)))
+            {
+                currentTarget = owner.transform.position + delta;
+                _lastValidTarget = currentTarget;
+                currentRoom = cRoom;
+            }
+            else
+            {
+                currentTarget = _lastValidTarget;
+            }
             transform.position = currentTarget;
             cursorParticle.transform.localPosition = mousePositionWS - transform.position;
         }

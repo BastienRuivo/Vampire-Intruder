@@ -50,13 +50,15 @@ public class Interactible : MonoBehaviour
     [Header("TagList")]
     public List<TagAttribute> tags;
 
+    public string dialogOnStart = "";
+
     private bool _isColliding = false;
     private bool _interacted = false;
 
     private SpriteRenderer _spriteRenderer;
 
 
-    private void Start()
+    private void Awake()
     {
         _currentTime = duration;
         _isActive = true;
@@ -74,13 +76,36 @@ public class Interactible : MonoBehaviour
 
     public void StartCollision()
     {
-        _isColliding= true;
+        if (!GameController.GetInstance().IsLevelLoaded()) return;
+        _isColliding = true;
         if (_isActive)
         {
+            if (afterUse == AfterUse.END_LVL)
+            {
+                GameController.GetGameMode().MessageToUser(
+                    new GameController.UserMessageData(
+                        GameController.UserMessageData.MessageToUserSenderType.Player,
+                        GameController.GetInstance().HasObtainedMainObjective ? "J'ai accomplie ma mission, je peut partir !" : "Si je pars sans remplir ma mission, je vais décevoir le prince...",
+                        priority: GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnReadability)
+                );
+
+                _glows[0].effectColor = GameController.GetInstance().HasObtainedMainObjective ? Color.green : Color.red;
+                Debug.Log(GameController.GetInstance().HasObtainedMainObjective.ToString() + " " + _glows[0].effectColor.ToString());
+            }
+            else if(isMainObjective || !string.IsNullOrEmpty(dialogOnStart))
+            {
+                GameController.GetGameMode().MessageToUser(
+                    new GameController.UserMessageData(
+                        GameController.UserMessageData.MessageToUserSenderType.Player,
+                        isMainObjective? "Vite ! C'est l'objectif pour le quel je suis ici" : dialogOnStart,
+                        priority: GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnReadability)
+                );
+            }
             _glows[1].Deactivate();
             _glows[0].Activate();
             DisplayTooltips(true);
             if (reference.Length > 0) GameController.GetInstance().UpdateObjective(reference, GameController.ObjectiveEvent.IN_RANGE);
+            
         }
     }
 
@@ -108,6 +133,8 @@ public class Interactible : MonoBehaviour
     {
         if (!_isActive) return;
         var axis = Input.GetAxis("Interact");
+
+        
         
 
         if (type == InteractibleType.TIMER_LOCKED)
@@ -184,6 +211,12 @@ public class Interactible : MonoBehaviour
     public void SetActive()
     {
         _isActive = true;
-        _glows[0].Activate();
+        if(_glows != null)
+        {
+            
+            _glows[0].Activate();
+        }
+
+
     }
 }

@@ -16,6 +16,7 @@ TagManager:
   - WallChanger
   - Exit
   - Targetable
+  - Floor
   layers:
   - Default
   - TransparentFX
@@ -32,8 +33,6 @@ TagManager:
   - StoryEffect
   - StoryCharacter
   - StoryBackground
-  - 
-  - 
   - 
   - 
   - 
