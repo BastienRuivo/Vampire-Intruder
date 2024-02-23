@@ -209,6 +209,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _coneBehaviors[(int)VisionBehavior.KEYBOARD].enabled = false;
         _coneBehaviors[(int)VisionBehavior.MOUSE].enabled = false;
         _coneBehaviors[(int)VisionBehavior.TARGET].enabled = true;
+        ((TargetInputToVisionSystemBehavior)_coneBehaviors[(int)VisionBehavior.TARGET]).targetPosition = target;
     }
 
     public void UnlockVision()
