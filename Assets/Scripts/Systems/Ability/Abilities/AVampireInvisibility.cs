@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using DefaultNamespace;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Systems.Ability.Abilities
@@ -23,7 +26,7 @@ namespace Systems.Ability.Abilities
             AbilityCosts.Add("Blood", 25.0f);
 
             //Specify if costs should automatically applied by the ability when triggered
-            //ApplyCostsOnTrigger = false;  //true by default, abilities costs will be apply at the end instead,
+            ApplyCostsOnTrigger = false;  //true by default, abilities costs will be apply at the end instead,
                                             //or manually using the CommitAbility() function.
                                           
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Invisibility";
@@ -34,11 +37,19 @@ namespace Systems.Ability.Abilities
 
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
+            SpriteRenderer playerRenderer = avatar.GetComponent<SpriteRenderer>();
+            Color invisibilityColor = new Color(0.7f, 0.7f, 1, 0.5f);
+            Color defaultColor = playerRenderer.color;
+            
+            CommitAbility(avatar);
             avatar.GetComponent<Targetable>().targetType = Targetable.TargetType.NOONE;
-            avatar.GetComponent<SpriteRenderer>().color = new Color(0.7f, 0.7f, 1, 0.5f);
+            playerRenderer.color = invisibilityColor;
             yield return new WaitForSeconds(15f);
+            
+            //todo spawn particle at the 5 lasts seconds to indicate it ends
+            
             avatar.GetComponent<Targetable>().targetType = Targetable.TargetType.PLAYER;
-            avatar.GetComponent<SpriteRenderer>().color = Color.white;
+            playerRenderer.color = Color.white;
         }
 
         public override bool ShouldAbilityTrigger(GameObject avatar)

@@ -70,6 +70,7 @@ namespace Systems.Ability.Abilities
             if (target != null)
             {
                 avatar.transform.position = target.transform.position;
+                GetAbilitySystemComponent(avatar).CancelAbility("Invisibility");
                 GetAbilitySystemComponent(avatar).TriggerAbility("Bite");
                 GetAbilitySystemComponent(target).TriggerAbility("Eaten");
             }
