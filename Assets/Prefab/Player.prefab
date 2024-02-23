@@ -37,8 +37,8 @@ Transform:
   m_GameObject: {fileID: 5346408450746507161}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.16, y: 2.9, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 899510859851760275}
@@ -110,10 +110,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visionObject: {fileID: 4591153829319014629}
-  speed: 35
+  speed: 40
   playerCamera: {fileID: 0}
   speedZoom: 50
-  currentZoom: 0
+  currentZoom: 2.1
   directionPerso: 0
 --- !u!95 &5108974979676792213
 Animator:
@@ -482,7 +482,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6524033022220863532, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
       propertyPath: targetEntityTag
-      value: Enemy
+      value: Targetable
       objectReference: {fileID: 0}
     - target: {fileID: 6524033022220863532, guid: 7dec59b9003569f48b5ace70ea938b94, type: 3}
       propertyPath: keepEnableWhenIsNotToRefresh

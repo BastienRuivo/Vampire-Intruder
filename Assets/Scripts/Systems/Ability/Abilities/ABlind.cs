@@ -53,7 +53,7 @@ namespace Systems.Ability.Abilities
 
             MouseLockingAimeController cursorController = cursor.GetComponent<MouseLockingAimeController>();
             cursorController.aimLockDistance = 1.0f;
-            cursorController.targetTag = "Enemy";
+            cursorController.targetType = Targetable.TargetType.ENEMY;
             cursorController.isTargetValid = false;
             while (true)
             {

@@ -24,7 +24,7 @@ namespace Systems.Ability.Abilities
             if (cursor != null)
             {
                 MouseLockingAimeController cursorController = cursor.GetComponent<MouseLockingAimeController>();
-                cursorController.targetTag = "Enemy";
+                cursorController.targetType = Targetable.TargetType.ENEMY;
                 cursorController.isTargetValid = false;
                 while (true)
                 {

@@ -7,7 +7,7 @@ namespace Systems.Ability.Aiming
     public class MouseLockingAimeController : MonoBehaviour
     {
         public float aimLockDistance = 0.5f;
-        public string targetTag = "";
+        public Targetable.TargetType targetType = Targetable.TargetType.NOONE;
         public Material cursorMaterial;
         [CanBeNull] public GameObject currentTarget = null;
         public bool isTargetValid;
@@ -54,9 +54,11 @@ namespace Systems.Ability.Aiming
             cursorMaterial.SetFloat(HasTarget, _hasTargetMatVal.UpdateGetValue());
             cursorMaterial.SetFloat(CanTarget, _canTargetMatVal.UpdateGetValue());
             
-            if(targetTag.Equals("")) return;
-            foreach (GameObject target in GameObject.FindGameObjectsWithTag(targetTag))
+            if(targetType == Targetable.TargetType.NOONE) return;
+            foreach (GameObject target in GameObject.FindGameObjectsWithTag(Targetable.TargetableTag))
             {
+                Targetable targetComp = target.GetComponent<Targetable>();
+                if (targetComp.targetType != targetType) continue;
                 if (Vector3.Distance(target.transform.position, transform.position) < aimLockDistance)
                 {
                     transform.position = target.transform.position;

@@ -15,6 +15,7 @@ public class Targetable : MonoBehaviour
 
     public TargetType targetType = TargetType.NOONE;
     private bool _isVisible = true;
+    public static string TargetableTag = "Targetable";
 
     public void ActivateVisibility()
     {
