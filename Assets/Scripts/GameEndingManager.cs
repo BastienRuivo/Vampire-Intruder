@@ -31,6 +31,21 @@ public class GameEndingManager : MonoBehaviour
     public void onPlayerExtraction(){
         var main = GameController.GetInstance().objectivesToComplete.Find(o => o.isMain);
         AudioManager.GetInstance().playClip(_bell, transform.position);
+
+        var seconds = GameController.GetInstance().objectivesToComplete.FindAll(o => !o.isMain);
+        int totalSeconds = seconds.Count;
+        int achievedSeconds = 0;
+        for(int i = 0; i < totalSeconds; i++)
+        {
+            if(seconds[i].state == GameController.ObjectiveState.DONE)
+            {
+                achievedSeconds++;
+            }
+        }
+
+        AppState.GetInstance().setTotalSecondaryObjectivesInCurrentScene(totalSeconds);
+        AppState.GetInstance().setSecondaryObjectivesAchievedInCurrentScene(achievedSeconds);
+
         if(main == null){
             Debug.LogError("No main objective found");
             return;

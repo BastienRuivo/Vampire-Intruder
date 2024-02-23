@@ -401,7 +401,7 @@ public class GameController : Singleton<GameController>
         {
             count += room.guards.Count;
         }
-        AppState.GetInstance().totalGuardsInCurrentScene = count;
+        AppState.GetInstance().setTotalGuardsInCurrentScene(count);
     }
 
     private void UpdateGameStatus(){

@@ -33,6 +33,7 @@ public class AppState : Singleton<AppState>
     private bool hasMainObjectiveFailed = false;
     private bool hasTimeFailed = false;
     private bool hasGuardFailed = false;
+    private bool hasBloodFailed = false;
 
     private int guardKilled = 0;
     private int totalGuards = 0;
@@ -45,9 +46,9 @@ public class AppState : Singleton<AppState>
 
     //CurrentScene parameters
     private int guardKilledInCurrentScene = 0; 
-    private int totalGuardsInCurrentScene = 0; //done
+    private int totalGuardsInCurrentScene = 0; 
     private int secondaryObjectivesAchievedInCurrentScene = 0;  
-    private int totalSecondaryObjectivesInCurrentScene = 0;
+    private int totalSecondaryObjectivesInCurrentScene = 0; 
 
     /////////////////////////////////
     /////// LEVEL MANAGEMENTS ///////
@@ -87,7 +88,7 @@ public class AppState : Singleton<AppState>
     public void endLevel(bool mainObjectiveAchieved, bool timeFailed, bool guardFailed, bool bloodFailed)
     {
         // Prince Mercies
-        if (timeFailed || guardFailed)
+        if (timeFailed || guardFailed || bloodFailed)
         {
             decreasePrinceMercy();
         }
@@ -100,15 +101,14 @@ public class AppState : Singleton<AppState>
         }
         hasTimeFailed = timeFailed;
         hasGuardFailed = guardFailed;
+        hasBloodFailed = bloodFailed;
         
-
-
         // Guards kills
-        guardKilled += kills;
-        totalGuards += guards;
+        guardKilled += guardKilledInCurrentScene;
+        totalGuards += totalGuardsInCurrentScene;
 
         // Secondary achievements and items
-        for (int i = 0; i < secondaryAchieved; i++)
+        for (int i = 0; i < secondaryObjectivesAchievedInCurrentScene; i++)
         {
             System.Random rand = new System.Random();
             int randomItem = rand.Next(0, 2);
@@ -121,8 +121,14 @@ public class AppState : Singleton<AppState>
                 items["BloodPouch"]++;
             }
         }
-        secondaryObjectivesAchieved = secondaryAchieved;
-        totalSecondaryObjectives = secondary;
+        secondaryObjectivesAchieved = secondaryObjectivesAchievedInCurrentScene; //+= ici non ?
+        totalSecondaryObjectives = totalSecondaryObjectivesInCurrentScene;  //pareil
+
+        // Reset the current scene parameters
+        guardKilledInCurrentScene = 0;
+        totalGuardsInCurrentScene = 0;
+        secondaryObjectivesAchievedInCurrentScene = 0;
+        totalSecondaryObjectivesInCurrentScene = 0;
 
         levelNumber++;
         if (levelNumber == 2)
@@ -174,6 +180,50 @@ public class AppState : Singleton<AppState>
     public int getRunNumber()
     {
         return runNumber;
+    }
+
+    // guardKilledInCurrentScene
+    public int getGuardKilledInCurrentScene()
+    {
+        return guardKilledInCurrentScene;
+    }
+
+    public void addGuardKilledInCurrentScene()
+    {
+        guardKilledInCurrentScene++;
+    }
+
+    // totalGuardsInCurrentScene
+    public int getTotalGuardsInCurrentScene()
+    {
+        return totalGuardsInCurrentScene;
+    }
+
+    public void setTotalGuardsInCurrentScene(int total)
+    {
+        totalGuardsInCurrentScene = total;
+    }
+
+    // secondaryObjectivesAchievedInCurrentScene
+    public int getSecondaryObjectivesAchievedInCurrentScene()
+    {
+        return secondaryObjectivesAchievedInCurrentScene;
+    }
+    
+    public void setSecondaryObjectivesAchievedInCurrentScene(int total)
+    {
+        secondaryObjectivesAchievedInCurrentScene = total;
+    }
+
+    // totalSecondaryObjectivesInCurrentScene
+    public int getTotalSecondaryObjectivesInCurrentScene()
+    {
+        return totalSecondaryObjectivesInCurrentScene;
+    }
+
+    public void setTotalSecondaryObjectivesInCurrentScene(int total)
+    {
+        totalSecondaryObjectivesInCurrentScene = total;
     }
 
     ///////////////////////////////////
