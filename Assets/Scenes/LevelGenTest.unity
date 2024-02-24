@@ -469,7 +469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3566486573396230255, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -134
+      value: -205.1
       objectReference: {fileID: 0}
     - target: {fileID: 6160038320768464199, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_UiScaleMode
@@ -493,7 +493,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7525506633661033723, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8091385302480374631, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalPosition.z
