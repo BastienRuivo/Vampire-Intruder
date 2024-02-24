@@ -8,6 +8,8 @@ public class ObjectivesManager : MonoBehaviour
 {
     private TextMeshProUGUI _textMeshPro;
     private IEnumerator _textCoroutine;
+    public Animator _animObjectives;
+    private bool _isUp = false;
 
     //public Color uknownPos;
     //public Color unknownPosMain;
@@ -27,6 +29,19 @@ public class ObjectivesManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.O))
+        {
+            if(_isUp)
+            {
+                _animObjectives.SetTrigger("Down");
+                _isUp = false;
+            }
+            else
+            {
+                _animObjectives.SetTrigger("Up");
+                _isUp = true;
+            }        
+        }
 
     }
 
