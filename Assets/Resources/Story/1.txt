@@ -1,4 +1,4 @@
-@@@Background Day C 2 Jessika Neutral 0 Elrik Neutral 0
+@@@Background Night C 2 Jessika Neutral 0 Elrik Neutral 0
 1 C Prince_Elric Elrik Neutral 1
 Ha ha ha, nous y voilà !\nMaintenant, choisis !
 1 T Jessika Elrik Neutral 0

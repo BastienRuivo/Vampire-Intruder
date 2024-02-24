@@ -37,8 +37,12 @@ public class ReadText : Singleton<ReadText>
 	public GameObject[] framesObjects;              // The different frames effects we can put on the background (Black = 0, Sepia = 1);
 	public GameObject choicePanelObject;			// The GameObject containing the different choices
 	public GameObject choiceObject;					// The choice button object
+    public GameObject saveQuestionObject;           // The saveQuestion to make appear
+    public GameObject continueObject;               // The continue button to make appear
+    public GameObject backObject;                   // The back button to make disappear
 
-	// Private dialog objects
+    // Private dialog objects
+    private string dialogName;                      // The current dialogName
 	private string[] lines;							// All the different printed phrases
 	private int[][] characters;						// All the different printed characters in the dialog				
 	private int[][] expressions;					// All the different printed character's expressions
@@ -48,6 +52,7 @@ public class ReadText : Singleton<ReadText>
 	private List<GameObject> logTextBoxes;			// All the different printed log textboxes
 	private GameObject[] narrationPhrases;          // All the different printed narration phrases
 	private GameObject[] choices;					// All the different printed choices
+    private bool isGameScene;                       // Indicates if a game scene is about to be launched
 	
 	// Possible objects
 	private SortedDictionary<string, int> possibleCharacters;	// All the possible characters
@@ -80,6 +85,14 @@ public class ReadText : Singleton<ReadText>
 	private string[] nextDialog;
 	private bool autoMode = false;
 
+    // Save parameters
+    private int currentBackground;
+    private int currentFrame;
+    private char currentTextBox;
+    private bool[] currentCharacters;
+    private int[] currentExpressions;
+    private float[] currentPositions;
+
     /////////////////////
     /////// START ///////
     /////////////////////
@@ -105,7 +118,7 @@ public class ReadText : Singleton<ReadText>
         };
         possibleTextBoxes = new SortedDictionary<char, int>
         {
-            {'L', 0}, {'R', 1}, {'C', 2}, {'S', 3}, {'T', 4 }
+            {'L', 0}, {'R', 1}, {'C', 2}, {'S', 3}, {'T', 4 }, {'J',  5}
         };
 
 		// Make all the characters invisible
@@ -116,15 +129,61 @@ public class ReadText : Singleton<ReadText>
 
 		logTextBoxes = new List<GameObject>();
 
+        // Save parameters
+        currentBackground = 0;
+        currentFrame = -1;
+        currentTextBox = 'L';
+        currentCharacters = new bool[4];
+        currentExpressions = new int[4];
+        currentPositions = new float[4];
+        for (int i = 0; i < 4; i++)
+        {
+            currentCharacters[i] = false;
+            currentExpressions[i] = 0;
+            currentPositions[i] = 0f;
+        }
+
 		chooseDialog();
 	}
 
+    /// <summary>
+    /// Computes whoch dialog scene should be played thanks to the AppState
+    /// </summary>
 	private void chooseDialog()
 	{
-		string dialogName = "0";
+		dialogName = "0";
 
 		AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
 
+        // Check if its from a save
+        bool isFromSave = appState.getFromSave();
+        if (isFromSave)
+        {
+
+            // Check if we must load the next game scene
+            bool isScene = appState.getGameScene();
+            if (isScene)
+            {
+                SceneManager.LoadSceneAsync("LevelGenTest");
+                return;
+            }
+
+            // Elseway, we must load a dialog and a current line
+            dialogName = appState.getDialogName();
+            currentLineNumber = appState.getLineNumber();
+            currentBackground = appState.getCurrentBackground();
+            currentFrame = appState.getCurrentFrame();
+            currentTextBox = appState.getCurrentTextBox();
+            currentCharacters = appState.getCurrentCharacters();
+            currentExpressions = appState.getCurrentExpressions();
+            currentPositions = appState.getCurrentPositions();
+
+            Initialize(dialogName, currentLineNumber - 1);
+
+            return;
+        }
+
+        // Elseway, must choose the right dialog
 		int runNumber = appState.getRunNumber();
 		int levelNumber = appState.getLevelNumber();
 		int princeMercy = appState.getPrinceMercy();
@@ -1273,14 +1332,15 @@ public class ReadText : Singleton<ReadText>
             }
         }
 
-        Initialize(dialogName);
+        Initialize(dialogName, -1);
+        //Initialize("0", -1);
 	}
 
 	/// <summary>
 	/// Initialize the dialog (delete everything but the log)
 	/// </summary>
 	/// <param name="dialog">The new dialog to load</param>
-	private void Initialize(string dialog) {
+	private void Initialize(string dialog, int lineNumber) {
 
 		// Reset the different variables
 		if (lines != null) Array.Clear(lines, 0, lines.Length);
@@ -1292,7 +1352,7 @@ public class ReadText : Singleton<ReadText>
         if (narrationPhrases != null) Array.Clear(narrationPhrases, 0, narrationPhrases.Length);
         if (choices != null) Array.Clear(choices, 0, choices.Length);
 		linesNumber = 0;
-		currentLineNumber = -1;
+		currentLineNumber = lineNumber;
 		printingTime = 0.0f;
 		startTime = 0.0f;
 		hasDisappeared = false;
@@ -1303,6 +1363,7 @@ public class ReadText : Singleton<ReadText>
 		isNarration = false;
 		narrationCoroutine = null;
 		isChoice = false;
+        isGameScene = false;
 
         // Load the dialog
         LoadDialog(dialog);
@@ -1310,7 +1371,41 @@ public class ReadText : Singleton<ReadText>
         // Set the printing time for the first line
         printingTime = 2.0f + lines[0].Length / 50.0f;
 
-		NextLine();
+        // From a saving
+        if (currentLineNumber > -1)
+        {
+            // Compute the scene to print
+            int numberOfCharacters = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (currentCharacters[i])
+                {
+                    numberOfCharacters++;
+                }
+            }
+
+            int[] charactersToPrint = new int[numberOfCharacters];
+            float[] positionsToPrint = new float[numberOfCharacters];
+            int[] expressionsToPrint = new int[numberOfCharacters];
+            numberOfCharacters = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (currentCharacters[i])
+                {
+                    charactersToPrint[numberOfCharacters] = i;
+                    positionsToPrint[numberOfCharacters] = currentPositions[i];
+                    expressionsToPrint[numberOfCharacters] += currentExpressions[i];
+                    numberOfCharacters++;
+                }
+            }
+
+            StartCoroutine(ChangeBackground(currentBackground, currentFrame, currentTextBox,
+                charactersToPrint, positionsToPrint, expressionsToPrint));
+        }
+        else
+        {
+            NextLine();
+        }
     }
 
     //////////////////////
@@ -1333,7 +1428,8 @@ public class ReadText : Singleton<ReadText>
 			// Conditions: mouse click or auto time exceeded, no log screen, no ongoing fading animations
 			if ((Input.GetMouseButtonDown(0) || (Time.time - startTime > printingTime
 				&& GetComponent<StoryButtonManager>().getAuto()))
-				&& !GetComponent<StoryButtonManager>().getLog() && !fadingProtect)
+				&& !GetComponent<StoryButtonManager>().getLog()
+				&& !GetComponent<StoryButtonManager>().getSave() && !fadingProtect)
 			{
 				// If a narration is ongoing, destroy all the narration lines
 				if (isNarration)
@@ -1374,7 +1470,7 @@ public class ReadText : Singleton<ReadText>
 						EventSystem.current.SetSelectedGameObject(null);
 					}
 					// If it's not another button, go to the next line
-					else if (name != "Log" && name != "Skip" && name != "Close")
+					else if (name != "Log" && name != "Skip" && name != "Close" && name != "Saves" && name != "Back")
 					{
 						NextLine();
 					}
@@ -1491,7 +1587,10 @@ public class ReadText : Singleton<ReadText>
                 // Scene change
                 if (mots[0] == "@@@Scene")
                 {
-                    SceneManager.LoadScene("LevelGenTest");
+                    int scene = int.Parse(mots[1]);
+                    int level = int.Parse(mots[2]);
+
+                    StartCoroutine(ChangeScene(scene, level));
                 }
 
 				// Character disappearing command
@@ -1515,7 +1614,7 @@ public class ReadText : Singleton<ReadText>
 				else if (mots[0] == "@@@Next")
 				{
 					string nextDialog = mots[1];
-					Initialize(nextDialog);
+					Initialize(nextDialog, -1);
 				}
 
 				// Background change (with new characters or not)
@@ -1665,7 +1764,7 @@ public class ReadText : Singleton<ReadText>
 					}
 
 					// Log
-					CreateLog(narrationLines, names[currentLineNumber], "", 5);
+					CreateLog(narrationLines, names[currentLineNumber], "", 6);
 
 					// Launch the narration animation
 					narrationCoroutine = StartCoroutine(SetNarration(narrationLines));
@@ -1698,6 +1797,9 @@ public class ReadText : Singleton<ReadText>
 					int expressionID = expressions[currentLineNumber][j];
 					bool isCharacterSpeaking = isSpeaking[currentLineNumber][j];
 					charactersObjects[characterID].GetComponent<ChangeExpressions>().ChangeExpression(expressionID, isCharacterSpeaking);
+
+                    // Save parameter
+                    currentExpressions[characterID] = expressionID;
 				}
 
 				// Log
@@ -1705,8 +1807,8 @@ public class ReadText : Singleton<ReadText>
 					lines[currentLineNumber], possibleTextBoxes[textBoxes[currentLineNumber]]);
 
                 startTime = Time.time;
-				printingTime = (float)(2.0f + lines[currentLineNumber].Length / 50.0);
-			}
+                printingTime = (float)(2.0f + lines[currentLineNumber].Length / 50.0);
+            }
 		}
 		// If the current line is not finished, end the current line
 		else
@@ -1812,6 +1914,9 @@ public class ReadText : Singleton<ReadText>
             if (textBoxID == 4) logTextBoxes.Last().transform.Find("Phrase").GetComponent<Text>().fontStyle = FontStyle.Italic;
             // New log textbox height
             height = logTextBoxes.Last().GetComponent<RectTransform>().rect.height;
+
+            // Save parameters
+            currentTextBox = textBoxes[currentLineNumber];
         }
 
         // Make all the previous log textbox up
@@ -1838,6 +1943,9 @@ public class ReadText : Singleton<ReadText>
 	{
 		// Fade In Out animation
 		charactersObjects[character].GetComponent<FadeInOut>().LaunchFadeOut();
+
+        // Save parameter
+        currentCharacters[character] = false;
 	}
 
 	/// <summary>
@@ -1856,6 +1964,11 @@ public class ReadText : Singleton<ReadText>
 
 		// Fade In Out animation
 		charactersObjects[character].GetComponent<FadeInOut>().LaunchFadeIn();
+
+        // Save parameter
+        currentCharacters[character] = true;
+        currentExpressions[character] = idExpression;
+        currentPositions[character] = position;
 	}
 
     ////////////////////////////////////
@@ -1971,11 +2084,12 @@ public class ReadText : Singleton<ReadText>
 		yield return new WaitUntil(() => blackObject.GetComponent<Image>().color.a == 0.0f);
 		fadingOut = false;
 
-		// Make the textbox appear
-        //textBoxObject.SetActive(true);
-
 		// End the fading animation
 		fadingProtect = false;
+
+        // Save parameter
+        currentBackground = backgroundID;
+        currentFrame = frameID;
 
 		// Load the next line
 		NextLine();
@@ -2243,7 +2357,7 @@ public class ReadText : Singleton<ReadText>
         GetComponent<StoryButtonManager>().setAuto(autoMode);
 
 		// Go to the next dialog
-		Initialize(nextDialog[choiceNumber]);
+		Initialize(nextDialog[choiceNumber], -1);
 	}
 
     ///////////////////////
@@ -2262,7 +2376,10 @@ public class ReadText : Singleton<ReadText>
         yield return new WaitUntil(() => blackObject.GetComponent<Image>().color.a == 1.0f);
         fadingIn = false;
 
+        #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
+        #endif
+        Application.Quit();
     }
 
 	/// <summary>
@@ -2297,4 +2414,115 @@ public class ReadText : Singleton<ReadText>
 	{
 		return logHeight;
 	}
+
+    /// <summary>
+    /// Before charging a new game scene, ask for the saving
+    /// </summary>
+    private IEnumerator ChangeScene(int scene, int level)
+    {
+        fadingProtect = true;
+
+        fadingIn = true;
+        yield return new WaitUntil(() => blackObject.GetComponent<Image>().color.a == 1.0f);
+        fadingIn = false;
+
+        // New infiltration game level
+        if (scene != -1)
+        {
+            isGameScene = true;
+            GetComponent<StoryButtonManager>().OnSaveClicked();
+            saveQuestionObject.SetActive(true);
+            continueObject.SetActive(true);
+        }
+        else
+        {
+            switch (level)
+            {
+                case 0:
+                    SceneManager.LoadSceneAsync("GameOver");
+                    break;
+                case 1:
+                    SceneManager.LoadSceneAsync("BadEnd");
+                    break;
+                case 2:
+                    SceneManager.LoadSceneAsync("NeutralEnd1");
+                    break;
+                case 3:
+                    SceneManager.LoadSceneAsync("NeutralEnd2");
+                    break;
+                case 4:
+                    SceneManager.LoadSceneAsync("GoodEnd1");
+                    break;
+                case 5:
+                    SceneManager.LoadSceneAsync("GoodEnd2");
+                    break;
+            }
+
+        }
+    }
+
+    /// <summary>
+    /// Continue on to the next scene
+    /// </summary>
+    public void OnContinueClicked()
+    {
+        saveQuestionObject.SetActive(false);
+        continueObject.SetActive(false);
+        GetComponent<StoryButtonManager>().OnBackClicked();
+
+        SceneManager.LoadSceneAsync("LevelGenTest");
+    }
+
+    /// <summary>
+    /// Returns the current dialog name
+    /// </summary>
+    /// <returns>The current dialog name</returns>
+    public string getDialogName()
+    {
+        return dialogName;
+    }
+
+    /// <summary>
+    /// Returns the current line number
+    /// </summary>
+    /// <returns>The current line number</returns>
+    public int getLineNumber()
+    {
+        return currentLineNumber;
+    }
+
+    public bool getGameScene()
+    {
+        return isGameScene;
+    }
+
+    public int getCurrentBackground()
+    {
+        return currentBackground;
+    }
+
+    public int getCurrentFrame()
+    {
+        return currentFrame;
+    }
+
+    public char getCurrentTextBox()
+    {
+        return currentTextBox;
+    }
+
+    public bool[] getCurrentCharacters()
+    {
+        return currentCharacters;
+    }
+
+    public int[] getCurrentExpressions()
+    {
+        return currentExpressions;
+    }
+
+    public float[] getCurrentPositions()
+    {
+        return currentPositions;
+    }
 }
