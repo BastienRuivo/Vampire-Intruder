@@ -86,12 +86,17 @@ public class ReadText : Singleton<ReadText>
 	private bool autoMode = false;
 
     // Save parameters
-    private int currentBackground;
-    private int currentFrame;
-    private char currentTextBox;
+    private int currentBackground = 0;
+    private int currentFrame = -1;
+    private char currentTextBox = 'L';
     private bool[] currentCharacters;
     private int[] currentExpressions;
     private float[] currentPositions;
+
+    // Skip parameters
+    private int nextSceneNumber = 0;
+    private int nextLevelNumber = 0;
+    private string nextDialogFile = "null";
 
     /////////////////////
     /////// START ///////
@@ -1364,6 +1369,9 @@ public class ReadText : Singleton<ReadText>
 		narrationCoroutine = null;
 		isChoice = false;
         isGameScene = false;
+        nextSceneNumber = 0;
+        nextLevelNumber = 0;
+        nextDialogFile = "null";
 
         // Load the dialog
         LoadDialog(dialog);
@@ -2251,6 +2259,22 @@ public class ReadText : Singleton<ReadText>
 							name = name.Replace('_', ' ');
 							names[i + 1] = name;
 						}
+                        // Next scene
+                        if (line.Length > 7 && line.Substring(0, 8) == "@@@Scene")
+                        {
+                            string[] mots = line.Split(' ');
+                            nextSceneNumber = int.Parse(mots[1]);
+                            nextLevelNumber = int.Parse(mots[2]);
+                            nextDialogFile = "null";
+                        }
+                        // Next dialog
+                        if (line.Length > 6 && line.Substring(0, 7) == "@@@Next")
+                        {
+                            string[] mots = line.Split(' ');
+                            nextDialogFile = mots[1];
+                            nextSceneNumber = -10;
+                            nextLevelNumber = -10;
+                        }
 
 						// Default text box
 						textBoxes[i] = '0';
@@ -2418,7 +2442,7 @@ public class ReadText : Singleton<ReadText>
     /// <summary>
     /// Before charging a new game scene, ask for the saving
     /// </summary>
-    private IEnumerator ChangeScene(int scene, int level)
+    public IEnumerator ChangeScene(int scene, int level)
     {
         fadingProtect = true;
 
@@ -2524,5 +2548,17 @@ public class ReadText : Singleton<ReadText>
     public float[] getCurrentPositions()
     {
         return currentPositions;
+    }
+
+    public int[] getNextScene()
+    {
+        int[] nextSceneAndLevel = new int[2];
+        while(nextSceneNumber == -10)
+        {
+            LoadDialog(nextDialogFile);
+        }
+        nextSceneAndLevel[0] = nextSceneNumber;
+        nextSceneAndLevel[1] = nextLevelNumber;
+        return nextSceneAndLevel;
     }
 }
