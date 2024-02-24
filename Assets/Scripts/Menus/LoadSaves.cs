@@ -20,33 +20,32 @@ public class LoadSaves : MonoBehaviour
     {
         AssetDatabase.Refresh();
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < captures.Length; i++)
         {
-            if (PlayerPrefs.HasKey("dialogName" + (i + 1)))
+            if (PlayerPrefs.HasKey("dialogName" + ((i % 3) + 1)))
             {
                 // Description
-                int runNumber = PlayerPrefs.GetInt("runNumber" + (i + 1)) + 1;
-                int levelNumber = PlayerPrefs.GetInt("levelNumber" + (i + 1)) + 1;
+                int runNumber = PlayerPrefs.GetInt("runNumber" + ((i % 3 + 1))) + 1;
+                int levelNumber = PlayerPrefs.GetInt("levelNumber" + ((i % 3) + 1)) + 1;
 
                 descriptions[i].text = "Run n°" + runNumber
                     + " - Niveau n°" + levelNumber
-                    + " - " + PlayerPrefs.GetInt("day" + (i + 1))
-                    + "/" + PlayerPrefs.GetInt("month" + (i + 1))
-                    + "/" + PlayerPrefs.GetInt("year" + (i + 1))
-                    + " à " + PlayerPrefs.GetInt("hour" + (i + 1))
-                    + "h" + PlayerPrefs.GetInt("minute" + (i + 1))
-                    + "m" + PlayerPrefs.GetInt("second" + (i + 1)) + "s";
+                    + " - " + PlayerPrefs.GetInt("day" + ((i % 3) + 1))
+                    + "/" + PlayerPrefs.GetInt("month" + ((i % 3) + 1))
+                    + "/" + PlayerPrefs.GetInt("year" + ((i % 3) + 1))
+                    + " à " + PlayerPrefs.GetInt("hour" + ((i % 3) + 1))
+                    + "h" + PlayerPrefs.GetInt("minute" + ((i % 3) + 1))
+                    + "m" + PlayerPrefs.GetInt("second" + ((i % 3) + 1)) + "s";
 
                 // Activate load button
-                loadButtons[i].interactable = true;
+                if (loadButtons.Length == captures.Length)
+                {
+                    loadButtons[i].interactable = true;
+                }
 
                 // Screenshot
                 Sprite captureSprite = (Sprite) AssetDatabase.LoadAssetAtPath<Sprite>(
-                    "Assets/Resources/Graphics/Menus/Screenshot" + (i + 1) + ".png");
-                //string path = "Screenshot" + (i + 1);
-                //Debug.Log(path);
-                //Sprite captureSprite = Resources.Load(path) as Sprite;
-                Debug.Log(captureSprite == null);   
+                    "Assets/Resources/Graphics/Menus/Screenshot" + ((i % 3) + 1) + ".png");
                 captures[i].GetComponent<Image>().sprite = captureSprite;
             }
         }

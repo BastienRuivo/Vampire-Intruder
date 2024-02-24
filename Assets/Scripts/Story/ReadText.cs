@@ -85,6 +85,14 @@ public class ReadText : Singleton<ReadText>
 	private string[] nextDialog;
 	private bool autoMode = false;
 
+    // Save parameters
+    private int currentBackground;
+    private int currentFrame;
+    private char currentTextBox;
+    private bool[] currentCharacters;
+    private int[] currentExpressions;
+    private float[] currentPositions;
+
     /////////////////////
     /////// START ///////
     /////////////////////
@@ -121,6 +129,20 @@ public class ReadText : Singleton<ReadText>
 
 		logTextBoxes = new List<GameObject>();
 
+        // Save parameters
+        currentBackground = 0;
+        currentFrame = -1;
+        currentTextBox = 'L';
+        currentCharacters = new bool[4];
+        currentExpressions = new int[4];
+        currentPositions = new float[4];
+        for (int i = 0; i < 4; i++)
+        {
+            currentCharacters[i] = false;
+            currentExpressions[i] = 0;
+            currentPositions[i] = 0f;
+        }
+
 		chooseDialog();
 	}
 
@@ -135,7 +157,6 @@ public class ReadText : Singleton<ReadText>
 
         // Check if its from a save
         bool isFromSave = appState.getFromSave();
-        Debug.Log("Save: " + isFromSave);
         if (isFromSave)
         {
 
@@ -150,9 +171,14 @@ public class ReadText : Singleton<ReadText>
             // Elseway, we must load a dialog and a current line
             dialogName = appState.getDialogName();
             currentLineNumber = appState.getLineNumber();
-            Initialize(dialogName, currentLineNumber);
+            currentBackground = appState.getCurrentBackground();
+            currentFrame = appState.getCurrentFrame();
+            currentTextBox = appState.getCurrentTextBox();
+            currentCharacters = appState.getCurrentCharacters();
+            currentExpressions = appState.getCurrentExpressions();
+            currentPositions = appState.getCurrentPositions();
 
-            Debug.Log("In ReadText: " + currentLineNumber);
+            Initialize(dialogName, currentLineNumber - 1);
 
             return;
         }
@@ -1345,7 +1371,41 @@ public class ReadText : Singleton<ReadText>
         // Set the printing time for the first line
         printingTime = 2.0f + lines[0].Length / 50.0f;
 
-		NextLine();
+        // From a saving
+        if (currentLineNumber > -1)
+        {
+            // Compute the scene to print
+            int numberOfCharacters = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (currentCharacters[i])
+                {
+                    numberOfCharacters++;
+                }
+            }
+
+            int[] charactersToPrint = new int[numberOfCharacters];
+            float[] positionsToPrint = new float[numberOfCharacters];
+            int[] expressionsToPrint = new int[numberOfCharacters];
+            numberOfCharacters = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (currentCharacters[i])
+                {
+                    charactersToPrint[numberOfCharacters] = i;
+                    positionsToPrint[numberOfCharacters] = currentPositions[i];
+                    expressionsToPrint[numberOfCharacters] += currentExpressions[i];
+                    numberOfCharacters++;
+                }
+            }
+
+            StartCoroutine(ChangeBackground(currentBackground, currentFrame, currentTextBox,
+                charactersToPrint, positionsToPrint, expressionsToPrint));
+        }
+        else
+        {
+            NextLine();
+        }
     }
 
     //////////////////////
@@ -1737,6 +1797,9 @@ public class ReadText : Singleton<ReadText>
 					int expressionID = expressions[currentLineNumber][j];
 					bool isCharacterSpeaking = isSpeaking[currentLineNumber][j];
 					charactersObjects[characterID].GetComponent<ChangeExpressions>().ChangeExpression(expressionID, isCharacterSpeaking);
+
+                    // Save parameter
+                    currentExpressions[characterID] = expressionID;
 				}
 
 				// Log
@@ -1744,8 +1807,8 @@ public class ReadText : Singleton<ReadText>
 					lines[currentLineNumber], possibleTextBoxes[textBoxes[currentLineNumber]]);
 
                 startTime = Time.time;
-				printingTime = (float)(2.0f + lines[currentLineNumber].Length / 50.0);
-			}
+                printingTime = (float)(2.0f + lines[currentLineNumber].Length / 50.0);
+            }
 		}
 		// If the current line is not finished, end the current line
 		else
@@ -1851,6 +1914,9 @@ public class ReadText : Singleton<ReadText>
             if (textBoxID == 4) logTextBoxes.Last().transform.Find("Phrase").GetComponent<Text>().fontStyle = FontStyle.Italic;
             // New log textbox height
             height = logTextBoxes.Last().GetComponent<RectTransform>().rect.height;
+
+            // Save parameters
+            currentTextBox = textBoxes[currentLineNumber];
         }
 
         // Make all the previous log textbox up
@@ -1877,6 +1943,9 @@ public class ReadText : Singleton<ReadText>
 	{
 		// Fade In Out animation
 		charactersObjects[character].GetComponent<FadeInOut>().LaunchFadeOut();
+
+        // Save parameter
+        currentCharacters[character] = false;
 	}
 
 	/// <summary>
@@ -1895,6 +1964,11 @@ public class ReadText : Singleton<ReadText>
 
 		// Fade In Out animation
 		charactersObjects[character].GetComponent<FadeInOut>().LaunchFadeIn();
+
+        // Save parameter
+        currentCharacters[character] = true;
+        currentExpressions[character] = idExpression;
+        currentPositions[character] = position;
 	}
 
     ////////////////////////////////////
@@ -2010,11 +2084,12 @@ public class ReadText : Singleton<ReadText>
 		yield return new WaitUntil(() => blackObject.GetComponent<Image>().color.a == 0.0f);
 		fadingOut = false;
 
-		// Make the textbox appear
-        //textBoxObject.SetActive(true);
-
 		// End the fading animation
 		fadingProtect = false;
+
+        // Save parameter
+        currentBackground = backgroundID;
+        currentFrame = frameID;
 
 		// Load the next line
 		NextLine();
@@ -2419,5 +2494,35 @@ public class ReadText : Singleton<ReadText>
     public bool getGameScene()
     {
         return isGameScene;
+    }
+
+    public int getCurrentBackground()
+    {
+        return currentBackground;
+    }
+
+    public int getCurrentFrame()
+    {
+        return currentFrame;
+    }
+
+    public char getCurrentTextBox()
+    {
+        return currentTextBox;
+    }
+
+    public bool[] getCurrentCharacters()
+    {
+        return currentCharacters;
+    }
+
+    public int[] getCurrentExpressions()
+    {
+        return currentExpressions;
+    }
+
+    public float[] getCurrentPositions()
+    {
+        return currentPositions;
     }
 }

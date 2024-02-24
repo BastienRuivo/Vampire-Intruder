@@ -4023,7 +4023,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d2687a63a6d9e41815ac784c55ddf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  captures: []
+  captures:
+  - {fileID: 812161943}
+  - {fileID: 1401464491}
+  - {fileID: 194684988}
   loadButtons:
   - {fileID: 1493175526}
   - {fileID: 2132885474}

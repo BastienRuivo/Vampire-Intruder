@@ -145,7 +145,10 @@ public class StoryButtonManager : MonoBehaviour
 		savesMenu.SetActive(false);
 		confirmMenu.SetActive(true);
 		savesConfirms[0].SetActive(true);
-	}
+
+        // Print
+        confirmMenu.GetComponent<LoadSaves>().ReloadInformations();
+    }
 
 	/// <summary>
 	/// Save on the second save
@@ -155,6 +158,9 @@ public class StoryButtonManager : MonoBehaviour
         savesMenu.SetActive(false);
         confirmMenu.SetActive(true);
         savesConfirms[1].SetActive(true);
+
+        // Print
+        confirmMenu.GetComponent<LoadSaves>().ReloadInformations();
     }
 
     /// <summary>
@@ -165,6 +171,9 @@ public class StoryButtonManager : MonoBehaviour
         savesMenu.SetActive(false);
         confirmMenu.SetActive(true);
         savesConfirms[2].SetActive(true);
+
+        // Print
+        confirmMenu.GetComponent<LoadSaves>().ReloadInformations();
     }
 
 	/// <summary>
@@ -175,6 +184,9 @@ public class StoryButtonManager : MonoBehaviour
         savesMenu.SetActive(false);
         confirmMenu.SetActive(true);
         loadConfirms[0].SetActive(true);
+
+        // Print
+        confirmMenu.GetComponent<LoadSaves>().ReloadInformations();
     }
 
     /// <summary>
@@ -185,6 +197,9 @@ public class StoryButtonManager : MonoBehaviour
         savesMenu.SetActive(false);
         confirmMenu.SetActive(true);
         loadConfirms[1].SetActive(true);
+
+        // Print
+        confirmMenu.GetComponent<LoadSaves>().ReloadInformations();
     }
 
     /// <summary>
@@ -195,6 +210,9 @@ public class StoryButtonManager : MonoBehaviour
         savesMenu.SetActive(false);
         confirmMenu.SetActive(true);
         loadConfirms[2].SetActive(true);
+
+        // Print
+        confirmMenu.GetComponent<LoadSaves>().ReloadInformations();
     }
 
 	private IEnumerator waitForCapture(int saveNumber)
@@ -208,6 +226,8 @@ public class StoryButtonManager : MonoBehaviour
         ScreenCapture.CaptureScreenshot(Application.dataPath +
 			"/Resources/Graphics/Menus/Screenshot" + saveNumber + ".png");
 
+        confirmMenu.SetActive(false);
+        savesMenu.SetActive(true);
     }
 
     /// <summary>
@@ -226,12 +246,18 @@ public class StoryButtonManager : MonoBehaviour
 		string dialogName = GetComponent<ReadText>().getDialogName();
 		int currentLine = GetComponent<ReadText>().getLineNumber();
 		bool isGameScene = GetComponent<ReadText>().getGameScene();
-		appState.Save(1, dialogName, currentLine, isGameScene);
+		int currentBackground = GetComponent<ReadText>().getCurrentBackground();
+        int currentFrame = GetComponent<ReadText>().getCurrentFrame();
+        char currentTextBox = GetComponent<ReadText>().getCurrentTextBox();
+        bool[] currentCharacters = GetComponent<ReadText>().getCurrentCharacters();
+		int[] currentExpressions = GetComponent<ReadText>().getCurrentExpressions();
+		float[] currentPositions = GetComponent<ReadText>().getCurrentPositions();
+        appState.Save(1, dialogName, currentLine, isGameScene,
+            currentBackground, currentFrame, currentTextBox,
+            currentCharacters, currentExpressions, currentPositions); ;
 
 		// Print
         savesMenu.GetComponent<LoadSaves>().ReloadInformations();
-        confirmMenu.SetActive(false);
-        savesMenu.SetActive(true);
     }
 
     /// <summary>
@@ -247,9 +273,17 @@ public class StoryButtonManager : MonoBehaviour
         string dialogName = GetComponent<ReadText>().getDialogName();
         int currentLine = GetComponent<ReadText>().getLineNumber();
         bool isGameScene = GetComponent<ReadText>().getGameScene();
-        appState.Save(2, dialogName, currentLine, isGameScene);
+        int currentBackground = GetComponent<ReadText>().getCurrentBackground();
+        int currentFrame = GetComponent<ReadText>().getCurrentFrame();
+        char currentTextBox = GetComponent<ReadText>().getCurrentTextBox();
+        bool[] currentCharacters = GetComponent<ReadText>().getCurrentCharacters();
+        int[] currentExpressions = GetComponent<ReadText>().getCurrentExpressions();
+        float[] currentPositions = GetComponent<ReadText>().getCurrentPositions();
+        appState.Save(2, dialogName, currentLine, isGameScene,
+            currentBackground, currentFrame, currentTextBox,
+            currentCharacters, currentExpressions, currentPositions); ;
 
-		// Print
+        // Print
         savesMenu.GetComponent<LoadSaves>().ReloadInformations();
         confirmMenu.SetActive(false);
         savesMenu.SetActive(true);
@@ -271,7 +305,15 @@ public class StoryButtonManager : MonoBehaviour
         string dialogName = GetComponent<ReadText>().getDialogName();
         int currentLine = GetComponent<ReadText>().getLineNumber();
         bool isGameScene = GetComponent<ReadText>().getGameScene();
-        appState.Save(3, dialogName, currentLine, isGameScene);
+        int currentBackground = GetComponent<ReadText>().getCurrentBackground();
+        int currentFrame = GetComponent<ReadText>().getCurrentFrame();
+        char currentTextBox = GetComponent<ReadText>().getCurrentTextBox();
+        bool[] currentCharacters = GetComponent<ReadText>().getCurrentCharacters();
+        int[] currentExpressions = GetComponent<ReadText>().getCurrentExpressions();
+        float[] currentPositions = GetComponent<ReadText>().getCurrentPositions();
+        appState.Save(3, dialogName, currentLine, isGameScene,
+            currentBackground, currentFrame, currentTextBox,
+            currentCharacters, currentExpressions, currentPositions); ;
 
         // Print
         savesMenu.GetComponent<LoadSaves>().ReloadInformations();

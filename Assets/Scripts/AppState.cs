@@ -6,9 +6,7 @@ using UnityEngine;
 
 public class AppState : Singleton<AppState>
 {
-    private void Awake() {
-        DontDestroyOnLoad(this.gameObject);
-    }
+
     /////////////////////////
     /////// VARIABLES ///////
     /////////////////////////
@@ -61,10 +59,27 @@ public class AppState : Singleton<AppState>
     private int currentLineNumber = 0;
     private bool isFromSave = false;
     private bool isGameScene = false;
+    private int currentBackground;
+    private int currentFrame;
+    private char currentTextBox;
+    private bool[] currentCharacters;
+    private int[] currentExpressions;
+    private float[] currentPositions;
 
     //////////////////////////
     /////// INITIALIZE ///////
     //////////////////////////
+
+    override public void Awake()
+    {
+        if (currentCharacters == null)
+        {
+            currentCharacters = new bool[4];
+            currentExpressions = new int[4];
+            currentPositions = new float[4];
+        }
+        DontDestroyOnLoad(this.gameObject);
+    }
 
     public void Initialize()
     {
@@ -152,7 +167,7 @@ public class AppState : Singleton<AppState>
         {
             if (mainObjectiveAchieved)
             {
-                decreasePrinceMercy();
+                decreaseMainObjectiveSkip();
             }
         }
         hasTimeFailed = timeFailed;
@@ -367,14 +382,25 @@ public class AppState : Singleton<AppState>
     /////////////////////
     /////// SAVES ///////
     /////////////////////
-    public void Save(int saveNumber, string dialogName, int lineNumber, bool gameScene)
+    public void Save(int saveNumber, string dialogName, int lineNumber, bool gameScene,
+        int currentBackground, int currentFrame, char currentTextBox,
+        bool[] currentCharacters, int[] currentExpressions, float[] currentPositions)
     {
 
         // Dialog scene stats
         PlayerPrefs.SetString("dialogName" + saveNumber, dialogName);
         PlayerPrefs.SetInt("lineNumber" + saveNumber, lineNumber);
-        PlayerPrefs.SetInt("gameScene" + saveNumber, isGameScene ? 1 : 0);
-
+        PlayerPrefs.SetInt("gameScene" + saveNumber, gameScene ? 1 : 0);
+        PlayerPrefs.SetInt("background" + saveNumber, currentBackground);
+        PlayerPrefs.SetInt("frame" + saveNumber, currentFrame);
+        PlayerPrefs.SetString("textBox" + saveNumber, currentTextBox.ToString());
+        for (int i = 0; i < 4; i++)
+        {
+            PlayerPrefs.SetInt("character" + i + saveNumber, currentCharacters[i] ? 1 : 0);
+            PlayerPrefs.SetInt("expression" + i + saveNumber, currentExpressions[i]);
+            PlayerPrefs.SetFloat("position" + i + saveNumber, currentPositions[i]);
+        }
+             
         // App State variables
         PlayerPrefs.SetInt("princeMercy" + saveNumber, princeMercy);
         PlayerPrefs.SetInt("mainObjectiveSkip" + saveNumber, mainObjectiveSkip);
@@ -414,8 +440,15 @@ public class AppState : Singleton<AppState>
             currentDialogName = PlayerPrefs.GetString("dialogName" + saveNumber);
             currentLineNumber = PlayerPrefs.GetInt("lineNumber" + saveNumber);
             isGameScene = PlayerPrefs.GetInt("gameScene" + saveNumber) == 1;
-
-            Debug.Log("In Load: " + currentLineNumber);
+            currentBackground = PlayerPrefs.GetInt("background" + saveNumber);
+            currentFrame = PlayerPrefs.GetInt("frame" + saveNumber);
+            currentTextBox = PlayerPrefs.GetString("textBox" + saveNumber)[0];
+            for (int i = 0; i < 4; i++)
+            {
+                currentCharacters[i] = PlayerPrefs.GetInt("character" + i + saveNumber) == 1;
+                currentExpressions[i] = PlayerPrefs.GetInt("expression" + i + saveNumber);
+                currentPositions[i] = PlayerPrefs.GetFloat("position" + i + saveNumber);
+            }
 
             // App State variables
             princeMercy = PlayerPrefs.GetInt("princeMercy" + saveNumber);
@@ -482,5 +515,35 @@ public class AppState : Singleton<AppState>
     public bool getGameScene()
     {
         return isGameScene;
+    }
+
+    public int getCurrentBackground()
+    {
+        return currentBackground;
+    }
+
+    public int getCurrentFrame()
+    {
+        return currentFrame;
+    }
+
+    public char getCurrentTextBox()
+    {
+        return currentTextBox;
+    }
+
+    public bool[] getCurrentCharacters()
+    {
+        return currentCharacters;
+    }
+
+    public int[] getCurrentExpressions()
+    {
+        return currentExpressions;
+    }
+
+    public float[] getCurrentPositions()
+    {
+        return currentPositions;
     }
 }
