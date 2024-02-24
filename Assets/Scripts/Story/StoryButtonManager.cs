@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 /// <summary>
 /// Manage the story mode buttons
@@ -121,6 +123,7 @@ public class StoryButtonManager : MonoBehaviour
 	/// </summary>
 	public void OnSaveClicked()
 	{
+		savesMenu.GetComponent<LoadSaves>().ReloadInformations();
 		savesMenu.SetActive(true);
 		isSave = true;
 	}
@@ -194,14 +197,39 @@ public class StoryButtonManager : MonoBehaviour
         loadConfirms[2].SetActive(true);
     }
 
+	private IEnumerator waitForCapture(int saveNumber)
+	{
+		yield return null;
+        savesConfirms[1].SetActive(false);
+        confirmMenu.SetActive(false);
+        savesMenu.SetActive(false);
+
+        yield return new WaitForEndOfFrame();
+        ScreenCapture.CaptureScreenshot(Application.dataPath +
+			"/Resources/Graphics/Menus/Screenshot" + saveNumber + ".png");
+
+    }
+
     /// <summary>
     /// Confirm the save on the first save
     /// </summary>
     public void OnConfirmSave1Clicked()
     {
-		// Save on the first
+        // Make and save the screenshot
+        savesConfirms[0].SetActive(false);
+        confirmMenu.SetActive(false);
+        savesMenu.SetActive(false);
+		StartCoroutine(waitForCapture(1));
 
-		savesConfirms[0].SetActive(false);
+        // Save on the first
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+		string dialogName = GetComponent<ReadText>().getDialogName();
+		int currentLine = GetComponent<ReadText>().getLineNumber();
+		bool isGameScene = GetComponent<ReadText>().getGameScene();
+		appState.Save(1, dialogName, currentLine, isGameScene);
+
+		// Print
+        savesMenu.GetComponent<LoadSaves>().ReloadInformations();
         confirmMenu.SetActive(false);
         savesMenu.SetActive(true);
     }
@@ -211,9 +239,18 @@ public class StoryButtonManager : MonoBehaviour
     /// </summary>
     public void OnConfirmSave2Clicked()
 	{
+        // Make and save the screenshot
+        StartCoroutine(waitForCapture(2));
+        
         // Save on the second
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        string dialogName = GetComponent<ReadText>().getDialogName();
+        int currentLine = GetComponent<ReadText>().getLineNumber();
+        bool isGameScene = GetComponent<ReadText>().getGameScene();
+        appState.Save(2, dialogName, currentLine, isGameScene);
 
-        savesConfirms[1].SetActive(false);
+		// Print
+        savesMenu.GetComponent<LoadSaves>().ReloadInformations();
         confirmMenu.SetActive(false);
         savesMenu.SetActive(true);
     }
@@ -223,9 +260,21 @@ public class StoryButtonManager : MonoBehaviour
     /// </summary>
     public void OnConfirmSave3Clicked()
     {
-        // Save on the third
-
+        // Make and save the screenshot
         savesConfirms[2].SetActive(false);
+        confirmMenu.SetActive(false);
+        savesMenu.SetActive(false);
+        StartCoroutine(waitForCapture(3));
+
+        // Save on the third
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        string dialogName = GetComponent<ReadText>().getDialogName();
+        int currentLine = GetComponent<ReadText>().getLineNumber();
+        bool isGameScene = GetComponent<ReadText>().getGameScene();
+        appState.Save(3, dialogName, currentLine, isGameScene);
+
+        // Print
+        savesMenu.GetComponent<LoadSaves>().ReloadInformations();
         confirmMenu.SetActive(false);
         savesMenu.SetActive(true);
     }
@@ -240,6 +289,9 @@ public class StoryButtonManager : MonoBehaviour
         confirmMenu.SetActive(false);
 
         // Load the first
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+		appState.Load(1);
+        SceneManager.LoadSceneAsync("Story");
     }
 
     /// <summary>
@@ -251,6 +303,9 @@ public class StoryButtonManager : MonoBehaviour
         confirmMenu.SetActive(false);
 
         // Load the second
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        appState.Load(2);
+        SceneManager.LoadSceneAsync("Story");
     }
 
     /// <summary>
@@ -262,6 +317,9 @@ public class StoryButtonManager : MonoBehaviour
         confirmMenu.SetActive(false);
 
         // Load the third
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        appState.Load(3);
+        SceneManager.LoadSceneAsync("Story");
     }
 
     public void OnCloseConfirmClicked()

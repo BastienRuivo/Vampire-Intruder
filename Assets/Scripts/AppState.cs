@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -55,6 +56,12 @@ public class AppState : Singleton<AppState>
     //LevelGenerator parameters
     private int startingEnergy;
 
+    // Scene parameters
+    private string currentDialogName = null;
+    private int currentLineNumber = 0;
+    private bool isFromSave = false;
+    private bool isGameScene = false;
+
     //////////////////////////
     /////// INITIALIZE ///////
     //////////////////////////
@@ -87,7 +94,13 @@ public class AppState : Singleton<AppState>
         totalSecondaryObjectives = 0;
         hasAlreadyKilled = false;
         hasAlreadySecondary = false;
-    }
+
+        // Scene parameters
+        currentDialogName = null;
+        currentLineNumber = 0;
+        isFromSave = false;
+        isGameScene = false;
+}
 
     /////////////////////////////////
     /////// LEVEL MANAGEMENTS ///////
@@ -126,8 +139,10 @@ public class AppState : Singleton<AppState>
     /// <param name="bloodFailed">If the player lost because of a blood</param>
     public void endLevel(bool mainObjectiveAchieved, bool timeFailed, bool guardFailed, bool bloodFailed)
     {
+        // Scene management
+        isGameScene = false;
+        isFromSave = false;
 
-        Debug.Log("End of level " + levelNumber + " with guardKilledInCurrentScene: " + guardKilledInCurrentScene + " and totalGuardsInCurrentScene: " + totalGuardsInCurrentScene + " and secondaryObjectivesAchievedInCurrentScene: " + secondaryObjectivesAchievedInCurrentScene + " and totalSecondaryObjectivesInCurrentScene: " + totalSecondaryObjectivesInCurrentScene);
         // Prince Mercies
         if (timeFailed || guardFailed || bloodFailed)
         {
@@ -349,4 +364,123 @@ public class AppState : Singleton<AppState>
         hasAlreadySecondary = true;
     }
 
+    /////////////////////
+    /////// SAVES ///////
+    /////////////////////
+    public void Save(int saveNumber, string dialogName, int lineNumber, bool gameScene)
+    {
+
+        // Dialog scene stats
+        PlayerPrefs.SetString("dialogName" + saveNumber, dialogName);
+        PlayerPrefs.SetInt("lineNumber" + saveNumber, lineNumber);
+        PlayerPrefs.SetInt("gameScene" + saveNumber, isGameScene ? 1 : 0);
+
+        // App State variables
+        PlayerPrefs.SetInt("princeMercy" + saveNumber, princeMercy);
+        PlayerPrefs.SetInt("mainObjectiveSkip" + saveNumber, mainObjectiveSkip);
+        PlayerPrefs.SetInt("levelNumber" + saveNumber, levelNumber);
+        PlayerPrefs.SetInt("runNumber" + saveNumber, runNumber);
+
+        // Items
+        PlayerPrefs.SetInt("sedatives" + saveNumber, items["Sedative"]);
+        PlayerPrefs.SetInt("bloodPouch" + saveNumber, items["BloodPouch"]);
+
+        // Story parameters
+        PlayerPrefs.SetInt("JessikaLove" + saveNumber, JessikaLove);
+        PlayerPrefs.SetInt("ElrikLove" + saveNumber, ElrikLove);
+        PlayerPrefs.SetInt("guardKilled" + saveNumber, guardKilled);
+        PlayerPrefs.SetInt("totalGuards" + saveNumber, totalGuards);
+        PlayerPrefs.SetInt("totalSecondaryObjectives" + saveNumber, totalSecondaryObjectives);
+        PlayerPrefs.SetInt("hasAlreadyKilled" + saveNumber, hasAlreadyKilled ? 1 : 0);
+        PlayerPrefs.SetInt("hasAlreadySecondary" + saveNumber, hasAlreadySecondary ? 1 : 0);
+
+        // Date and time
+        DateTime dt = DateTime.Now;
+        PlayerPrefs.SetInt("year" + saveNumber, dt.Year);
+        PlayerPrefs.SetInt("month" + saveNumber, dt.Month);
+        PlayerPrefs.SetInt("day" + saveNumber, dt.Day);
+        PlayerPrefs.SetInt("hour" + saveNumber, dt.Hour);
+        PlayerPrefs.SetInt("minute" + saveNumber, dt.Minute);
+        PlayerPrefs.SetInt("second" + saveNumber, dt.Second);
+
+        
+    }
+
+    public void Load(int saveNumber)
+    {
+        if (PlayerPrefs.HasKey("dialogName" + saveNumber))
+        {
+            // Dialog scene stats
+            currentDialogName = PlayerPrefs.GetString("dialogName" + saveNumber);
+            currentLineNumber = PlayerPrefs.GetInt("lineNumber" + saveNumber);
+            isGameScene = PlayerPrefs.GetInt("gameScene" + saveNumber) == 1;
+
+            Debug.Log("In Load: " + currentLineNumber);
+
+            // App State variables
+            princeMercy = PlayerPrefs.GetInt("princeMercy" + saveNumber);
+            mainObjectiveSkip = PlayerPrefs.GetInt("mainObjectiveSkip" + saveNumber);
+            levelNumber = PlayerPrefs.GetInt("levelNumber" + saveNumber);
+            runNumber = PlayerPrefs.GetInt("runNumber" + saveNumber);
+
+            // Abilities
+            switch (runNumber)
+            {
+                case 1:
+                    abilities["Teleportation"] = true; break;
+                case 2:
+                    abilities["Teleportation"] = true;
+                    abilities["Decieving"] = true; break;
+                case 3:
+                    abilities["Teleportation"] = true;
+                    abilities["Decieving"] = true;
+                    abilities["Cataract"] = true; break;
+                case 4:
+                    abilities["Teleportation"] = true;
+                    abilities["Decieving"] = true;
+                    abilities["Cataract"] = true;
+                    abilities["Invisibility"] = true; break;
+            }
+
+            // Items
+            items["Sedative"] = PlayerPrefs.GetInt("sedatives" + saveNumber);
+            items["BloodPouch"] = PlayerPrefs.GetInt("bloodPouch" + saveNumber);
+
+            // Story parameters
+            JessikaLove = PlayerPrefs.GetInt("JessikaLove" + saveNumber);
+            ElrikLove = PlayerPrefs.GetInt("ElrikLove" + saveNumber);
+            guardKilled = PlayerPrefs.GetInt("guardKilled" + saveNumber);
+            totalGuards = PlayerPrefs.GetInt("totalGuards" + saveNumber);
+            totalSecondaryObjectives = PlayerPrefs.GetInt("totalSecondaryObjectives" + saveNumber);
+            hasAlreadyKilled = PlayerPrefs.GetInt("hasAlreadyKilled" + saveNumber) == 1;
+            hasAlreadySecondary = PlayerPrefs.GetInt("hasAlreadySecondary") == 1;
+
+            // Scene parameters
+            isFromSave = true;
+        }
+        else
+        {
+            Initialize();
+        }
+    }
+    
+    public string getDialogName()
+    {
+        return currentDialogName;
+    }
+
+    public int getLineNumber()
+    {
+        return currentLineNumber;
+    }
+
+    public bool getFromSave()
+    {
+        return isFromSave;
+    }
+
+    public bool getGameScene()
+    {
+        return isGameScene;
+    }
 }

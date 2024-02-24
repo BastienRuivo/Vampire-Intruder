@@ -109,39 +109,46 @@ public class MenusButtonManager : MonoBehaviour
 	{
         AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
         appState.Initialize();
-        SceneManager.LoadScene("Story");
+        SceneManager.LoadSceneAsync("Story");
     }
 
 	/// <summary>
 	/// Open the saves menu
 	/// </summary>
 	public void OnSavesClick()
-	{
-		savesMenu.SetActive(true);
+    {
+        savesMenu.GetComponent<LoadSaves>().ReloadInformations();
+        savesMenu.SetActive(true);
 	}
 
 	/// <summary>
 	/// Charge the first save
 	/// </summary>
-	public void OnSave1Click()
+	public void OnLoad1Click()
 	{
-
-	}
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        appState.Load(1);
+        SceneManager.LoadSceneAsync("Story");
+    }
 
     /// <summary>
     /// Charge the second save
     /// </summary>
-    public void OnSave2Click()
+    public void OnLoad2Click()
     {
-
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        appState.Load(2);
+        SceneManager.LoadSceneAsync("Story");
     }
 
     /// <summary>
     /// Charge the third save
     /// </summary>
-    public void OnSave3Click()
+    public void OnLoad3Click()
     {
-
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        appState.Load(3);
+        SceneManager.LoadSceneAsync("Story");
     }
 
     /// <summary>

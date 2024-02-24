@@ -41,7 +41,8 @@ public class ReadText : Singleton<ReadText>
     public GameObject continueObject;               // The continue button to make appear
     public GameObject backObject;                   // The back button to make disappear
 
-	// Private dialog objects
+    // Private dialog objects
+    private string dialogName;                      // The current dialogName
 	private string[] lines;							// All the different printed phrases
 	private int[][] characters;						// All the different printed characters in the dialog				
 	private int[][] expressions;					// All the different printed character's expressions
@@ -51,6 +52,7 @@ public class ReadText : Singleton<ReadText>
 	private List<GameObject> logTextBoxes;			// All the different printed log textboxes
 	private GameObject[] narrationPhrases;          // All the different printed narration phrases
 	private GameObject[] choices;					// All the different printed choices
+    private bool isGameScene;                       // Indicates if a game scene is about to be launched
 	
 	// Possible objects
 	private SortedDictionary<string, int> possibleCharacters;	// All the possible characters
@@ -122,12 +124,40 @@ public class ReadText : Singleton<ReadText>
 		chooseDialog();
 	}
 
+    /// <summary>
+    /// Computes whoch dialog scene should be played thanks to the AppState
+    /// </summary>
 	private void chooseDialog()
 	{
-		string dialogName = "0";
+		dialogName = "0";
 
 		AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
 
+        // Check if its from a save
+        bool isFromSave = appState.getFromSave();
+        Debug.Log("Save: " + isFromSave);
+        if (isFromSave)
+        {
+
+            // Check if we must load the next game scene
+            bool isScene = appState.getGameScene();
+            if (isScene)
+            {
+                SceneManager.LoadSceneAsync("LevelGenTest");
+                return;
+            }
+
+            // Elseway, we must load a dialog and a current line
+            dialogName = appState.getDialogName();
+            currentLineNumber = appState.getLineNumber();
+            Initialize(dialogName, currentLineNumber);
+
+            Debug.Log("In ReadText: " + currentLineNumber);
+
+            return;
+        }
+
+        // Elseway, must choose the right dialog
 		int runNumber = appState.getRunNumber();
 		int levelNumber = appState.getLevelNumber();
 		int princeMercy = appState.getPrinceMercy();
@@ -1276,15 +1306,15 @@ public class ReadText : Singleton<ReadText>
             }
         }
 
-        Initialize(dialogName);
-        //Initialize("0");
+        Initialize(dialogName, -1);
+        //Initialize("0", -1);
 	}
 
 	/// <summary>
 	/// Initialize the dialog (delete everything but the log)
 	/// </summary>
 	/// <param name="dialog">The new dialog to load</param>
-	private void Initialize(string dialog) {
+	private void Initialize(string dialog, int lineNumber) {
 
 		// Reset the different variables
 		if (lines != null) Array.Clear(lines, 0, lines.Length);
@@ -1296,7 +1326,7 @@ public class ReadText : Singleton<ReadText>
         if (narrationPhrases != null) Array.Clear(narrationPhrases, 0, narrationPhrases.Length);
         if (choices != null) Array.Clear(choices, 0, choices.Length);
 		linesNumber = 0;
-		currentLineNumber = -1;
+		currentLineNumber = lineNumber;
 		printingTime = 0.0f;
 		startTime = 0.0f;
 		hasDisappeared = false;
@@ -1307,6 +1337,7 @@ public class ReadText : Singleton<ReadText>
 		isNarration = false;
 		narrationCoroutine = null;
 		isChoice = false;
+        isGameScene = false;
 
         // Load the dialog
         LoadDialog(dialog);
@@ -1523,7 +1554,7 @@ public class ReadText : Singleton<ReadText>
 				else if (mots[0] == "@@@Next")
 				{
 					string nextDialog = mots[1];
-					Initialize(nextDialog);
+					Initialize(nextDialog, -1);
 				}
 
 				// Background change (with new characters or not)
@@ -2251,7 +2282,7 @@ public class ReadText : Singleton<ReadText>
         GetComponent<StoryButtonManager>().setAuto(autoMode);
 
 		// Go to the next dialog
-		Initialize(nextDialog[choiceNumber]);
+		Initialize(nextDialog[choiceNumber], -1);
 	}
 
     ///////////////////////
@@ -2323,6 +2354,7 @@ public class ReadText : Singleton<ReadText>
         // New infiltration game level
         if (scene != -1)
         {
+            isGameScene = true;
             GetComponent<StoryButtonManager>().OnSaveClicked();
             saveQuestionObject.SetActive(true);
             continueObject.SetActive(true);
@@ -2332,22 +2364,22 @@ public class ReadText : Singleton<ReadText>
             switch (level)
             {
                 case 0:
-                    SceneManager.LoadScene("GameOver");
+                    SceneManager.LoadSceneAsync("GameOver");
                     break;
                 case 1:
-                    SceneManager.LoadScene("BadEnd");
+                    SceneManager.LoadSceneAsync("BadEnd");
                     break;
                 case 2:
-                    SceneManager.LoadScene("NeutralEnd1");
+                    SceneManager.LoadSceneAsync("NeutralEnd1");
                     break;
                 case 3:
-                    SceneManager.LoadScene("NeutralEnd2");
+                    SceneManager.LoadSceneAsync("NeutralEnd2");
                     break;
                 case 4:
-                    SceneManager.LoadScene("GoodEnd1");
+                    SceneManager.LoadSceneAsync("GoodEnd1");
                     break;
                 case 5:
-                    SceneManager.LoadScene("GoodEnd2");
+                    SceneManager.LoadSceneAsync("GoodEnd2");
                     break;
             }
 
@@ -2363,6 +2395,29 @@ public class ReadText : Singleton<ReadText>
         continueObject.SetActive(false);
         GetComponent<StoryButtonManager>().OnBackClicked();
 
-        SceneManager.LoadScene("LevelGenTest");
+        SceneManager.LoadSceneAsync("LevelGenTest");
+    }
+
+    /// <summary>
+    /// Returns the current dialog name
+    /// </summary>
+    /// <returns>The current dialog name</returns>
+    public string getDialogName()
+    {
+        return dialogName;
+    }
+
+    /// <summary>
+    /// Returns the current line number
+    /// </summary>
+    /// <returns>The current line number</returns>
+    public int getLineNumber()
+    {
+        return currentLineNumber;
+    }
+
+    public bool getGameScene()
+    {
+        return isGameScene;
     }
 }

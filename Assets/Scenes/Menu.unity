@@ -579,6 +579,7 @@ MonoBehaviour:
   - {fileID: 1074347476}
   - {fileID: 5785583}
   title: {fileID: 256608962}
+  explanation: {fileID: 0}
   buttons:
   - {fileID: 1114586254}
   - {fileID: 185209403}
@@ -1157,8 +1158,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 141, y: -35.668}
-  m_SizeDelta: {x: -341.3974, y: -162.68}
+  m_AnchoredPosition: {x: -3.9033203, y: -32.67787}
+  m_SizeDelta: {x: -631.204, y: -139.7462}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &272459986
 MonoBehaviour:
@@ -1173,7 +1174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AspectMode: 1
-  m_AspectRatio: 19.048212
+  m_AspectRatio: 9.392164
 --- !u!114 &272459987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1201,7 +1202,7 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 3
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -1531,21 +1532,21 @@ MonoBehaviour:
     m_HighlightedSprite: {fileID: 21300000, guid: f2dfd7dc72a644d44be1176a36810c3a, type: 3}
     m_PressedSprite: {fileID: 21300000, guid: 2e20c57107c885749af90f82bafaffdf, type: 3}
     m_SelectedSprite: {fileID: 21300000, guid: dd26aab7e56047f4fa7c5da7eabe6cc0, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: dd26aab7e56047f4fa7c5da7eabe6cc0, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 30fb845376530e04bb3b77a00186625b, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 565139564}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 175733715}
         m_TargetAssemblyTypeName: MenusButtonManager, Assembly-CSharp
-        m_MethodName: OnSave3Click
+        m_MethodName: OnLoad3Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2759,8 +2760,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 141, y: -35.668}
-  m_SizeDelta: {x: -341.3974, y: -162.68}
+  m_AnchoredPosition: {x: -1.7620239, y: -33.39174}
+  m_SizeDelta: {x: -626.9213, y: -138.3185}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1336628371
 MonoBehaviour:
@@ -2775,7 +2776,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AspectMode: 1
-  m_AspectRatio: 19.048212
+  m_AspectRatio: 9.273145
 --- !u!114 &1336628372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2803,7 +2804,7 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 3
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -3178,6 +3179,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401464491}
   m_CullTransparentMesh: 1
+--- !u!1 &1467131252
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1467131254}
+  - component: {fileID: 1467131253}
+  m_Layer: 0
+  m_Name: AppState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1467131253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467131252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2671e4c2e6384664a9a6b8c3ef5296b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1467131254
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467131252}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 944.67413, y: 595.13617, z: -5.2564616}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1467224172
 GameObject:
   m_ObjectHideFlags: 0
@@ -3346,21 +3391,21 @@ MonoBehaviour:
     m_HighlightedSprite: {fileID: 21300000, guid: f2dfd7dc72a644d44be1176a36810c3a, type: 3}
     m_PressedSprite: {fileID: 21300000, guid: 2e20c57107c885749af90f82bafaffdf, type: 3}
     m_SelectedSprite: {fileID: 21300000, guid: dd26aab7e56047f4fa7c5da7eabe6cc0, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: dd26aab7e56047f4fa7c5da7eabe6cc0, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 30fb845376530e04bb3b77a00186625b, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1493175527}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 175733715}
         m_TargetAssemblyTypeName: MenusButtonManager, Assembly-CSharp
-        m_MethodName: OnSave1Click
+        m_MethodName: OnLoad1Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3443,8 +3488,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 141, y: -35.668}
-  m_SizeDelta: {x: -341.3974, y: -162.68}
+  m_AnchoredPosition: {x: -5.929016, y: -33.274567}
+  m_SizeDelta: {x: -635.2553, y: -138.5509}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1540683672
 MonoBehaviour:
@@ -3459,7 +3504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AspectMode: 1
-  m_AspectRatio: 19.048212
+  m_AspectRatio: 9.192322
 --- !u!114 &1540683673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3487,7 +3532,7 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 3
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -3897,6 +3942,7 @@ GameObject:
   - component: {fileID: 2085361702}
   - component: {fileID: 2085361704}
   - component: {fileID: 2085361703}
+  - component: {fileID: 2085361705}
   m_Layer: 5
   m_Name: Saves
   m_TagString: Untagged
@@ -3965,6 +4011,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2085361701}
   m_CullTransparentMesh: 1
+--- !u!114 &2085361705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085361701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22d2687a63a6d9e41815ac784c55ddf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  captures: []
+  loadButtons:
+  - {fileID: 1493175526}
+  - {fileID: 2132885474}
+  - {fileID: 565139563}
+  descriptions:
+  - {fileID: 1336628372}
+  - {fileID: 272459987}
+  - {fileID: 1540683673}
 --- !u!1 &2132885472
 GameObject:
   m_ObjectHideFlags: 0
@@ -4036,21 +4103,21 @@ MonoBehaviour:
     m_HighlightedSprite: {fileID: 21300000, guid: f2dfd7dc72a644d44be1176a36810c3a, type: 3}
     m_PressedSprite: {fileID: 21300000, guid: 2e20c57107c885749af90f82bafaffdf, type: 3}
     m_SelectedSprite: {fileID: 21300000, guid: dd26aab7e56047f4fa7c5da7eabe6cc0, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: dd26aab7e56047f4fa7c5da7eabe6cc0, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 30fb845376530e04bb3b77a00186625b, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 2132885475}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 175733715}
         m_TargetAssemblyTypeName: MenusButtonManager, Assembly-CSharp
-        m_MethodName: OnSave2Click
+        m_MethodName: OnLoad2Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4105,3 +4172,4 @@ SceneRoots:
   - {fileID: 78564810}
   - {fileID: 175733714}
   - {fileID: 505665347}
+  - {fileID: 1467131254}
