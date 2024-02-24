@@ -92,8 +92,9 @@ public class StoryButtonManager : MonoBehaviour
 	/// </summary>
 	public void OnSkipClicked()
 	{
-		// Goes to the dialog end
-		StartCoroutine(GetComponent<ReadText>().End());
+        // Goes to the dialog end
+        int[] nextSceneAndLevel = GetComponent<ReadText>().getNextScene();
+        StartCoroutine(GetComponent<ReadText>().ChangeScene(nextSceneAndLevel[0], nextSceneAndLevel[1]));
 	}
 
 	/// <summary>
