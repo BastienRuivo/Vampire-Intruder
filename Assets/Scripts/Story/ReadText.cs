@@ -198,6 +198,7 @@ public class ReadText : Singleton<ReadText>
 		bool hasMainObjectiveFailed = appState.getMainObjectiveFailed();
 		bool hasTimeFailed = appState.getTimeFailed();
 		bool hasGuardFailed = appState.getGuardFailed();
+		bool hasBloodFailed = appState.getBloodFailed();
 		float guardKilledPercent = appState.getGuardsKilledPercent();
 		float secondaryObjectivesPercent = appState.getSecondaryObjectivesAchievedPercent();
 		bool hasAlreadyKilled = appState.getAlreadyKilled();
@@ -228,9 +229,13 @@ public class ReadText : Singleton<ReadText>
 				{
 					dialogName = "Run0/Level0/FailGuard"; // -> Run0/GameOver -> GameOver Scene
                 }
+                else if (hasBloodFailed)
+                {
+                    dialogName = "Run0/Level0/FailBlood"; // -> Run0/GameOver -> GameOver Scene
+                }
 
-				// Success
-				else
+                // Success
+                else
 				{
 					if (guardKilledPercent > 0.0f)
 					{
@@ -263,6 +268,10 @@ public class ReadText : Singleton<ReadText>
                 else if (hasGuardFailed)
                 {
                     dialogName = "Run0/Level1/FailGuard"; // -> Run0/GameOver -> GameOver Scene
+                }
+                else if (hasBloodFailed)
+                {
+                    dialogName = "Run0/Level1/FailBlood"; // -> Run0/GameOver -> GameOver Scene
                 }
 
                 // Success
@@ -300,6 +309,10 @@ public class ReadText : Singleton<ReadText>
                 else if (hasGuardFailed)
                 {
                     dialogName = "Run1/Level0/FailGuard"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                }
+                else if (hasBloodFailed)
+                {
+                    dialogName = "Run1/Level0/FailBlood"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
                 }
 
                 // Success
@@ -376,7 +389,7 @@ public class ReadText : Singleton<ReadText>
                     }
 				}
 
-				else if (hasTimeFailed || hasGuardFailed)
+				else if (hasTimeFailed || hasGuardFailed || hasBloodFailed)
 				{
 
 					// Second fail
@@ -390,7 +403,11 @@ public class ReadText : Singleton<ReadText>
 						{
 							dialogName = "Run1/Level1/FailGuard2"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
                         }
-					}
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run1/Level1/FailBlood2"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                    }
 
 					// First fail
 					else
@@ -403,7 +420,11 @@ public class ReadText : Singleton<ReadText>
 						{
 							dialogName = "Run1/Level1/FailGuard"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
                         }
-					}
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run1/Level1/FailBlood"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                        }
+                    }
 				}
 
 
@@ -500,7 +521,7 @@ public class ReadText : Singleton<ReadText>
                     }
                 }
 
-                else if (hasTimeFailed || hasGuardFailed)
+                else if (hasTimeFailed || hasGuardFailed || hasBloodFailed)
                 {
 
                     // Third fail
@@ -513,6 +534,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run2/Level0/FailGuard3"; // -> Run2/GameOver -> GameOver Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run2/Level0/FailBlood3"; // -> Run2/GameOver -> GameOver Scene
                         }
                     }
 
@@ -527,6 +552,10 @@ public class ReadText : Singleton<ReadText>
                         {
                             dialogName = "Run2/Level0/FailGuard2"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
                         }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run2/Level0/FailBlood2"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
                     }
 
                     // First fail
@@ -539,6 +568,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run2/Level0/FailGuard"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run2/Level0/FailBlood"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
                         }
                     }
                 }
@@ -640,7 +673,7 @@ public class ReadText : Singleton<ReadText>
                     }
                 }
 
-                else if (hasTimeFailed || hasGuardFailed)
+                else if (hasTimeFailed || hasGuardFailed || hasBloodFailed)
                 {
 
                     // Third fail
@@ -653,6 +686,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run2/Level1/FailGuard3"; // -> Run2/GameOver -> GameOver Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run2/Level1/FailBlood3"; // -> Run2/GameOver -> GameOver Scene
                         }
                     }
 
@@ -667,6 +704,10 @@ public class ReadText : Singleton<ReadText>
                         {
                             dialogName = "Run2/Level1/FailGuard2"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
                         }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run2/Level1/FailBlood2"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
                     }
 
                     // First fail
@@ -679,6 +720,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run2/Level1/FailGuard"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run2/Level1/FailBlood"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
                         }
                     }
                 }
@@ -777,7 +822,7 @@ public class ReadText : Singleton<ReadText>
                     }
                 }
 
-                else if (hasTimeFailed || hasGuardFailed)
+                else if (hasTimeFailed || hasGuardFailed || hasBloodFailed)
                 {
 
                     // Third fail
@@ -790,6 +835,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run3/Level0/FailGuard3"; // -> Run3/GameOver -> GameOver Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run3/Level0/FailBlood3"; // -> Run3/GameOver -> GameOver Scene
                         }
                     }
 
@@ -804,6 +853,10 @@ public class ReadText : Singleton<ReadText>
                         {
                             dialogName = "Run3/Level0/FailGuard2"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
                         }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run3/Level0/FailBlood2"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
                     }
 
                     // First fail
@@ -816,6 +869,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run3/Level0/FailGuard"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run3/Level0/FailBlood"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
                         }
                     }
                 }
@@ -923,7 +980,7 @@ public class ReadText : Singleton<ReadText>
                     }
                 }
 
-                else if (hasTimeFailed || hasGuardFailed)
+                else if (hasTimeFailed || hasGuardFailed || hasBloodFailed)
                 {
 
                     // Third fail
@@ -936,6 +993,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run3/Level1/" + storyPath + "FailGuard3"; // -> Run3/GameOver -> GameOver Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailBlood3"; // -> Run3/GameOver -> GameOver Scene
                         }
                     }
 
@@ -950,6 +1011,10 @@ public class ReadText : Singleton<ReadText>
                         {
                             dialogName = "Run3/Level1/" + storyPath + "FailGuard2"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
                         }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailBlood2"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
                     }
 
                     // First fail
@@ -962,6 +1027,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run3/Level1/" + storyPath + "FailGuard"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run3/Level1/" + storyPath + "FailBlood"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
                         }
                     }
                 }
@@ -1060,7 +1129,7 @@ public class ReadText : Singleton<ReadText>
                     }
                 }
 
-                else if (hasTimeFailed || hasGuardFailed)
+                else if (hasTimeFailed || hasGuardFailed || hasBloodFailed)
                 {
 
                     // Third fail
@@ -1073,6 +1142,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run4/Level0/FailGuard3"; // -> Run4/GameOver -> GameOver Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run4/Level0/FailBlood3"; // -> Run4/GameOver -> GameOver Scene
                         }
                     }
 
@@ -1087,6 +1160,10 @@ public class ReadText : Singleton<ReadText>
                         {
                             dialogName = "Run4/Level0/FailGuard2"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
                         }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run4/Level0/FailBlood2"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
                     }
 
                     // First fail
@@ -1099,6 +1176,10 @@ public class ReadText : Singleton<ReadText>
                         else if (hasGuardFailed)
                         {
                             dialogName = "Run4/Level0/FailGuard"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                        }
+                        else if (hasBloodFailed)
+                        {
+                            dialogName = "Run4/Level0/FailBlood"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
                         }
                     }
                 }
@@ -1218,7 +1299,7 @@ public class ReadText : Singleton<ReadText>
                 }
             }
 
-            else if (hasTimeFailed || hasGuardFailed)
+            else if (hasTimeFailed || hasGuardFailed || hasBloodFailed)
             {
 
                 // Third fail
@@ -1231,6 +1312,10 @@ public class ReadText : Singleton<ReadText>
                     else if (hasGuardFailed)
                     {
                         dialogName = "Run4/Level1/" + storyPath + "FailGuard3"; // -> Run4/GameOver -> GameOver Scene
+                    }
+                    else if (hasBloodFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailBlood3"; // -> Run4/GameOver -> GameOver Scene
                     }
                 }
 
@@ -1245,6 +1330,10 @@ public class ReadText : Singleton<ReadText>
                     {
                         dialogName = "Run4/Level1/" + storyPath + "FailGuard2"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
                     }
+                    else if (hasBloodFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailBlood2"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
                 }
 
                 // First fail
@@ -1257,6 +1346,10 @@ public class ReadText : Singleton<ReadText>
                     else if (hasGuardFailed)
                     {
                         dialogName = "Run4/Level1/" + storyPath + "FailGuard"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                    }
+                    else if (hasBloodFailed)
+                    {
+                        dialogName = "Run4/Level1/" + storyPath + "FailBlood"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
                     }
                 }
             }
