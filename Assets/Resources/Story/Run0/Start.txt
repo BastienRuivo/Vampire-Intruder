@@ -1,10 +1,4 @@
 @@@Background Day C 2 Jessika Neutral 0 Jasper Neutral 1
 1 C Lord_Jasper Jasper Neutral 1
 Ceci est le début de l'histoire !
-0 C Lord_Jasper
-Et ma deuxième quote !
-0 C Lord_Jasper
-Et ma troisième quote !
-0 C Lord_Jasper
-Et ma quatrième quote !
 @@@Scene 0 0

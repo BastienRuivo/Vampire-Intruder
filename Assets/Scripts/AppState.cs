@@ -1,7 +1,6 @@
+using JetBrains.Annotations;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class AppState : Singleton<AppState>
@@ -70,15 +69,30 @@ public class AppState : Singleton<AppState>
     /////// INITIALIZE ///////
     //////////////////////////
 
+    public static AppState appState;
+
     override public void Awake()
     {
+
+        // Check existence
+        if (appState == null) {
+            appState = this;
+        }
+        else if (appState != this)
+        {
+            Destroy(gameObject);
+        }
+
+        // Keep data persistent
+        DontDestroyOnLoad(gameObject);
+
+        // First initialization
         if (currentCharacters == null)
         {
             currentCharacters = new bool[4];
             currentExpressions = new int[4];
             currentPositions = new float[4];
         }
-        DontDestroyOnLoad(this.gameObject);
     }
 
     public void Initialize()
@@ -158,14 +172,18 @@ public class AppState : Singleton<AppState>
         isGameScene = false;
         isFromSave = false;
 
+        // Main objective
+        hasMainObjectiveFailed = !mainObjectiveAchieved;
+
         // Prince Mercies
         if (timeFailed || guardFailed || bloodFailed)
         {
+            hasMainObjectiveFailed = false;
             decreasePrinceMercy();
         }
         else
         {
-            if (mainObjectiveAchieved)
+            if (!mainObjectiveAchieved)
             {
                 decreaseMainObjectiveSkip();
             }
@@ -192,8 +210,8 @@ public class AppState : Singleton<AppState>
                 items["BloodPouch"]++;
             }
         }
-        secondaryObjectivesAchieved = secondaryObjectivesAchievedInCurrentScene; //+= ici non ?
-        totalSecondaryObjectives = totalSecondaryObjectivesInCurrentScene;  //pareil
+        secondaryObjectivesAchieved = secondaryObjectivesAchievedInCurrentScene;
+        totalSecondaryObjectives = totalSecondaryObjectivesInCurrentScene;
 
         // Reset the current scene parameters
         guardKilledInCurrentScene = 0;
@@ -347,6 +365,11 @@ public class AppState : Singleton<AppState>
     public bool getGuardFailed()
     {
         return hasGuardFailed;
+    }
+
+    public bool getBloodFailed()
+    {
+        return hasBloodFailed;
     }
 
     public float getGuardsKilledPercent()
