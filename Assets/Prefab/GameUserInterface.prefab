@@ -1288,6 +1288,7 @@ MonoBehaviour:
   abilitySelector: {fileID: 5064897248150505837}
   abilitySelectorHintImage: {fileID: 33713608041381999}
   abilitySelectorHintText: {fileID: 3319272379007554905}
+  textBackgroundPanel: {fileID: 1123839960444791461}
   upSpeed: 0
   downSpeed: 0
   objectivesHeightOnScreen: 0
@@ -2023,6 +2024,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e04b069c843e14fb2c9715cbebf275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animObjectives: {fileID: 0}
 --- !u!1 &6057866948439094268
 GameObject:
   m_ObjectHideFlags: 0

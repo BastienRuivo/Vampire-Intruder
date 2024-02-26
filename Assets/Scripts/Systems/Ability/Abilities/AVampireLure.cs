@@ -43,7 +43,7 @@ namespace Systems.Ability.Abilities
             WorldPositionAimingController cursorController = cursor.GetComponent<WorldPositionAimingController>();
             cursorController.owner = avatar;
             cursorController.aimDistance = 2.5f;
-            cursorController.collide = false;
+            cursorController.blockVisionToWall = false;
 
             bool hasTarget = false;
             Vector3 targetPosition = default;
