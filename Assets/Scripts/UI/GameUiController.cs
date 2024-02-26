@@ -57,6 +57,8 @@ public class GameUiController : MonoBehaviour,
     private readonly SmoothScalarValue _abilitySelectorOpacity = new (0);
     private bool _hasLock = false;
 
+    private bool hasAbility = true;
+
     private struct MessageQueueElement
     {
         private readonly GameController.UserMessageData _messageData;
@@ -99,6 +101,14 @@ public class GameUiController : MonoBehaviour,
         _abilityEIndicator.SetAbilitySystemComponent(_playerASC);
         _abilityEIndicator.SetAbilityTag(_playerASC.GetAbilityByBinding(KeyCode.E));
 
+        if (_playerASC.GetAbilityByBinding(KeyCode.E) == null)
+        {
+            _abilityEIndicator.gameObject.SetActive(false);
+            abilitySelectorHintText.SetActive(false);
+            abilitySelectorHintImage.SetActive(false);
+            hasAbility = false;
+        }
+
         _abilitySelector.SetAbilitySystemComponent(_playerASC);
         _abilitySelector.UpdateAbilityUIBase();
         _abilitySelector.SetOpacity(0);
@@ -128,6 +138,9 @@ public class GameUiController : MonoBehaviour,
 
         _abilitySelector.SetOpacity(_abilitySelectorOpacity.UpdateGetValue());
         _abilityEIndicator.SetOpacity(1 - _abilitySelectorOpacity.GetValue());
+        
+        if(!hasAbility)
+            return;
         
         TextMeshProUGUI hintText = abilitySelectorHintText.GetComponent<TextMeshProUGUI>();
         Color hintTxtCol = hintText.color;

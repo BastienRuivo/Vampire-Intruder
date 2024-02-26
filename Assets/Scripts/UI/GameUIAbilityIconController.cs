@@ -36,12 +36,15 @@ namespace UI
         public void SetAbilityTag(string abilityTag)
         {
             _abilityTag = abilityTag;
+
             if (_ASC != null)
                 UpdateAbilityUIBase();
         }
 
         public void UpdateAbilityUIBase()
         {
+            if(_abilityTag == null) return;
+            
             Texture2D tex = Resources.Load<Texture2D>(_ASC.QueryAbilityUIIcon(_abilityTag));
             Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 

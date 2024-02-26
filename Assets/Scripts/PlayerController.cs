@@ -11,7 +11,7 @@ using UnityEngine;
 
 
 
-public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>
+public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemController.OverlapData>, IEventObserver<string>
 {
     public GameObject visionObject;
     private VisionConeController _coneController;
@@ -88,16 +88,48 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _ascRef.GrantAbility<AEffectVampireBite>("Bite");
         _ascRef.GrantAbility<AEffectVampireInvisibility>("EInvisibility");
         _ascRef.GrantAbility<AVampireBite>("TryBite");
-        _ascRef.GrantAbility<AVampireTeleportation>("TP");
-        _ascRef.GrantAbility<AVampireBlind>("Blind");
-        _ascRef.GrantAbility<AVampireInvisibility>("Invisibility");
-        _ascRef.GrantAbility<AVampireLure>("Lure");
-        _ascRef.GrantAbility<AVampireSedate>("Sedate");
-        _ascRef.GrantAbility<AVampireBloodPocket>("BloodPack");
+        AppState state = AppState.GetInstance();
+
+        string first = null;
+        foreach (var (ability, isAvailable) in state.getAbilities())
+        {
+            if(!isAvailable)
+                continue;
+
+            first = first == null ? ability : first;
+
+            if (ability == "Teleportation")
+                _ascRef.GrantAbility<AVampireTeleportation>("Teleportation");
+            else if(ability == "Cataract")
+                _ascRef.GrantAbility<AVampireBlind>("Cataract");
+            else if(ability == "Invisibility")
+                _ascRef.GrantAbility<AVampireInvisibility>("Invisibility");
+            else if(ability == "Decieving")
+                _ascRef.GrantAbility<AVampireLure>("Decieving");
+        }
+        foreach (var (item, charges) in state.getItems())
+        {
+            if (charges == 0)
+                continue;
+
+            if (item == "Sedative")
+            {
+                for (int i = 0; i < charges; i++)
+                {
+                    _ascRef.GrantAbility<AVampireSedate>("Sedative");
+                }
+            }
+            else if(item == "BloodPouch")
+                for (int i = 0; i < charges; i++)
+                {
+                    _ascRef.GrantAbility<AVampireBloodPocket>("BloodPouch");
+                }
+        } //todo a proper non static system
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
-        _ascRef.BindAbility("Blind", KeyCode.E);
+        if(first != null)
+            _ascRef.BindAbility(first, KeyCode.E);
 
 
         playerCamera.orthographicSize = currentZoom;
@@ -224,4 +256,8 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     }
 
 
+    public void OnEvent(string context)
+    {
+        AppState.GetInstance().getItems()[context]--;
+    }
 }
