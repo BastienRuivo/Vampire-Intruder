@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Systems.Ability;
 using TMPro;
 using UI;
@@ -41,19 +43,6 @@ public class GameUIAbilitySelectorController : MonoBehaviour
     public void UpdateAbilityUIBase()
     {
         string boundAbility = _ASC.GetAbilityByBinding(KeyCode.E);
-        
-        Texture2D tex = Resources.Load<Texture2D>(_ASC.QueryAbilityUIIcon(boundAbility));
-        Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-
-        abilityImageIcon.GetComponent<Image>().sprite =sprite;
-        
-        float blood = _ASC.QueryAbilityCosts(boundAbility, "Blood");
-
-        abilityName.GetComponent<TextMeshProUGUI>().SetText(_ASC.QueryAbilityUIName(boundAbility));
-        abilityBloodCost.GetComponent<TextMeshProUGUI>().SetText($"Sang : {-blood} %");
-        abilityDescription.GetComponent<TextMeshProUGUI>().SetText(_ASC.QueryAbilityUIDescription(boundAbility));
-        abilityCooldown.GetComponent<TextMeshProUGUI>().SetText($"Temps de recharge : {_ASC.QueryAbilityCooldownBase(boundAbility)}s");
-
         for (uint i = 0; i < _abilities.Length; i++)
         {
             abilitiesIcons[i].GetComponent<GameUIAbilityIconController>().SetAbilityTag(_abilities[i]);
@@ -67,6 +56,20 @@ public class GameUIAbilitySelectorController : MonoBehaviour
         {
             abilitiesIcons[i].SetActive(false);
         }
+        
+        if(boundAbility == null) return;
+        
+        Texture2D tex = Resources.Load<Texture2D>(_ASC.QueryAbilityUIIcon(boundAbility));
+        Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+
+        abilityImageIcon.GetComponent<Image>().sprite =sprite;
+        
+        float blood = _ASC.QueryAbilityCosts(boundAbility, "Blood");
+
+        abilityName.GetComponent<TextMeshProUGUI>().SetText(_ASC.QueryAbilityUIName(boundAbility));
+        abilityBloodCost.GetComponent<TextMeshProUGUI>().SetText($"Sang : {-blood} %");
+        abilityDescription.GetComponent<TextMeshProUGUI>().SetText(_ASC.QueryAbilityUIDescription(boundAbility));
+        abilityCooldown.GetComponent<TextMeshProUGUI>().SetText($"Temps de recharge : {_ASC.QueryAbilityCooldownBase(boundAbility)}s");
     }
 
     public void SetOpacity(float alpha)
@@ -125,11 +128,29 @@ public class GameUIAbilitySelectorController : MonoBehaviour
         col.a = alpha;
         txt.color = col;
     }
-    
+
+    private void Awake()
+    {
+        AppState state = AppState.GetInstance();
+        LinkedList<string> abilities = new LinkedList<string>();
+        foreach (var (ability, isAvailable) in state.getAbilities())
+        {
+            if (isAvailable)
+                abilities.AddLast(ability);
+        }
+        foreach (var (item, charges) in state.getItems())
+        {
+            if (charges > 0)
+                abilities.AddLast(item);
+        }
+        
+        _abilities = abilities.ToArray();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        _abilities = new[] { "TP","Blind", "Invisibility", "Lure", "Sedate", "BloodPack" };
+        
     }
 
     // Update is called once per frame

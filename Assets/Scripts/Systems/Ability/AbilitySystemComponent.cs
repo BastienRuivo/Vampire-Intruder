@@ -441,6 +441,7 @@ namespace Systems.Ability
             if (!thisAbility.IsConsumable()) 
                 yield break;
             thisAbility.ConsumeCharge();
+            OnConsumableChargeDecreaseEventDispatcher.BroadcastEvent(name);
             
             //todo maybe remove ability if consumable runs out of charges, for now ability is just unusable
         }
@@ -726,6 +727,7 @@ namespace Systems.Ability
         [ItemCanBeNull] private readonly Dictionary<string, IEnumerator> _runningAbilities = new ();
 
         private readonly EventDispatcher<GameObject> _statChangeEventDispatcher = new ();
+        public readonly EventDispatcher<string> OnConsumableChargeDecreaseEventDispatcher = new ();
 
         private readonly Lock _inputLock = new Lock();
 

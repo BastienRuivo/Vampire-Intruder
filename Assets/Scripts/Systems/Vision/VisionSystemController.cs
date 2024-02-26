@@ -74,7 +74,8 @@ namespace Systems.Vision
             if(size == 0) return;
 
             bool shouldRefresh = false;
-            IEnumerable<Collider2D> targets = _collider2DBuff.Where(target => target != null && target.gameObject.CompareTag(Targetable.TargetableTag));
+            int i = 0;
+            IEnumerable<Collider2D> targets = _collider2DBuff.Where(target => i++ < size && target != null && target.gameObject.CompareTag(Targetable.TargetableTag));
             foreach (Collider2D target in targets)
             {
                 bool hadKnown = _inCollisionObjects.Contains(target.gameObject);
