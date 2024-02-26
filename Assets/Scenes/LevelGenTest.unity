@@ -487,6 +487,14 @@ PrefabInstance:
       propertyPath: m_ReferenceResolution.y
       value: 720
       objectReference: {fileID: 0}
+    - target: {fileID: 6209541025708247265, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_fontSize
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 6209541025708247265, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 6584938855459847236, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalPosition.z
       value: 1
@@ -494,6 +502,22 @@ PrefabInstance:
     - target: {fileID: 7525506633661033723, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7983674350068298140, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 509.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7983674350068298140, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 379.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7983674350068298140, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 2.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7983674350068298140, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -2.6
       objectReference: {fileID: 0}
     - target: {fileID: 8091385302480374631, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -638,6 +662,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b60067fc33128d4ebb983c6551baef1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roomParameters:
+  - type: 0
+    cost: 0
+    maxPerLvl: 1
+  - type: 1
+    cost: 0.1
+    maxPerLvl: 1
+  - type: 2
+    cost: 0.2
+    maxPerLvl: -1
+  - type: 3
+    cost: 0.3
+    maxPerLvl: 2
+  - type: 4
+    cost: 0.1
+    maxPerLvl: 4
+  - type: 5
+    cost: 0.2
+    maxPerLvl: 2
+  - type: 6
+    cost: 0.3
+    maxPerLvl: 1
+  - type: 7
+    cost: 0.3
+    maxPerLvl: 3
+  - type: 8
+    cost: 0.4
+    maxPerLvl: 1
+  - type: 9
+    cost: 0.15
+    maxPerLvl: 3
   replacement:
   - {fileID: 11400000, guid: 4f365380174f3404299a0bc49edac725, type: 2}
   - {fileID: 11400000, guid: 274d6930c9cd82249963f9f44ca3dc59, type: 2}
@@ -645,7 +700,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2eb1fb4eb747f4a4d847b4e1b573047e, type: 2}
   instanciatedRooms: []
   convexHull: []
-  startingEnergy: 0.11
+  startingEnergy: 0.6
   seed: 0
 --- !u!1001 &1535210841
 PrefabInstance:
