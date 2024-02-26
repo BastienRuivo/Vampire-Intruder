@@ -45,6 +45,7 @@ namespace Systems.Ability.Abilities
             {
                 WorldAimLockController cursorController = cursor.GetComponent<WorldAimLockController>();
                 cursorController.targetType = Targetable.TargetType.ENEMY;
+                cursorController.owner = avatar;
                 cursorController.isTargetValid = false;
                 while (true)
                 {
