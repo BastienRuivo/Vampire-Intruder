@@ -3,47 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class RoomData : MonoBehaviour
 {
     public enum Type
     {
-        HALL,
-        TREASURE,
-        CORRIDOR,
-        LIBRARY,
-        BEDROOM,
-        OFFICE,
-        PRISON,
-        LIVINGROOM,
-        CHURCH,
-        STOCKAGE,
+        HALLS,
+        TREASURES,
+        CORRIDORS,
+        LIBRARIES,
+        BEDROOMS,
+        OFFICES,
+        PRISONS,
+        LIVINGROOMS,
+        CHURCHES,
+        STOCKAGES,
         NOONE
     }
 
-    public static float[] TypeCost =
+    public static string GetStringFromType(Type type)
     {
-        // HALL ALWAYS COST 0
-        0f, 
-        // TREASURE ROOM COST
-        0.1f,
-        // CORRIDOR ROOM COST
-        0.2f,
-        // LIBRARY ROOM COST
-        0.3f,
-        // BEDROOM ROOM COST
-        0.1f,
-        // OFFICE ROOM COST
-        0.2f,
-        // PRISON ROOM COST
-        0.3f,
-        // LIVINGROOM ROOM COST
-        0.3f,
-        // CHURCH ROOM COST
-        0.1f,
-        // STOCKAGE ROOM COST
-        0.15f,
-    };
+        string res = type.ToString().ToLower();
+        return char.ToUpper(res[0]) + res.Substring(1);
+    }
     /// <summary>
     /// Type of room for procedural connection
     /// </summary>
@@ -87,6 +70,15 @@ public class RoomData : MonoBehaviour
     public float energy;
     public List<GuardManager> guards;
 
+    public Material defaultMtl;
+    public Material transparentMtl;
+    private IEnumerator _roomFadeAway = null;
+
+    public Renderer wall;
+    public Renderer wallDown;
+    public Tilemap floor;
+    private bool _fade = false;
+
     private void Awake()
     {
         _connectors = GetComponentsInChildren<RoomConnector>();
@@ -119,11 +111,6 @@ public class RoomData : MonoBehaviour
         List<RoomData> rooms = _connectors.Select(x => x.targetRoom).ToList();
         GameController.GetInstance().activesRoom = rooms;
     }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        _isColliding= true;
-        _collider = collision.gameObject.GetComponent<RoomData>();
-    }
 
     public bool IsColliding()
     {
@@ -140,6 +127,28 @@ public class RoomData : MonoBehaviour
         }
     }
 
+    public void SetVisbility(float value)
+    {
+        Debug.Log("Set room visibility for " + name + " = " + value.ToString());
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>())
+        {
+            if (!renderer.material.HasColor("_Color"))
+            {
+                continue;
+            }
+            Color c = renderer.material.color;
+            if (renderer.material.name.Contains(defaultMtl.name) || renderer.material.name.Contains("Glow"))
+            {
+                c.a = value * defaultMtl.color.a;
+            }
+            else
+            {
+                c.a = value * transparentMtl.color.a;
+            }
+            renderer.material.color = c;
+        }
+    }
+
     public RoomConnector[] GetConnectors()
     {
         return _connectors;
@@ -152,5 +161,56 @@ public class RoomData : MonoBehaviour
             this
         };
         return roomDatas.Union(_connectors.Select(x => x.targetRoom)).ToList();
+    }
+
+    public void EnterToAdjacent(RoomData other, Direction dir)
+    {
+        if (_roomFadeAway != null)
+        {
+            StopCoroutine(_roomFadeAway);
+        }
+
+        other.SetVisbility(1f);
+
+        switch (dir)
+        {
+            case Direction.NORTH:
+            case Direction.WEST:
+                wall.material.color = transparentMtl.color;
+                break;
+            case Direction.SOUTH: 
+            case Direction.EAST:
+                other.wall.material.color = transparentMtl.color;
+                break;
+            default: break;
+        }
+    }
+
+    public void SetCurrent(RoomData target)
+    {
+        if (target._roomFadeAway != null)
+        {
+            target._fade = false;
+            StopCoroutine(target._roomFadeAway);
+        }
+        SetVisbility(1f);
+
+        _roomFadeAway = DisableRoom(target);
+        _fade = true;
+        StartCoroutine(_roomFadeAway);
+
+        PlayerState.GetInstance().currentRoom = this;
+        GameController.GetInstance().OnRoomChange(this);
+    }
+
+    public IEnumerator DisableRoom(RoomData target)
+    {
+        for (float alpha = 1f; alpha > 0.02f; alpha -= Time.deltaTime)
+        {
+            if (!_fade) break;
+            alpha = Mathf.Max(alpha, 0.02f);
+            target.SetVisbility(alpha);
+            yield return null;
+        }
     }
 }

@@ -498,10 +498,13 @@ MonoBehaviour:
   aimDistance: 3.5
   owner: {fileID: 0}
   currentTarget: {x: 0, y: 0, z: 0}
-  collide: 1
+  blockVisionToWall: 0
   visionMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 256
   collisionRadius: 0.25
   worldReferenceParticle: {fileID: 8703010317139399308}
   cursorParticle: {fileID: 8016509129869902028}
@@ -596,7 +599,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4348330687921298472
 Transform:
   m_ObjectHideFlags: 0

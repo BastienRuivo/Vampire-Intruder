@@ -337,7 +337,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
     public void EnterPlayerSigth()
     {
-        Debug.Log("Guard is entering player sight");
         if(_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);
@@ -347,7 +346,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     }
     public void ExitPlayerSight()
     {
-        Debug.Log("Guard is leaving player sight");
         if (_updateAlphaCoroutine != null)
         {
             StopCoroutine(_updateAlphaCoroutine);

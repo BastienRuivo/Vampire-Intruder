@@ -6,36 +6,82 @@ using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+[System.Serializable]
+public class RoomsHandler
+{
+    public GameObject[] rooms;
+    public int maxRoomPerLevel = -1;
+    public RoomsHandler(GameObject[] rooms, int maxRoomPerLevel)
+    {
+        this.rooms = rooms;
+        this.maxRoomPerLevel = maxRoomPerLevel;
+    }
+}
+
+[System.Serializable]
+public class RoomParameter
+{
+    public RoomData.Type type;
+    public float cost;
+    public int maxPerLvl;
+    public RoomParameter(RoomData.Type type, float cost, int maxPerLvl)
+    {
+        this.type = type;
+        this.cost = cost;
+        this.maxPerLvl = maxPerLvl;
+    }
+}
+
 public class LevelGenerator : Singleton<LevelGenerator>
 {
     
-    public GameObject[] halls;
-    public GameObject[] treasures;
-    public GameObject[] corridors;
-    public GameObject[] libraries;
-    public GameObject[] bedrooms;
-    public GameObject[] offices;
-    public GameObject[] prisons;
-    public GameObject[] livingrooms;
-    public GameObject[] churches;
-    public GameObject[] stockages;
+    public Dictionary<RoomData.Type, RoomsHandler> roomMaps;
+
+    public RoomParameter[] roomParameters =
+    {
+        // HALL ALWAYS COST 0
+        new RoomParameter(RoomData.Type.HALLS, 0f, 1),
+        // TREASURE ROOM COST
+        new RoomParameter(RoomData.Type.TREASURES, 0.1f, 1),
+        // CORRIDOR ROOM COST
+        new RoomParameter(RoomData.Type.CORRIDORS, 0.2f, -1),
+        // LIBRARY ROOM COST
+        new RoomParameter(RoomData.Type.LIBRARIES, 0.3f, 2),
+        // BEDROOM ROOM COST
+        new RoomParameter(RoomData.Type.BEDROOMS, 0.1f, 4),
+        // OFFICE ROOM COST
+        new RoomParameter(RoomData.Type.OFFICES, 0.2f, 2),
+        // PRISON ROOM COST
+        new RoomParameter(RoomData.Type.PRISONS, 0.3f, 1),
+        // LIVINGROOM ROOM COST
+        new RoomParameter(RoomData.Type.LIVINGROOMS, 0.3f, 3),
+        // CHURCH ROOM COST
+        new RoomParameter(RoomData.Type.CHURCHES, 0.4f, 1),
+        // STOCKAGE ROOM COST
+        new RoomParameter(RoomData.Type.STOCKAGES, 0.15f, 3)
+    };
+
+    int completeRoomType = 0;
 
     public Tile[] replacement;
 
     public List<GameObject> instanciatedRooms;
+    public List<RoomData> convexHull;
     public Queue<GameObject> roomToFill;
 
     public float startingEnergy = 5f;
     bool hasStart = false;
 
-    private static string _pathToLayer = "CustomPivot/Props/";
-    private static string _floor = _pathToLayer + "Floor";
-    private static string _walls = _pathToLayer + "Walls";
-    private static string _hiddenWalls = _pathToLayer + "WallsDown";
     private static float _maximumOverlapp = 0.3f;
 
-    ContactFilter2D filter;
+    private string _mainObjective = "";
+    private bool _hasGenerateMain = false;
 
+    public string seed = "";
+
+    
+
+    ContactFilter2D filter;
     private IEnumerator _coroutine;
 
     /// <summary>
@@ -43,9 +89,10 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// </summary>
     /// <param name="file"></param>
     /// <returns></returns>
-    GameObject[] LoadRooms(string file)
+    void LoadRooms(RoomData.Type type)
     {
-        return Resources.LoadAll<GameObject>(file);
+        RoomsHandler rm = new RoomsHandler(Resources.LoadAll<GameObject>("Rooms/" + RoomData.GetStringFromType(type)), -1);
+        roomMaps.Add(type, rm);
     }
 
     /// <summary>
@@ -53,31 +100,13 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// </summary>
     public void LoadData()
     {
-        
-        halls = LoadRooms("Rooms/Halls");
-        treasures = LoadRooms("Rooms/Treasures");
-        corridors = LoadRooms("Rooms/Corridors");
-        libraries = LoadRooms("Rooms/Libraries");
-        bedrooms = LoadRooms("Rooms/Bedrooms");
-        offices = LoadRooms("Rooms/Offices");
-        prisons = LoadRooms("Rooms/Prisons");
-        livingrooms = LoadRooms("Rooms/Livingrooms");
-        churches = LoadRooms("Rooms/Churches");
-        stockages = LoadRooms("Rooms/Stockages");
-
-        Debug.Log("Halls has " + halls.Length + " rooms");
-        Debug.Log("Treasures has " + treasures.Length + " rooms");
-        Debug.Log("Corridors has " + corridors.Length + " rooms");
-        Debug.Log("Libraries has " + libraries.Length + " rooms");
-        Debug.Log("Bedrooms has " + bedrooms.Length + " rooms");
-        Debug.Log("Offices has " + offices.Length + " rooms");
-        Debug.Log("Prisons has " + prisons.Length + " rooms");
-        Debug.Log("Livingrooms has " + livingrooms.Length + " rooms");
-        Debug.Log("Churches has " + churches.Length + " rooms");
-        Debug.Log("Stockages has " + stockages.Length + " rooms");
+        roomMaps = new Dictionary<RoomData.Type, RoomsHandler>();
+        for(RoomData.Type i = RoomData.Type.HALLS; i < RoomData.Type.NOONE; i++)
+        {
+            LoadRooms(i);
+            Debug.Log("There is " + roomMaps[i].rooms.Length.ToString() + " maps of type " + i.ToString());
+        }
     
-
-
         filter = new ContactFilter2D();
         filter.SetLayerMask(LayerMask.GetMask("RoomColl"));
     }
@@ -87,9 +116,9 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// </summary>
     public void PlaceHall()
     {
-        int rand = Random.Range(0, halls.Length);
+        int rand = Random.Range(0, roomMaps[RoomData.Type.HALLS].rooms.Length);
         int selected = rand;
-        var instance = Instantiate(halls[selected]);
+        var instance = Instantiate(roomMaps[RoomData.Type.HALLS].rooms[selected]);
         roomToFill= new Queue<GameObject>();
         roomToFill.Enqueue(instance);
     }
@@ -108,16 +137,33 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         if (graph != null) Destroy(graph);
 
-        var grid = room.transform.Find(_floor).GetComponent<Tilemap>().layoutGrid;
+        var grid = roomData.floor.layoutGrid;
         roomData.energy += addEnergy;
 
+        if(!_hasGenerateMain)
+        {
+            Interactible[] inters = roomData.GetComponentsInChildren<Interactible>();
+
+            foreach (Interactible interactible in inters)
+            {
+                if (interactible.reference == _mainObjective)
+                {
+                    _hasGenerateMain = true;
+                    break;
+                }
+            }
+        }
+
+
+
+        int connectionsNumber = roomData.GetConnectors().Length;
         //Debug.Log("Fill " + room.name + " with energy " + roomData.energy);
         // If energy is neg, then it's over
-        if (roomData.energy <= 0f)
+        if (!CanPlaceAnything() || roomData.energy <= 0f)
         {
             roomData.GetConnectors().Where(c => !c.isFilled).ToList().ForEach(c =>
             {
-                Transform go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? room.transform.Find(_walls) : room.transform.Find(_hiddenWalls);
+                GameObject go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? roomData.wall.gameObject : roomData.wallDown.gameObject;
                 Tilemap tm = go.gameObject.GetComponent<Tilemap>();
                 Tile t;
                 switch (c.dir)
@@ -134,7 +180,9 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 }
                 tm.SetTile(c.coordOnGrid, t);
                 c.SetActiveState(false);
+                connectionsNumber--;
             });
+            convexHull.Add(roomData);
             return;
         }
         // For all connectors of the room, try to place somtheing
@@ -146,10 +194,15 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
             List<RoomData.Type> typeTested = new List<RoomData.Type>();
 
-            // If energy is really low, avoid generating corridor
-            if(roomData.energy - RoomData.TypeCost[(int)RoomData.Type.CORRIDOR] <= 0f)
+            foreach(RoomParameter rp in roomParameters)
             {
-                typeTested.Add(RoomData.Type.CORRIDOR);
+                if (rp.maxPerLvl == 0) typeTested.Add(rp.type);
+            }
+
+            // If energy is really low, avoid generating corridor
+            if(roomData.energy - roomParameters[(int)RoomData.Type.CORRIDORS].cost <= 0f)
+            {
+                typeTested.Add(RoomData.Type.CORRIDORS);
             }
 
             RoomData.Type roomType = PickRoomType(c, typeTested);
@@ -183,25 +236,28 @@ public class LevelGenerator : Singleton<LevelGenerator>
                         return;
                     }
                     // Place the instance in the scene, false if it can't be placed
-                    bool findPlace = PlaceInstanceAtConnector(room, instance, c, instConnectors, cPos);
+                    bool findPlace = PlaceInstanceAtConnector(roomData, instData, c, instConnectors, cPos);
 
-                    if (!findPlace)
+                    if (findPlace)
+                    {
+                        // Enqueue new instance to fill its connectors
+                        roomToFill.Enqueue(instance);
+                        generated = true;
+                        // Update new instance energy
+                        if (roomParameters[(int)roomType].maxPerLvl > 0)
+                        {
+                            roomParameters[(int)roomType].maxPerLvl--;
+                        }
+                        instance.GetComponent<RoomData>().energy = roomData.energy - roomParameters[(int)RoomData.Type.CORRIDORS].cost;
+                        break;
+                    }
+                    else
                     {
                         // Destroy the instance that can't be placed
                         //if(instance.name != "CorridorsHorizontal(Clone)33")
                         instance.transform.position = new Vector3(1000, 1000, 1000);
                         Destroy(instance);
                         instance = PickRoomToPlace(c, roomType, roomTested);
-                    }
-                    else
-                    {
-                        // Enqueue new instance to fill its connectors
-                        roomToFill.Enqueue(instance);
-                        generated = true;
-                        // Update new instance energy
-                        Debug.Log(roomType.ToString());
-                        instance.GetComponent<RoomData>().energy = roomData.energy - RoomData.TypeCost[(int)roomType];
-                        break;
                     }
                 }
 
@@ -214,8 +270,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
             if(!generated)
             {
-                Transform go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? room.transform.Find(_walls) : room.transform.Find(_hiddenWalls);
-                Tilemap tm = go.gameObject.GetComponent<Tilemap>();
+                Transform go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? roomData.wall.transform : roomData.wallDown.transform;
+                Tilemap tm = go.GetComponent<Tilemap>();
                 Tile t;
                 switch(c.dir)
                 {
@@ -231,9 +287,43 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 }
                 tm.SetTile(c.coordOnGrid, t);
                 c.SetActiveState(false);
+                connectionsNumber--;
             }
             
         });
+        Debug.Log("Connection number for room " + room.name + " is " + connectionsNumber.ToString());
+        if(connectionsNumber == 1)
+        {
+            if(roomData.type == RoomData.Type.CORRIDORS)
+            {
+                RoomConnector c = roomData.GetConnectors().Where(c => c.isFilled).FirstOrDefault();
+                c = c.targetRoomConnector;
+                Destroy(roomData.gameObject);
+                instanciatedRooms.Remove(roomData.gameObject);
+                GameObject go = c.dir == Direction.NORTH || c.dir == Direction.WEST ? c.room.wall.gameObject : c.room.wallDown.gameObject;
+                Tilemap tm = go.gameObject.GetComponent<Tilemap>();
+                Tile t;
+                switch (c.dir)
+                {
+                    case Direction.NORTH:
+                        t = replacement[2]; break;
+                    case Direction.EAST:
+                        t = replacement[3]; break;
+                    case Direction.SOUTH:
+                        t = replacement[0]; break;
+                    case Direction.WEST:
+                    default:
+                        t = replacement[1]; break;
+                }
+                tm.SetTile(c.coordOnGrid, t);
+                c.SetActiveState(false);
+            }
+            else
+            {
+                convexHull.Add(roomData);
+            }
+        }
+    
     }
 
     /// <summary>
@@ -245,12 +335,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// <param name="connectors">Connectors of the new room</param>
     /// <param name="cPos">C connector pos is world</param>
     /// <returns>Boolean that indicate if the room has been place without collision</returns>
-    public bool PlaceInstanceAtConnector(GameObject room, GameObject instance, RoomConnector c, RoomConnector[] instConnectors, Vector3 cPos)
+    public bool PlaceInstanceAtConnector(RoomData room, RoomData instance, RoomConnector c, RoomConnector[] instConnectors, Vector3 cPos)
     {
         // To see if 2 rooms overlap, we check the collider on the floor
-        var floor = instance.transform.Find(_floor);
-        Grid inGrid = floor.GetComponent<Tilemap>().layoutGrid;
-        var collider = floor.GetComponent<TilemapCollider2D>();
+        Grid inGrid = instance.floor.layoutGrid;
+        var collider = instance.floor.GetComponent<TilemapCollider2D>();
 
         // We then iterate on each collider that are valid 
         for (int i = 0; i < instConnectors.Length; i++)
@@ -315,7 +404,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             int roll = Random.Range(0, 100);
             typeToCreate= connector.GetFromDice(roll);
         }
-        while(forbidden.Contains(typeToCreate));
+        while(roomParameters[(int)typeToCreate].maxPerLvl == 0 || forbidden.Contains(typeToCreate));
 
 
         return typeToCreate;
@@ -331,20 +420,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public GameObject PickRoomToPlace(RoomConnector connector, RoomData.Type type, List<GameObject> forbidden)
     {
         GameObject prefab = null;
-        switch (type)
-        {
-            case RoomData.Type.HALL: prefab = RandomOnArray(halls, connector.dir, forbidden); break;
-            case RoomData.Type.TREASURE: prefab = RandomOnArray(treasures, connector.dir, forbidden); break;
-            case RoomData.Type.CORRIDOR: prefab = RandomOnArray(corridors, connector.dir, forbidden); break;
-            case RoomData.Type.LIBRARY: prefab = RandomOnArray(libraries, connector.dir, forbidden); break;
-            case RoomData.Type.BEDROOM: prefab = RandomOnArray(bedrooms, connector.dir, forbidden); break;
-            case RoomData.Type.OFFICE: prefab = RandomOnArray(offices, connector.dir, forbidden); break;
-            case RoomData.Type.PRISON: prefab = RandomOnArray(prisons, connector.dir, forbidden); break;
-            case RoomData.Type.LIVINGROOM: prefab = RandomOnArray(livingrooms, connector.dir, forbidden); break;
-            case RoomData.Type.CHURCH: prefab = RandomOnArray(churches, connector.dir, forbidden); break;
-            case RoomData.Type.STOCKAGE: prefab = RandomOnArray(stockages, connector.dir, forbidden); break;
-            default: Debug.Log("Achievement Get :: How did we get here ? Level Type Gen."); break;
-        }
+        prefab = RandomRoom(type, connector.dir, forbidden);
         if (prefab == null) return null;
         forbidden.Add(prefab);
         return Instantiate(prefab);
@@ -361,31 +437,15 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         // Fill the A connector
         A.isFilled = true;
-        A.currentRoom = croom;
+        A.room = croom;
         A.targetRoom = troom;
         A.targetRoomConnector = B;
 
         // Fill the B Connector
         B.isFilled = true;
-        B.currentRoom = troom;
+        B.room = troom;
         B.targetRoom = croom;
         B.targetRoomConnector = A;
-
-        switch (A.dir)
-        {
-            case Direction.NORTH:
-            case Direction.WEST:
-                A.currentWalls = croom.transform.Find(_walls).gameObject;
-                A.targetWalls = troom.transform.Find(_hiddenWalls).gameObject;
-                break;
-            case Direction.SOUTH:
-            case Direction.EAST:
-                A.currentWalls = croom.transform.Find(_hiddenWalls).gameObject;
-                A.targetWalls = troom.transform.Find(_walls).gameObject;
-                break;
-        }
-        B.currentWalls = A.targetWalls;
-        B.targetWalls = A.currentWalls;
 
         A.SetActiveState(true);
         B.SetActiveState(true);
@@ -397,19 +457,26 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// <param name="array">Array of prefab object loaded from resources</param>
     /// <param name="dir">Direction allowed</param>
     /// <returns>A random game object to instanciate</returns>
-    public GameObject RandomOnArray(GameObject[] array, Direction dir, List<GameObject> forbidden)
+    public GameObject RandomRoom(RoomData.Type type, Direction dir, List<GameObject> forbidden)
     {
-        var roomsInstatiable = array.Where(r => !forbidden.Contains(r) && r.GetComponent<RoomData>().connectableDir.Contains(dir));
+        var roomsInstatiable = roomMaps[type].rooms.Where(r => !forbidden.Contains(r) && r.GetComponent<RoomData>().connectableDir.Contains(dir));
         if(roomsInstatiable.Count() <= 0) return null;
         return roomsInstatiable.ElementAt(Random.Range(0, roomsInstatiable.Count()));
+
     }
 
     /// <summary>
     /// Load and generate a complete lvl.
     /// </summary>
     /// <returns>The hall room</returns>
-    public RoomData Generate()
+    public RoomData Generate(string mainObjective)
     {
+        _mainObjective = mainObjective;
+        convexHull = new List<RoomData>();
+        if(!string.IsNullOrEmpty(seed)) 
+        { 
+            Random.InitState(StringToInt(seed));
+        }
         System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         instanciatedRooms = new List<GameObject>();
@@ -443,6 +510,16 @@ public class LevelGenerator : Singleton<LevelGenerator>
         }
     }
 
+    public static int StringToInt(string str)
+    {
+        int sum = 0;
+        foreach(char c in str)
+        {
+            sum += (int)c;
+        }
+        return sum;
+    }
+
 
     private IEnumerator GenerateLevel()
     {
@@ -452,7 +529,88 @@ public class LevelGenerator : Singleton<LevelGenerator>
             FillRoom(roomToFill.Dequeue());
             yield return null;
         }
+
+
+
+        Debug.Log("ConvexHull size is " + convexHull.Count.ToString() + " has placed main ? " + _hasGenerateMain.ToString());
+
+        if (!_hasGenerateMain)
+        {
+            Debug.Log("Try to generate main");
+            List<GameObject> candidate = new List<GameObject>();
+            roomMaps.Select(e => e.Value.rooms.ToList()).ToList().ForEach(rm => rm.ForEach(r => candidate.Add(r)));
+            candidate = candidate.Where(c => c.GetComponentsInChildren<Interactible>().Any(a => a.reference == _mainObjective)).ToList();
+            Debug.Log("There is " + candidate.Count.ToString() + " candidates");
+            foreach (RoomData room in convexHull)
+            {
+                if (room.type == RoomData.Type.HALLS) continue;
+                RoomConnector connector = room.GetConnectors().Where(c => c.isFilled).FirstOrDefault();
+                if (connector == null) continue;
+                connector = connector.targetRoomConnector;
+                Grid grid = connector.room.floor.layoutGrid;
+                Vector3Int directionOffset = DirectionHelper.DirectionOffsetGrid(connector.dir) + new Vector3Int(1, 1, 0);
+                Vector3 cPos = grid.CellToWorld(connector.coordOnGrid + directionOffset);
+                List<GameObject> localCandidates = candidate.Where(c => c.GetComponent<RoomData>().connectableDir.Contains(connector.dir)).ToList();
+                bool canFit = false;
+                Vector3 origin = room.transform.position;
+                room.transform.position = new Vector3(10000, 10000);
+                foreach (GameObject lc in localCandidates)
+                {
+                    GameObject instance = Instantiate(lc);
+                    Physics2D.SyncTransforms();
+                    RoomData instData = instance.GetComponent<RoomData>();
+                    canFit = PlaceInstanceAtConnector(connector.room, instData, connector, instData.GetConnectors(), cPos);
+                    Debug.Log(canFit);
+                    if (canFit)
+                    {
+                        instanciatedRooms.Add(instance);
+                        break;
+                    }
+                    else
+                    {
+                        instance.transform.position = new Vector3(10000, 10000);
+                        Destroy(instance);
+                    }
+                    yield return new WaitForSeconds(0.5f);
+                }
+                if (canFit)
+                {
+                    _hasGenerateMain = true;
+                    instanciatedRooms.Remove(room.gameObject);
+                    Destroy(room);
+                    break;
+                }
+                else
+                {
+                    room.transform.position = origin;
+                }
+            }
+        }
+
+        //foreach (RoomData rd in convexHull)
+        //{
+        //    rd.GetComponentsInChildren<Renderer>().ToList().ForEach(r => r.material.color = Color.red);
+        //}
+
+        Debug.Log("Has placed main ? " + _hasGenerateMain);
+
         GameController.GetInstance().OnLevelLoadComplete(instanciatedRooms.Select(x => x.GetComponent<RoomData>()).ToList());
         //Destroy(this);
+    }
+
+    public bool CanPlaceAnything()
+    {
+        if(completeRoomType >= (int)RoomData.Type.NOONE)
+        {
+            return false;
+        }
+
+        completeRoomType = 0;
+        foreach(RoomParameter rp in roomParameters)
+        {
+            if (rp.maxPerLvl > 0) completeRoomType++;
+        }
+
+        return completeRoomType < (int)RoomData.Type.NOONE;
     }
 }
