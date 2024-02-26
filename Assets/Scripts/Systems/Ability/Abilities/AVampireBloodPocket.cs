@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Systems.Ability.Abilities
 {
-    public class AConsumableBloodPocket :  Ability
+    public class AVampireBloodPocket :  Ability
     {
-        public AConsumableBloodPocket()
+        public AVampireBloodPocket()
         {
             //Specify if ability is a consumable object.
             ConsumableAbility = true; //false by default.

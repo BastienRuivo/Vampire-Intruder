@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _ascRef.GrantAbility<AVampireInvisibility>("Invisibility");
         _ascRef.GrantAbility<AVampireLure>("Lure");
         _ascRef.GrantAbility<AVampireSedate>("Sedate");
-        _ascRef.GrantAbility<AConsumableBloodPocket>("BloodPack");
+        _ascRef.GrantAbility<AVampireBloodPocket>("BloodPack");
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
