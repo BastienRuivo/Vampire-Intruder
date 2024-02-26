@@ -11,14 +11,10 @@ public class ObjectivesManager : MonoBehaviour
     public Animator _animObjectives;
     private bool _isUp = false;
 
-    //public Color uknownPos;
-    //public Color unknownPosMain;
-    //public Color discovered;
-    //public Color discoveredMain;
-    //public Color playerAt;
-    //public Color playerAtMain;
-    //public Color done;
-    //public Color doneMain;
+    public Color mainColor;
+    public Color mainTitleColor;
+    public Color secondaryTitle;
+    public Color secondaryColor;
     void Start()
     {
         _textMeshPro= GetComponent<TextMeshProUGUI>();
@@ -53,7 +49,7 @@ public class ObjectivesManager : MonoBehaviour
 
     private string TextWithColor(string text, Color col)
     {
-        return $"<#{UnityEngine.ColorUtility.ToHtmlStringRGB(col)}>{text}</color>\n";
+        return $"<#{UnityEngine.ColorUtility.ToHtmlStringRGB(col)}>{text}</color>";
     }
 
     private IEnumerator UpdateText()
@@ -87,7 +83,22 @@ public class ObjectivesManager : MonoBehaviour
                     //    }
                     //}
                     //text += TextWithColor(obj.phrase, color);
-                    text += obj.state == GameController.ObjectiveState.DONE ? $"<s>{obj.phrase}</s>" : obj.phrase;
+                    string txt = "";
+                    txt += obj.state == GameController.ObjectiveState.DONE ? $"<s>{obj.phrase}</s>" : obj.phrase;
+                    if(obj.isMain)
+                    {
+                        txt = TextWithColor("Objectif principal :\n", mainTitleColor) + TextWithColor(txt, mainColor);
+                    }
+                    else
+                    {
+                        txt = TextWithColor(txt, secondaryColor);
+                    }
+                    text += txt + "\n\n";
+                    if(obj.isMain)
+                    {
+                        text += TextWithColor("Objectifs secondaire : \n", secondaryTitle);
+                    }
+
                 });
 
                 _textMeshPro.text = text;

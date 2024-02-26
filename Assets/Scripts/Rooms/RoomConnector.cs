@@ -7,15 +7,11 @@ using UnityEngine.Tilemaps;
 public class RoomConnector : MonoBehaviour
 {
     // Tile you leave
-    [Header("Current Room")]
+    [Header("Rooms info")]
     // Current room will always be set visible within this script, it's the connector from the other room
     // that will disable it
-    public RoomData currentRoom;
-    public GameObject currentWalls;
-
-    [Header("Connected Room")]
+    public RoomData room;
     public RoomData targetRoom;
-    public GameObject targetWalls;
     public RoomConnector targetRoomConnector;
 
     [Header("Inner data")]
@@ -32,8 +28,6 @@ public class RoomConnector : MonoBehaviour
     public Material defaultMtl;
     public bool isFilled = false;
 
-    private IEnumerator _roomFadeAway = null;
-    private bool _fade = false;
     private GameObject _collisions;
     private GameObject _trigger;
 
@@ -59,70 +53,14 @@ public class RoomConnector : MonoBehaviour
 
     public void Enter()
     {
-        SetRoomVisibility(targetRoom.gameObject, 1f);
-        targetWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
-        currentWalls.GetComponent<Renderer>().material.color = transparentMtl.color;
+        room.EnterToAdjacent(targetRoom, dir);
     }
 
     public void Exit()
     {
-        SetRoomVisibility(currentRoom.gameObject, 1f);
-
-        //// Start coroutine
-        // Disable Coroutine if one is already started
-        if (targetRoomConnector._roomFadeAway != null)
-        {
-            targetRoomConnector._fade = false;
-            StopCoroutine(targetRoomConnector._roomFadeAway);
-            SetRoomVisibility(currentRoom.gameObject, 1f);
-        }
-        
-        _roomFadeAway = DisableRoom(targetRoom.gameObject);
-        _fade = true;
-        StartCoroutine(_roomFadeAway);
-
-        PlayerState.GetInstance().currentRoom = currentRoom;
-
-        GameController.GetInstance().OnRoomChange(currentRoom);
+        room.SetCurrent(targetRoom);
     }
-
-    public void SetActive()
-    {
-        
-    }
-
-
-    private void SetRoomVisibility(GameObject roomRoot, float value)
-    {
-        foreach (Renderer renderer in roomRoot.GetComponentsInChildren<Renderer>())
-        {
-            if (!renderer.material.HasColor("_Color"))
-            {
-                continue;
-            }
-            Color c = renderer.material.color;
-            if(renderer.material.name.Contains(defaultMtl.name) || renderer.material.name.Contains("Glow"))
-            {
-                c.a = value * defaultMtl.color.a;
-            }
-            else
-            {
-                c.a = value * transparentMtl.color.a;
-            }
-            renderer.material.color = c;
-        }
-    }
-
-    public IEnumerator DisableRoom(GameObject roomRoot)
-    {
-        for (float alpha = 1f; alpha > 0.02f; alpha -= Time.deltaTime)
-        {
-            if (!_fade) break;
-            alpha = Mathf.Max(alpha, 0.02f);
-            SetRoomVisibility(roomRoot, alpha);
-            yield return null;
-        }
-    }
+    
 
     void Awake()
     {
@@ -138,11 +76,14 @@ public class RoomConnector : MonoBehaviour
     {
         if(isActive)
         {
-            Destroy(_collisions);
+            _collisions.SetActive(false);
+            _trigger.SetActive(true);
         }
         else
         {
-            Destroy(_trigger);
+            _collisions.SetActive(true);
+            _trigger.SetActive(false);
+            targetRoom = null;
         }
     }
 }

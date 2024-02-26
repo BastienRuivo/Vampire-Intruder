@@ -33,6 +33,7 @@ public class GameUiController : MonoBehaviour,
     public GameObject abilitySelector;
     public GameObject abilitySelectorHintImage;
     public GameObject abilitySelectorHintText;
+    public GameObject textBackgroundPanel;
 
     [Header("Objectives")]
     public float upSpeed;
@@ -262,9 +263,9 @@ public class GameUiController : MonoBehaviour,
     {
         quotationTextBox.GetComponent<TextMeshProUGUI>().SetText(text);
         quotationTextBox.GetComponent<TextMeshProUGUI>().color = color;
-        GetComponentInChildren<Animator>().SetBool("ShowDialog", true);
+        textBackgroundPanel.GetComponent<Animator>().SetBool("ShowDialog", true);
         yield return new WaitForSeconds(dialogLineDuration);
-        GetComponentInChildren<Animator>().SetBool("ShowDialog", false);
+        textBackgroundPanel.GetComponent<Animator>().SetBool("ShowDialog", false);
     }
 
     public void OnEvent(TimeProgression context)

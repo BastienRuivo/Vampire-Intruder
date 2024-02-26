@@ -69,6 +69,7 @@ public class GameController : Singleton<GameController>
     [FormerlySerializedAs("CaughtBell")] public AudioClip caughtBell;
 
     public List<Objective> objectivesToComplete = new List<Objective>();
+    private Objective _main;
     
     private int _eventCount = 0;
     private float _eventTime = 0.0f;
@@ -113,6 +114,7 @@ public class GameController : Singleton<GameController>
             {
                 o.isMainObjective= isMain;
                 Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
+                if (isMain) _main = obj;
                 objectivesToComplete.Add(obj);
                 chosenRefs.Add(o.reference);
                 nbObjectives--;
@@ -330,7 +332,7 @@ public class GameController : Singleton<GameController>
         if(shouldGenerateLvl)
         {
             PlayerState.GetInstance().LockInput();
-            RoomData hall = LevelGenerator.GetInstance().Generate();
+            RoomData hall = LevelGenerator.GetInstance().Generate(mainObjectiveReference);
 
             PlayerState.GetInstance().currentRoom = hall;
             var start = hall.transform.Find("CustomPivot/Start");
@@ -466,5 +468,13 @@ public class GameController : Singleton<GameController>
     public bool IsLevelLoaded()
     {
         return _hasLevelLoaded;
+    }
+
+    public bool HasObtainedMainObjective
+    {
+        get
+        {
+            return _main.state == ObjectiveState.DONE;
+        }
     }
 }

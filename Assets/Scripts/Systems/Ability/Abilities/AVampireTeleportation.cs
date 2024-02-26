@@ -28,9 +28,10 @@ namespace Systems.Ability.Abilities
                 yield break;
 
             WorldPositionAimingController cursorController = cursor.GetComponent<WorldPositionAimingController>();
+            cursorController.canGoInAnotherRoom= true;
             cursorController.owner = avatar;
             cursorController.aimDistance = 2.5f;
-            cursorController.collide = false;
+            cursorController.blockVisionToWall = false;
 
             bool hasTarget = false;
             Vector3 targetPosition = default;
@@ -49,6 +50,10 @@ namespace Systems.Ability.Abilities
                 {
                     hasTarget = true;
                     targetPosition = cursorController.currentTarget;
+                    if(PlayerState.GetInstance().currentRoom != cursorController.currentRoom)
+                    {
+                        cursorController.currentRoom.SetCurrent(PlayerState.GetInstance().currentRoom);
+                    }
 
 
                     break;
@@ -58,7 +63,17 @@ namespace Systems.Ability.Abilities
 
             if (hasTarget)
             {
-                avatar.transform.position = targetPosition;
+                Vector2 dir = (targetPosition - avatar.transform.position).normalized;
+                RaycastHit2D ray = Physics2D.Raycast(avatar.transform.position, dir, 0, cursorController.visionMask);
+                if(ray.collider == null)
+                {
+                    avatar.transform.position = targetPosition;
+                }
+                else
+                {
+                    Vector2 nd = dir * ray.distance * 0.75f;
+                    avatar.transform.position += new Vector3(nd.x, nd.y, 0f);
+                }
             }
             else
             {

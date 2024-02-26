@@ -47,6 +47,8 @@ public class Glow : MonoBehaviour
     public void Activate()
     {
         enabled = true;
+        Color col = render.material.color;
+        mat.color = col;
         render.material = mat;
         render.material.SetColor("_Color", render.material.color);
         render.material.SetColor("_GlowColor", effectColor);

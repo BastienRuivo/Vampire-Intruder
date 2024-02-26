@@ -1288,6 +1288,7 @@ MonoBehaviour:
   abilitySelector: {fileID: 5064897248150505837}
   abilitySelectorHintImage: {fileID: 33713608041381999}
   abilitySelectorHintText: {fileID: 3319272379007554905}
+  textBackgroundPanel: {fileID: 1123839960444791461}
   upSpeed: 0
   downSpeed: 0
   objectivesHeightOnScreen: 0
@@ -1911,8 +1912,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000022888, y: 0.0014877}
-  m_SizeDelta: {x: 664.8, y: 534.9}
+  m_AnchoredPosition: {x: 1.1578, y: -1.1563}
+  m_SizeDelta: {x: 521.2407, y: 391.3408}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3732868836579892766
 CanvasRenderer:
@@ -1952,7 +1953,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1969,10 +1970,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 17
+  m_fontSize: 18
   m_fontSizeBase: 17
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -2023,6 +2024,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e04b069c843e14fb2c9715cbebf275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animObjectives: {fileID: 0}
+  mainColor: {r: 0.49238783, g: 0.21960123, b: 0.5622641, a: 0}
+  mainTitleColor: {r: 0.65046203, g: 0.042869277, b: 0.8415094, a: 0}
+  secondaryTitle: {r: 0.78113204, g: 0.03246737, b: 0, a: 0}
+  secondaryColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &6057866948439094268
 GameObject:
   m_ObjectHideFlags: 0
