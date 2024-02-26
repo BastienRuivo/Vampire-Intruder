@@ -169,6 +169,7 @@ public class ReadText : Singleton<ReadText>
             bool isScene = appState.getGameScene();
             if (isScene)
             {
+                Debug.Log("Here I am");
                 SceneManager.LoadSceneAsync("LevelGenTest");
                 return;
             }
@@ -323,7 +324,7 @@ public class ReadText : Singleton<ReadText>
 					{
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run1/Level0/FirstKilledFirstObjetives"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                            dialogName = "Run1/Level0/FirstKilledFirstObjectives"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -436,7 +437,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run1/Level1/FirstKilledFirstObjetives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                            dialogName = "Run1/Level1/FirstKilledFirstObjectives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -460,7 +461,7 @@ public class ReadText : Singleton<ReadText>
 					{
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run1/Level1/FirstKilledObjetives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
+                            dialogName = "Run1/Level1/FirstKilledObjectives"; // -> Run1/Level1/End -> Run2/Start -> Run 2 Level 0 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -584,7 +585,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run2/Level0/FirstKilledFirstObjetives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                            dialogName = "Run2/Level0/FirstKilledFirstObjectives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -608,7 +609,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run2/Level0/FirstKilledObjetives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
+                            dialogName = "Run2/Level0/FirstKilledObjectives"; // -> Run2/Level0/End -> Run 2 Level 1 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -737,7 +738,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run2/Level1/FirstKilledFirstObjetives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                            dialogName = "Run2/Level1/FirstKilledFirstObjectives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -761,7 +762,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run2/Level1/FirstKilledObjetives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
+                            dialogName = "Run2/Level1/FirstKilledObjectives"; // -> Run2/Level1/End -> Run3/Start -> Run 3 Level 0 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -885,7 +886,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run3/Level0/FirstKilledFirstObjetives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                            dialogName = "Run3/Level0/FirstKilledFirstObjectives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -909,7 +910,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run3/Level0/FirstKilledObjetives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
+                            dialogName = "Run3/Level0/FirstKilledObjectives"; // -> Run3/Level0/End -> Run 3 Level 1 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -1044,7 +1045,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run3/Level1/" + storyPath + "FirstKilledFirstObjetives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                            dialogName = "Run3/Level1/" + storyPath + "FirstKilledFirstObjectives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -1068,7 +1069,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run3/Level1/" + storyPath + "FirstKilledObjetives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                            dialogName = "Run3/Level1/" + storyPath + "FirstKilledObjectives"; // -> Run3/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -1192,7 +1193,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run4/Level0/FirstKilledFirstObjetives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                            dialogName = "Run4/Level0/FirstKilledFirstObjectives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -1216,7 +1217,7 @@ public class ReadText : Singleton<ReadText>
                     {
                         if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                         {
-                            dialogName = "Run4/Level0/FirstKilledObjetives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
+                            dialogName = "Run4/Level0/FirstKilledObjectives"; // -> Run4/Level0/End -> Run 4 Level 1 Scene
                             appState.setAlreadyKilled();
 
                         }
@@ -1363,7 +1364,7 @@ public class ReadText : Singleton<ReadText>
                 {
                     if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                     {
-                        dialogName = "Run4/Level1/" + storyPath + "FirstKilledFirstObjetives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        dialogName = "Run4/Level1/" + storyPath + "FirstKilledFirstObjectives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
                         appState.setAlreadyKilled();
 
                     }
@@ -1387,7 +1388,7 @@ public class ReadText : Singleton<ReadText>
                 {
                     if (guardKilledPercent > 0.0f && !hasAlreadyKilled)
                     {
-                        dialogName = "Run4/Level1/" + storyPath + "FirstKilledObjetives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
+                        dialogName = "Run4/Level1/" + storyPath + "FirstKilledObjectives"; // -> Run4/Level1/End -> Run4/Start -> Run 4 Level 0 Scene
                         appState.setAlreadyKilled();
 
                     }
