@@ -90,7 +90,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _ObserverFieldOfView: 2.443461
-    - _ObserverMinAngle: 3.4906585
+    - _ObserverMinAngle: 5.846853
     - _ObserverViewDistance: 5.5
     - _OcclusionStrength: 1
     - _Parallax: 0.02

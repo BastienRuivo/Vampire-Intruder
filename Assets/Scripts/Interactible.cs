@@ -150,8 +150,8 @@ public class Interactible : MonoBehaviour
             if (v != _interacted)
             {
                 _interacted = v;
-                if(_interacted) PlayerState.GetInstance().LockInput();
-                else PlayerState.GetInstance().UnlockInput();
+                if(_interacted) PlayerState.GetInstance().GetPlayerController().LockInput();
+                else PlayerState.GetInstance().GetPlayerController().UnlockInput();
             }
         }
 
@@ -179,7 +179,7 @@ public class Interactible : MonoBehaviour
 
     private void OnEnd()
     {
-        PlayerState.GetInstance().UnlockInput();
+        PlayerState.GetInstance().GetPlayerController().UnlockInput();
         _isActive = false;
         DisplayTooltips(false);
         _glows[0].Deactivate();

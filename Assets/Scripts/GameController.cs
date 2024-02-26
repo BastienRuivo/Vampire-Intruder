@@ -53,6 +53,7 @@ public class GameController : Singleton<GameController>
         return GameState.GetInstance();
     }
 
+
     [Header("Game Duration")]
     [FormerlySerializedAs("GameEventTickTime")] 
     public float gameEventTickTime = 60.0f;
@@ -63,8 +64,8 @@ public class GameController : Singleton<GameController>
     public List<RoomData> rooms;
     public bool shouldGenerateLvl = true;
     public List<RoomData> activesRoom = new List<RoomData>();
-    bool _hasLevelLoaded = false;
-
+    private bool _hasLevelLoaded = false;
+    public bool endFadeIn = false;
     [FormerlySerializedAs("TimeBell")] public AudioClip timeBell;
     [FormerlySerializedAs("CaughtBell")] public AudioClip caughtBell;
 
@@ -74,8 +75,8 @@ public class GameController : Singleton<GameController>
     private int _eventCount = 0;
     private float _eventTime = 0.0f;
 
-    public string mainObjectiveReference;
     public int nbObjectives;
+    public AppState.Level currentLevel;
 
     private readonly EventDispatcher<int> _gameEventDispatcher = new ();
     private readonly EventDispatcher<TimeProgression> _gameProgressionEventDispatcher = new ();
@@ -89,6 +90,7 @@ public class GameController : Singleton<GameController>
     public void LeaveLevel()
     {
         GetGameState().status = GameStatus.Ended;
+        _gameProgressionEventDispatcher.BroadcastEvent(TimeProgression.End);
 
         //todo implementation of going to the next level, computing the impacts of this level to the next one.
         //may need a singleton "GameState" to save the results from one game to another.
@@ -102,10 +104,11 @@ public class GameController : Singleton<GameController>
         Debug.Log(objectives.Count + " on map");
         List<string> chosenRefs = new List<string>();
         List<Interactible> rejected = new List<Interactible>();
+        string main = "";
         objectives.ForEach(o =>
         {
 
-            bool isMain = mainObjectiveReference.Equals(o.reference);
+            bool isMain = currentLevel.mainRef.Equals(o.reference);
             if (chosenRefs.Contains(o.reference))
             {
                 o.SetInactive();
@@ -114,10 +117,15 @@ public class GameController : Singleton<GameController>
             {
                 o.isMainObjective= isMain;
                 Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
-                if (isMain) _main = obj;
+                if (isMain)
+                {
+                    _main = obj;
+                    _main.phrase = currentLevel.mainPhrase;
+                    main = o.gameObject.GetComponentInParent<RoomData>().name;
+                }
+                else nbObjectives--;
                 objectivesToComplete.Add(obj);
                 chosenRefs.Add(o.reference);
-                nbObjectives--;
                 o.SetActive();
             }
             else if(!isMain)
@@ -150,6 +158,7 @@ public class GameController : Singleton<GameController>
         }
 
         Debug.Log("There is " + objectivesToComplete.Count + " Objectives");
+        Debug.Log("Main is in" + main);
         objectives.Sort((a, b) =>
         {
             if (a.isMainObjective) return 1;
@@ -177,6 +186,7 @@ public class GameController : Singleton<GameController>
     {
         // Vérifiez si l'instance de GameEndingManager existe avant d'y accéder
         GetGameState().status = GameStatus.Ended;
+        _gameProgressionEventDispatcher.BroadcastEvent(TimeProgression.End);
         if (GameEndingManager.instance != null)
         {
             AudioManager.GetInstance().playClip(caughtBell, transform.position);
@@ -195,6 +205,7 @@ public class GameController : Singleton<GameController>
     {
         // Vérifiez si l'instance de GameEndingManager existe avant d'y accéder
         GetGameState().status = GameStatus.Ended;
+        _gameProgressionEventDispatcher.BroadcastEvent(TimeProgression.End);
         if (GameEndingManager.instance != null)
         {
             AudioManager.GetInstance().playClip(caughtBell, transform.position);
@@ -331,8 +342,10 @@ public class GameController : Singleton<GameController>
         // Generate map
         if(shouldGenerateLvl)
         {
-            PlayerState.GetInstance().LockInput();
-            RoomData hall = LevelGenerator.GetInstance().Generate(mainObjectiveReference);
+            PlayerState.GetInstance().GetPlayerController().LockInput();
+            currentLevel = AppState.GetInstance().GetLevelData();
+            nbObjectives = currentLevel.nbObjectives;
+            RoomData hall = LevelGenerator.GetInstance().Generate(currentLevel);
 
             PlayerState.GetInstance().currentRoom = hall;
             var start = hall.transform.Find("CustomPivot/Start");
@@ -341,7 +354,6 @@ public class GameController : Singleton<GameController>
         else
         {
             OnLevelLoadComplete(rooms);
-
         }
     }
 
@@ -390,9 +402,7 @@ public class GameController : Singleton<GameController>
 
         OnRoomChange(rooms[0]);
 
-        PlayerState.GetInstance().UnlockInput();
-
-
+        PlayerState.GetInstance().GetPlayerController().UnlockInput();
 
         _hasLevelLoaded = true;
     }

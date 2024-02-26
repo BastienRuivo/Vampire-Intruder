@@ -50,9 +50,6 @@ public class AppState : Singleton<AppState>
     private int secondaryObjectivesAchievedInCurrentScene = 0;  
     private int totalSecondaryObjectivesInCurrentScene = 0; 
 
-    //LevelGenerator parameters
-    private int startingEnergy;
-
     // Scene parameters
     private string currentDialogName = null;
     private int currentLineNumber = 0;
@@ -65,25 +62,66 @@ public class AppState : Singleton<AppState>
     private int[] currentExpressions;
     private float[] currentPositions;
 
+    [System.Serializable]
+    public class Level
+    {
+        public string mainRef;
+        public string mainPhrase;
+        public float startingEnergy;
+        public int nbObjectives;
+        public string seed;
+        public Level(float startingEnergy, int nbObjectives, string mainRef, string mainPhrase, string seed = null)
+        {
+            this.startingEnergy = startingEnergy;
+            this.mainRef = mainRef;
+            this.mainPhrase = mainPhrase;
+            this.nbObjectives = nbObjectives;
+            if(string.IsNullOrEmpty(seed))
+            {
+                int r = UnityEngine.Random.Range(0, 6942666);
+                this.seed = r.ToString();
+            }
+            else
+            {
+                this.seed = seed;
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"Level : [energy : { startingEnergy }, nbObjectives : {nbObjectives}, mainRef : {mainRef}, mainPhrase : {mainPhrase}, seed : {seed}]";
+        }
+    }
+
+    public Level[] levelData =
+    {
+        // RUN 0
+        new Level(0.21f, 0, "_DisplaySword", "Crochetez la vitrine contenant l'épée marquée", "Tartanpion"),
+        new Level(0.39f, 0, "_StoleScroll", "Volez la lettre du Cardinal de Rohan au Roi", "Tagazok"),
+        // RUN 1
+        new Level(0.41f, 1, "_StealPriestNote", "Lire le journal intime du Cardinal de Rohan", "Et"),
+        new Level(0.59f, 2, "_ChestToOpen", "Volez l'argent du coffre du Comte de la Motte", "Puis"),
+        // RUN 2
+        new Level(0.61f, 3, "_StoleScroll", "Volez une lettre portant la signature de la Reine", "Baston"),
+        new Level(0.79f, 4, "_SuckBloodBed", "Assassinez l'amant de la Baronne d'Oliva", "ceci est une seed"),
+        // Run 3
+        new Level(0.81f, 4, "_Vampire_Hunt_Bible", "Lisez les notes de la Comtesse de la Motte", "Rabibocher"),
+        new Level(0.99f, 5, "_SuckBloodBed", "Assassinez Louis Marc Antoine Rétaux de Villette", "Technoblade"),
+        // Run 4
+        new Level(1.01f, 5, "_ChestToOpen", "Volez les diamants restants", "J3551K4"),
+        new Level(1.19f, 6, "_SuckBloodBed", "Assassinez Boehmer", "MordMoiLNoeud"),
+
+    };
+    private static int lvlPerRun = 2;
+
     //////////////////////////
     /////// INITIALIZE ///////
     //////////////////////////
 
-    public static AppState appState;
-
     override public void Awake()
     {
+        base.Awake();
 
-        // Check existence
-        if (appState == null) {
-            appState = this;
-        }
-        else if (appState != this)
-        {
-            Destroy(gameObject);
-        }
-
-        // Keep data persistent
         DontDestroyOnLoad(gameObject);
 
         // First initialization
@@ -220,7 +258,7 @@ public class AppState : Singleton<AppState>
         totalSecondaryObjectivesInCurrentScene = 0;
 
         levelNumber++;
-        if (levelNumber == 2)
+        if (levelNumber == lvlPerRun)
         {
             NewRun();
         }
@@ -568,5 +606,10 @@ public class AppState : Singleton<AppState>
     public float[] getCurrentPositions()
     {
         return currentPositions;
+    }
+
+    public Level GetLevelData()
+    {
+        return levelData[runNumber * lvlPerRun + levelNumber];
     }
 }

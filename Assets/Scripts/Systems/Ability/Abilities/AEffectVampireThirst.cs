@@ -11,7 +11,7 @@ namespace Systems.Ability.Abilities
             SelfTriggeringAbility = true; //false by default.
             
             //Specify the ability cooldown.
-            Cooldown = 50.0f; //too much time, anyways games end when this ability is trigger so whatever.
+            Cooldown = 20.0f; //too much time, anyways games end when this ability is trigger so whatever.
             //todo ensure of pause system
         }
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
@@ -19,7 +19,11 @@ namespace Systems.Ability.Abilities
             //call the endgame
             //todo call the endgame from :
             //GameController.GetGameMode().
-            GameController.GetGameMode().GetDesiccated();
+            yield return new WaitForSeconds(Cooldown);
+            if(GetAbilitySystemComponent(avatar).QueryStat("Blood") <= 0)
+            {
+                GameController.GetGameMode().GetDesiccated();
+            }
             yield return null; //at the end if ability does run on a single tick (no yield return before).
         }
 

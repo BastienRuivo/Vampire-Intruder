@@ -38,6 +38,8 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     {
         IDLE = 0,
         WALKING = 1,
+        RUNNING = 2,
+        ATTACK = 3,
         EATEN
     }
 
@@ -275,8 +277,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     private void HandleVision()
     {
         _visionConeController.GetMaterial().SetFloat(AlertRatio, _alertRatio);
-
-        //Debug.Log("HasSomethingInSight = " + HasSomethingInSight.ToString());
         UpdateAlertStage(HasSomethingInSight);
 
         HandleDialogs();
@@ -288,7 +288,21 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             {
                 case Targetable.TargetType.PLAYER:
                 {
-                        GameController.GetGameMode().GetCaught();
+                        enabled = false;
+
+                        if (!PlayerState.GetInstance().GetEndLock())
+                        {
+
+                            _animator.SetInteger("state", (int)AnimationState.ATTACK);
+                            PlayerState.GetInstance().LockEndGame();
+                            PlayerState.GetInstance().GetPlayerController().LockInput();
+                            GameController.GetGameMode().GetCaught();
+                        }
+                        else
+                        {
+
+                            _animator.SetInteger("state", (int)AnimationState.IDLE);
+                        }
                         break;
                 }
                 case Targetable.TargetType.ALERTER:
@@ -515,7 +529,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     
     private void DebugStageAlert(float alertRatio)
     {
-        Color col = Color.Lerp(Color.green, Color.red, alertRatio);
+        Color col = Color.Lerp(Color.white, Color.red, alertRatio);
         col.a = _guardRenderer.color.a;
         _guardRenderer.color = col;
     }//todo replace with real animation.
@@ -546,6 +560,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             {
                 LookAt(DirectionHelper.AngleDeg(_directions[currentDir]));
                 Vector2 d = DirectionHelper.FromDirection(_directions[currentDir]);
+                d = d.normalized;
                 _animator.SetFloat("xSpeed", d.x);
                 _animator.SetFloat("ySpeed", d.y);
             }
@@ -603,17 +618,42 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         Vector2 force = dir * _speed * Time.deltaTime;
         force.y *= 0.5f;
 
+        _body.AddForce(force);
+
+
         if (_body.velocity.magnitude > 0)
         {
-            _animator.SetFloat("xSpeed", _body.velocity.x);
-            _animator.SetFloat("ySpeed", _body.velocity.y);
-            _animator.SetInteger("state", (int)AnimationState.WALKING);
+            float px = _animator.GetFloat("xSpeed");
+            float py = _animator.GetFloat("ySpeed");
+            //dir = dir.normalized;
+            //dir.y *= 0.5f;
+
+            float hAx = 0f;
+            float vAx = 0f;
+            float e = 0.02f;
+            if (dir.x > e) hAx = 1f;
+            else if (dir.x < -e) hAx = -1f;
+
+            if (dir.y > e) vAx = 1f;
+            else if (dir.y < -e) vAx = -1f;
+            _animator.SetFloat("xSpeed", Mathf.Lerp(px, hAx, Time.deltaTime));
+            _animator.SetFloat("ySpeed", Mathf.Lerp(py, vAx, Time.deltaTime));
+            if(currentTarget != null)
+            {
+                _animator.SetInteger("state", (int)AnimationState.RUNNING);
+            }
+            else
+            {
+                _animator.SetInteger("state", (int)AnimationState.WALKING);
+            }
+
         }
+
+
 
         float distance = Vector2.Distance(_body.position, pathPos);
         if (distance < nextPointDistance) _currentPointInPath++;
 
-        _body.AddForce(force);
     }
     
     /**

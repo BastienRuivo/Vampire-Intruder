@@ -516,8 +516,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2671e4c2e6384664a9a6b8c3ef5296b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vie: 3
-  nbObjectifSkip: 0
+  levelData:
+  - mainRef: _DisplaySword
+    mainPhrase: "Crochetez la vitrine contenant l'\xE9p\xE9e marqu\xE9e"
+    startingEnergy: 0.21
+    nbObjectives: 0
+    seed: Tartanpion
+  - mainRef: _StoleScroll
+    mainPhrase: Volez la lettre du Cardinal de Rohan au Roi
+    startingEnergy: 0.39
+    nbObjectives: 0
+    seed: Tagazok
+  - mainRef: _StealPriestNote
+    mainPhrase: Lire le journal intime du Cardinal de Rohan
+    startingEnergy: 0.41
+    nbObjectives: 1
+    seed: Et
+  - mainRef: _ChestToOpen
+    mainPhrase: Volez l'argent du coffre du Comte de la Motte
+    startingEnergy: 0.59
+    nbObjectives: 2
+    seed: Puis
+  - mainRef: _StoleScroll
+    mainPhrase: Volez une lettre portant la signature de la Reine
+    startingEnergy: 0.61
+    nbObjectives: 3
+    seed: Baston
+  - mainRef: _SuckBloodBed
+    mainPhrase: Assassinez l'amant de la Baronne d'Oliva
+    startingEnergy: 0.79
+    nbObjectives: 4
+    seed: ceci est une seed
+  - mainRef: _Vampire_Hunt_Bible
+    mainPhrase: Lisez les notes de la Comtesse de la Motte
+    startingEnergy: 0.81
+    nbObjectives: 4
+    seed: Rabibocher
+  - mainRef: _SuckBloodBed
+    mainPhrase: "Assassinez Louis Marc Antoine R\xE9taux de Villette"
+    startingEnergy: 0.99
+    nbObjectives: 5
+    seed: Technoblade
+  - mainRef: _ChestToOpen
+    mainPhrase: Volez les diamants restants
+    startingEnergy: 1.01
+    nbObjectives: 5
+    seed: J3551K4
+  - mainRef: _SuckBloodBed
+    mainPhrase: Assassinez Boehmer
+    startingEnergy: 1.19
+    nbObjectives: 6
+    seed: MordMoiLNoeud
 --- !u!4 &603100736
 Transform:
   m_ObjectHideFlags: 0
@@ -2068,6 +2117,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2671610580363259081, guid: fb83b55c8617ddd41ad11996b9505ab0, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2671610580363259081, guid: fb83b55c8617ddd41ad11996b9505ab0, type: 3}
       propertyPath: m_Name
       value: Enemy
@@ -6380,11 +6433,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2487885219397157561, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.16
+      value: -3.15
       objectReference: {fileID: 0}
     - target: {fileID: 2487885219397157561, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.9
+      value: 4.26
       objectReference: {fileID: 0}
     - target: {fileID: 2487885219397157561, guid: 1d9cd5b80ddc0604687148d11d95c785, type: 3}
       propertyPath: m_LocalPosition.z

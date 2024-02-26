@@ -59,6 +59,7 @@ public class ObjectivesManager : MonoBehaviour
             string text = "";
             if (_textCoroutine != null && _textMeshPro != null)
             {
+                int nbObjectives = GameController.GetInstance().objectivesToComplete.Count;
                 GameController.GetInstance().objectivesToComplete.ForEach(obj =>
                 {
                     Color color = Color.white;
@@ -87,16 +88,16 @@ public class ObjectivesManager : MonoBehaviour
                     txt += obj.state == GameController.ObjectiveState.DONE ? $"<s>{obj.phrase}</s>" : obj.phrase;
                     if(obj.isMain)
                     {
-                        txt = TextWithColor("Objectif principal :\n", mainTitleColor) + TextWithColor(txt, mainColor);
+                        txt = TextWithColor("Objectif principal:\n", mainTitleColor) + TextWithColor(txt, mainColor);
                     }
                     else
                     {
                         txt = TextWithColor(txt, secondaryColor);
                     }
                     text += txt + "\n\n";
-                    if(obj.isMain)
+                    if(obj.isMain && nbObjectives > 1)
                     {
-                        text += TextWithColor("Objectifs secondaire : \n", secondaryTitle);
+                        text += TextWithColor("Objectifs secondaire: \n", secondaryTitle);
                     }
 
                 });

@@ -194,11 +194,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
             List<RoomData.Type> typeTested = new List<RoomData.Type>();
 
-            foreach(RoomParameter rp in roomParameters)
-            {
-                if (rp.maxPerLvl == 0) typeTested.Add(rp.type);
-            }
-
             // If energy is really low, avoid generating corridor
             if(roomData.energy - roomParameters[(int)RoomData.Type.CORRIDORS].cost <= 0f)
             {
@@ -392,6 +387,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         RoomData.Type typeToCreate = RoomData.Type.NOONE;
 
+
         // If we tried every type of room, then return noone
         if(forbidden.Count >= connector.allowedBranch.Length)
         {
@@ -401,10 +397,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
         // Generate a random number till we have an allowed type
         do
         {
+            forbidden.Add(typeToCreate);
             int roll = Random.Range(0, 100);
             typeToCreate= connector.GetFromDice(roll);
         }
-        while(roomParameters[(int)typeToCreate].maxPerLvl == 0 || forbidden.Contains(typeToCreate));
+        while((roomParameters[(int)typeToCreate].maxPerLvl == 0 || forbidden.Contains(typeToCreate)));
 
 
         return typeToCreate;
@@ -469,15 +466,17 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// Load and generate a complete lvl.
     /// </summary>
     /// <returns>The hall room</returns>
-    public RoomData Generate(string mainObjective)
+    public RoomData Generate(AppState.Level level)
     {
-        _mainObjective = mainObjective;
+        _mainObjective = level.mainRef;
         convexHull = new List<RoomData>();
+        seed = level.seed;
+        startingEnergy = level.startingEnergy;
+        Debug.Log("Level is generating with seed " + seed);
         if(!string.IsNullOrEmpty(seed)) 
         { 
             Random.InitState(StringToInt(seed));
         }
-        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         instanciatedRooms = new List<GameObject>();
         LoadData();
@@ -527,6 +526,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         while (roomToFill.Count > 0)
         {
             FillRoom(roomToFill.Dequeue());
+            Debug.Log("To fill = " + roomToFill.Count);
             yield return null;
         }
 
