@@ -111,6 +111,8 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         {
             if (charges == 0)
                 continue;
+            
+            first = first == null ? item : first;
 
             if (item == "Sedative")
             {
@@ -124,7 +126,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
                 {
                     _ascRef.GrantAbility<AVampireBloodPocket>("BloodPouch");
                 }
-        } //todo a proper non static system
+        } //todo a proper non static system to grant abilities from AppState
         
         //bind ability to a keyboard input. The ability will then be executed when this key is pressed.
         _ascRef.BindAbility("TryBite", KeyCode.Q);
