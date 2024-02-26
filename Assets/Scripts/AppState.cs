@@ -1,13 +1,11 @@
-using System.Collections;
+using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class AppState : Singleton<AppState>
 {
-    private void Awake() {
-        DontDestroyOnLoad(this.gameObject);
-    }
+
     /////////////////////////
     /////// VARIABLES ///////
     /////////////////////////
@@ -46,7 +44,6 @@ public class AppState : Singleton<AppState>
     private bool hasAlreadyKilled = false;
     private bool hasAlreadySecondary = false;
 
-
     //CurrentScene parameters
     private int guardKilledInCurrentScene = 0; 
     private int totalGuardsInCurrentScene = 0; 
@@ -55,6 +52,84 @@ public class AppState : Singleton<AppState>
 
     //LevelGenerator parameters
     private int startingEnergy;
+
+    // Scene parameters
+    private string currentDialogName = null;
+    private int currentLineNumber = 0;
+    private bool isFromSave = false;
+    private bool isGameScene = false;
+    private int currentBackground;
+    private int currentFrame;
+    private char currentTextBox;
+    private bool[] currentCharacters;
+    private int[] currentExpressions;
+    private float[] currentPositions;
+
+    //////////////////////////
+    /////// INITIALIZE ///////
+    //////////////////////////
+
+    public static AppState appState;
+
+    override public void Awake()
+    {
+
+        // Check existence
+        if (appState == null) {
+            appState = this;
+        }
+        else if (appState != this)
+        {
+            Destroy(gameObject);
+        }
+
+        // Keep data persistent
+        DontDestroyOnLoad(gameObject);
+
+        // First initialization
+        if (currentCharacters == null)
+        {
+            currentCharacters = new bool[4];
+            currentExpressions = new int[4];
+            currentPositions = new float[4];
+        }
+    }
+
+    public void Initialize()
+    {
+        // App State
+        princeMercy = 3;
+        mainObjectiveSkip = 2;
+        levelNumber = 0;
+        runNumber = 0;
+
+        // Abilities
+        abilities["Teleportation"] = false;
+        abilities["Decieving"] = false;
+        abilities["Cataract"] = false;
+        abilities["Invisibility"] = false;
+        items["Sedative"] = 0;
+        items["BloodPouch"] = 0;
+
+        // Story
+        JessikaLove = 0;
+        ElrikLove = 0;
+        hasMainObjectiveFailed = false;
+        hasTimeFailed = false;
+        hasGuardFailed = false;
+        guardKilled = 0;
+        secondaryObjectivesAchieved = 0;
+        totalGuards = 0;
+        totalSecondaryObjectives = 0;
+        hasAlreadyKilled = false;
+        hasAlreadySecondary = false;
+
+        // Scene parameters
+        currentDialogName = null;
+        currentLineNumber = 0;
+        isFromSave = false;
+        isGameScene = false;
+}
 
     /////////////////////////////////
     /////// LEVEL MANAGEMENTS ///////
@@ -93,18 +168,24 @@ public class AppState : Singleton<AppState>
     /// <param name="bloodFailed">If the player lost because of a blood</param>
     public void endLevel(bool mainObjectiveAchieved, bool timeFailed, bool guardFailed, bool bloodFailed)
     {
+        // Scene management
+        isGameScene = false;
+        isFromSave = false;
 
-        Debug.Log("End of level " + levelNumber + " with guardKilledInCurrentScene: " + guardKilledInCurrentScene + " and totalGuardsInCurrentScene: " + totalGuardsInCurrentScene + " and secondaryObjectivesAchievedInCurrentScene: " + secondaryObjectivesAchievedInCurrentScene + " and totalSecondaryObjectivesInCurrentScene: " + totalSecondaryObjectivesInCurrentScene);
+        // Main objective
+        hasMainObjectiveFailed = !mainObjectiveAchieved;
+
         // Prince Mercies
         if (timeFailed || guardFailed || bloodFailed)
         {
+            hasMainObjectiveFailed = false;
             decreasePrinceMercy();
         }
         else
         {
-            if (mainObjectiveAchieved)
+            if (!mainObjectiveAchieved)
             {
-                decreasePrinceMercy();
+                decreaseMainObjectiveSkip();
             }
         }
         hasTimeFailed = timeFailed;
@@ -129,8 +210,8 @@ public class AppState : Singleton<AppState>
                 items["BloodPouch"]++;
             }
         }
-        secondaryObjectivesAchieved = secondaryObjectivesAchievedInCurrentScene; //+= ici non ?
-        totalSecondaryObjectives = totalSecondaryObjectivesInCurrentScene;  //pareil
+        secondaryObjectivesAchieved = secondaryObjectivesAchievedInCurrentScene;
+        totalSecondaryObjectives = totalSecondaryObjectivesInCurrentScene;
 
         // Reset the current scene parameters
         guardKilledInCurrentScene = 0;
@@ -286,6 +367,11 @@ public class AppState : Singleton<AppState>
         return hasGuardFailed;
     }
 
+    public bool getBloodFailed()
+    {
+        return hasBloodFailed;
+    }
+
     public float getGuardsKilledPercent()
     {
         return guardKilled / (float) totalGuards;
@@ -316,4 +402,171 @@ public class AppState : Singleton<AppState>
         hasAlreadySecondary = true;
     }
 
+    /////////////////////
+    /////// SAVES ///////
+    /////////////////////
+    public void Save(int saveNumber, string dialogName, int lineNumber, bool gameScene,
+        int currentBackground, int currentFrame, char currentTextBox,
+        bool[] currentCharacters, int[] currentExpressions, float[] currentPositions)
+    {
+
+        // Dialog scene stats
+        PlayerPrefs.SetString("dialogName" + saveNumber, dialogName);
+        PlayerPrefs.SetInt("lineNumber" + saveNumber, lineNumber);
+        PlayerPrefs.SetInt("gameScene" + saveNumber, gameScene ? 1 : 0);
+        PlayerPrefs.SetInt("background" + saveNumber, currentBackground);
+        PlayerPrefs.SetInt("frame" + saveNumber, currentFrame);
+        PlayerPrefs.SetString("textBox" + saveNumber, currentTextBox.ToString());
+        for (int i = 0; i < 4; i++)
+        {
+            PlayerPrefs.SetInt("character" + i + saveNumber, currentCharacters[i] ? 1 : 0);
+            PlayerPrefs.SetInt("expression" + i + saveNumber, currentExpressions[i]);
+            PlayerPrefs.SetFloat("position" + i + saveNumber, currentPositions[i]);
+        }
+             
+        // App State variables
+        PlayerPrefs.SetInt("princeMercy" + saveNumber, princeMercy);
+        PlayerPrefs.SetInt("mainObjectiveSkip" + saveNumber, mainObjectiveSkip);
+        PlayerPrefs.SetInt("levelNumber" + saveNumber, levelNumber);
+        PlayerPrefs.SetInt("runNumber" + saveNumber, runNumber);
+
+        // Items
+        PlayerPrefs.SetInt("sedatives" + saveNumber, items["Sedative"]);
+        PlayerPrefs.SetInt("bloodPouch" + saveNumber, items["BloodPouch"]);
+
+        // Story parameters
+        PlayerPrefs.SetInt("JessikaLove" + saveNumber, JessikaLove);
+        PlayerPrefs.SetInt("ElrikLove" + saveNumber, ElrikLove);
+        PlayerPrefs.SetInt("guardKilled" + saveNumber, guardKilled);
+        PlayerPrefs.SetInt("totalGuards" + saveNumber, totalGuards);
+        PlayerPrefs.SetInt("totalSecondaryObjectives" + saveNumber, totalSecondaryObjectives);
+        PlayerPrefs.SetInt("hasAlreadyKilled" + saveNumber, hasAlreadyKilled ? 1 : 0);
+        PlayerPrefs.SetInt("hasAlreadySecondary" + saveNumber, hasAlreadySecondary ? 1 : 0);
+
+        // Date and time
+        DateTime dt = DateTime.Now;
+        PlayerPrefs.SetInt("year" + saveNumber, dt.Year);
+        PlayerPrefs.SetInt("month" + saveNumber, dt.Month);
+        PlayerPrefs.SetInt("day" + saveNumber, dt.Day);
+        PlayerPrefs.SetInt("hour" + saveNumber, dt.Hour);
+        PlayerPrefs.SetInt("minute" + saveNumber, dt.Minute);
+        PlayerPrefs.SetInt("second" + saveNumber, dt.Second);
+
+        
+    }
+
+    public void Load(int saveNumber)
+    {
+        if (PlayerPrefs.HasKey("dialogName" + saveNumber))
+        {
+            // Dialog scene stats
+            currentDialogName = PlayerPrefs.GetString("dialogName" + saveNumber);
+            currentLineNumber = PlayerPrefs.GetInt("lineNumber" + saveNumber);
+            isGameScene = PlayerPrefs.GetInt("gameScene" + saveNumber) == 1;
+            currentBackground = PlayerPrefs.GetInt("background" + saveNumber);
+            currentFrame = PlayerPrefs.GetInt("frame" + saveNumber);
+            currentTextBox = PlayerPrefs.GetString("textBox" + saveNumber)[0];
+            for (int i = 0; i < 4; i++)
+            {
+                currentCharacters[i] = PlayerPrefs.GetInt("character" + i + saveNumber) == 1;
+                currentExpressions[i] = PlayerPrefs.GetInt("expression" + i + saveNumber);
+                currentPositions[i] = PlayerPrefs.GetFloat("position" + i + saveNumber);
+            }
+
+            // App State variables
+            princeMercy = PlayerPrefs.GetInt("princeMercy" + saveNumber);
+            mainObjectiveSkip = PlayerPrefs.GetInt("mainObjectiveSkip" + saveNumber);
+            levelNumber = PlayerPrefs.GetInt("levelNumber" + saveNumber);
+            runNumber = PlayerPrefs.GetInt("runNumber" + saveNumber);
+
+            // Abilities
+            switch (runNumber)
+            {
+                case 1:
+                    abilities["Teleportation"] = true; break;
+                case 2:
+                    abilities["Teleportation"] = true;
+                    abilities["Decieving"] = true; break;
+                case 3:
+                    abilities["Teleportation"] = true;
+                    abilities["Decieving"] = true;
+                    abilities["Cataract"] = true; break;
+                case 4:
+                    abilities["Teleportation"] = true;
+                    abilities["Decieving"] = true;
+                    abilities["Cataract"] = true;
+                    abilities["Invisibility"] = true; break;
+            }
+
+            // Items
+            items["Sedative"] = PlayerPrefs.GetInt("sedatives" + saveNumber);
+            items["BloodPouch"] = PlayerPrefs.GetInt("bloodPouch" + saveNumber);
+
+            // Story parameters
+            JessikaLove = PlayerPrefs.GetInt("JessikaLove" + saveNumber);
+            ElrikLove = PlayerPrefs.GetInt("ElrikLove" + saveNumber);
+            guardKilled = PlayerPrefs.GetInt("guardKilled" + saveNumber);
+            totalGuards = PlayerPrefs.GetInt("totalGuards" + saveNumber);
+            totalSecondaryObjectives = PlayerPrefs.GetInt("totalSecondaryObjectives" + saveNumber);
+            hasAlreadyKilled = PlayerPrefs.GetInt("hasAlreadyKilled" + saveNumber) == 1;
+            hasAlreadySecondary = PlayerPrefs.GetInt("hasAlreadySecondary") == 1;
+
+            // Scene parameters
+            isFromSave = true;
+        }
+        else
+        {
+            Initialize();
+        }
+    }
+    
+    public string getDialogName()
+    {
+        return currentDialogName;
+    }
+
+    public int getLineNumber()
+    {
+        return currentLineNumber;
+    }
+
+    public bool getFromSave()
+    {
+        return isFromSave;
+    }
+
+    public bool getGameScene()
+    {
+        return isGameScene;
+    }
+
+    public int getCurrentBackground()
+    {
+        return currentBackground;
+    }
+
+    public int getCurrentFrame()
+    {
+        return currentFrame;
+    }
+
+    public char getCurrentTextBox()
+    {
+        return currentTextBox;
+    }
+
+    public bool[] getCurrentCharacters()
+    {
+        return currentCharacters;
+    }
+
+    public int[] getCurrentExpressions()
+    {
+        return currentExpressions;
+    }
+
+    public float[] getCurrentPositions()
+    {
+        return currentPositions;
+    }
 }

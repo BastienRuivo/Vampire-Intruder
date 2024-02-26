@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ed65d31dc74ff604d956f1c64a658272
+guid: b6558503e1fa50546adcfda080660c8c
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -173,49 +173,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: ef_adv_tap0_0
-      rect:
-        serializedVersion: 2
-        x: 27
-        y: 46
-        width: 45
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bfb51db2782b0c0469c3ac4caac99822
-      internalID: 1452115676
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ef_adv_tap0_1
-      rect:
-        serializedVersion: 2
-        x: 107
-        y: 78
-        width: 61
-        height: 30
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a1eb1aed6f7b93f4ab98d3557dc90c7e
-      internalID: -607580223
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     physicsShape: []
     bones: []
@@ -226,9 +184,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      ef_adv_tap0_0: 1452115676
-      ef_adv_tap0_1: -607580223
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
