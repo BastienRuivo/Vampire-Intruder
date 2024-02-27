@@ -163,7 +163,7 @@ MonoBehaviour:
   distancePercentageSuspicious: 0
   spotSpeed: 2000
   camSpeed: 10
-  _spotSound: {fileID: 8300000, guid: d10610c5cc10b1b43b578250baab23d6, type: 3}
+  _spotSound: {fileID: 8300000, guid: 5821fc230882ed7478616d752ddc67d2, type: 3}
   visionCone: {fileID: 2976086864853864014}
   currentTarget: {fileID: 0}
   isPathReversed: 0

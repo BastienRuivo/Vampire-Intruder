@@ -200,6 +200,14 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 typeTested.Add(RoomData.Type.CORRIDORS);
             }
 
+            foreach(RoomParameter param in roomParameters)
+            {
+                if(param.maxPerLvl == 0 && c.allowedBranch.Contains(param.type))
+                {
+                    typeTested.Add(param.type);
+                }
+            }
+
             RoomData.Type roomType = PickRoomType(c, typeTested);
 
             //Debug.Log("First type picked = " + roomType.ToString());
@@ -387,6 +395,12 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         RoomData.Type typeToCreate = RoomData.Type.NOONE;
 
+        if(connector.allowedBranch.Length != connector.branchPercentage.Length)
+        {
+            Debug.LogError("WAH LA PUTAIN DE TA RACE" + connector.name);
+            return RoomData.Type.NOONE;
+        }
+
 
         // If we tried every type of room, then return noone
         if(forbidden.Count >= connector.allowedBranch.Length)
@@ -397,7 +411,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
         // Generate a random number till we have an allowed type
         do
         {
-            forbidden.Add(typeToCreate);
             int roll = Random.Range(0, 100);
             typeToCreate= connector.GetFromDice(roll);
         }

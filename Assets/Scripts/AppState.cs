@@ -14,7 +14,7 @@ public class AppState : Singleton<AppState>
     private int princeMercy = 3;                        // Number of Prince Mercies left (player's life number)
     private int mainObjectiveSkip = 2;                  // Number of main objectives skip (can skip only 2 main objectives)
     private int levelNumber = 0;                        // The level number in the run
-    private int runNumber = 0;                          // The run number
+    private int runNumber = 4;                          // The run number
 
     // The abilities and their acquisition
     private SortedDictionary<string, bool> abilities = new SortedDictionary<string, bool>
