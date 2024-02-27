@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: objectivePhrase
-      value: Voler la bible des chasseurs de vampires
+      value: Volez la Bible des chasseurs de Vampires
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: replacementSprite

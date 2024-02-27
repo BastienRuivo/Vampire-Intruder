@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4783516749485578990, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: objectivePhrase
-      value: "R\xE9cup\xE9rer l'enclopedia vampirae"
+      value: "R\xE9cup\xE9rez l'Enclopedia Vampirae"
       objectReference: {fileID: 0}
     - target: {fileID: 4783516749485578990, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: replacementSprite

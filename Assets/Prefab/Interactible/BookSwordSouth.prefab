@@ -17,8 +17,12 @@ PrefabInstance:
       value: _DisplaySword
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
+      propertyPath: isMainObjective
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: objectivePhrase
-      value: "Crochetez la vitrine et r\xE9cup\xE9rer l'\xE9p\xE9e rituel"
+      value: "Crochetez la vitrine et r\xE9cup\xE9rez l'\xE9p\xE9e rituelle"
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: replacementSprite
