@@ -1,0 +1,14 @@
+@@@Background Office C 2 Jessika Neutral 0 Jasper Upset 0
+1 C Lord_Jasper Jasper Upset 1
+Toi ? Une gamine ?\nTu veux devenir garde royal ?!
+1 C Lord_Jasper Jessika Upset 0
+Ne me fais pas rire !
+@@@Background ReceptionHall C 3 Jessika Smile 0 Elrik Neutral 1 Jasper Neutral -1
+2 R Prince_Elrik Elrik Neutral 1 Jasper Neutral 0
+C'est donc toi que l'on appelle Jessika ?\nTu es effectivement bien jeune...
+2 R Prince_Elrik Elrik Smile 1 Jessika Flush 0 Jasper Surprise 0
+Mais ce n'est pas un problème...
+@@@Background ElrikBedroom C 2 Jessika Surprise 0 Elrik Smile 0
+1 C Prince_Elrik Elrik Smile 1
+J'ai des goûts... particuliers.
+@@@Choice P-Particuliers..._Qu'est-ce_qu'il_entend_par_là_?! Elrik Smile 2 Trailer2 5 5 Des_goûts_...?_C'est-à-dire_? 0 5 5 Ce_n'est_pas_comme_si_j'en_avais_quelque_chose_à_faire.

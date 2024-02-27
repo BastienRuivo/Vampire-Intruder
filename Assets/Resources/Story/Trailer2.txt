@@ -1,0 +1,10 @@
+@@@Disappear Elrik
+@@@Appear Elrik Flush 0
+2 C Prince_Elrik Elrik Flush 1 Jessika Flush 0
+J'entends... En termes d'épouse !
+2 C Prince_Elrik Elrik Neutral 1 Jessika Neutral 0
+Peu sont les femmes qui me correspondent !
+0 C Prince_Elrik
+Il y a certaines... caractéristiques à respecter.
+2 J Jessika Jessika Flush 1 Elrik Neutral 0
+Ah... Je vois.
