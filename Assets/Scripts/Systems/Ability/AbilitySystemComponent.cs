@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -269,8 +270,8 @@ namespace Systems.Ability
         {
             if (_abilities.TryAdd(name, new GrantedAbility(new TAbilityType())))
                 return; //All good;
-
-            if (!(_abilities[name].GetType() == typeof(TAbilityType)))
+            
+            if (_abilities[name].GetAbility().GetType() != typeof(TAbilityType))
             {
                 Debug.LogError($"Unable to grant ability named \"{name}\" as it has already been bound to " +
                                $"another kind of ability.");
