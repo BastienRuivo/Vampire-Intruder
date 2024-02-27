@@ -59,11 +59,11 @@ public class RoomData : MonoBehaviour
     /// <summary>
     /// Size of a node in world
     /// </summary>
-    private static readonly float _nodeSize = 0.176775f;
-    /// <summary>
-    /// Size of an obstacle in the graph
-    /// </summary>
-    private static readonly float _obstacleSize = 1.5f;
+    //private static readonly float _nodeSize = 0.176775f;
+    ///// <summary>
+    ///// Size of an obstacle in the graph
+    ///// </summary>
+    //private static readonly float _obstacleSize = 1.5f;
     private bool _isColliding;
     private RoomData _collider;
     private RoomConnector[] _connectors;
@@ -91,19 +91,19 @@ public class RoomData : MonoBehaviour
     /// </summary>
     /// <param name="pos"> Room position in world</param>
     /// <returns>The new grid graph if needed</returns>
-    public GridGraph BuildGraph(Vector3 pos)
-    {
-        GridGraph gg = AstarPath.active.data.AddGraph(typeof(GridGraph)) as GridGraph;
-        gg.SetGridShape(InspectorGridMode.IsometricGrid);
-        gg.isometricAngle = 60f;
-        gg.rotation = new Vector3(-45f, 270f, 90f);
-        gg.center = localGraphPosition + pos;
-        gg.SetDimensions(width, height, _nodeSize);
-        gg.collision.use2D = true;
-        gg.collision.diameter = _obstacleSize;
-        gg.collision.mask = layers;
-        return gg;
-    }
+    //public GridGraph BuildGraph(Vector3 pos)
+    //{
+    //    GridGraph gg = AstarPath.active.data.AddGraph(typeof(GridGraph)) as GridGraph;
+    //    gg.SetGridShape(InspectorGridMode.IsometricGrid);
+    //    gg.isometricAngle = 60f;
+    //    gg.rotation = new Vector3(-45f, 270f, 90f);
+    //    gg.center = localGraphPosition + pos;
+    //    gg.SetDimensions(width, height, _nodeSize);
+    //    gg.collision.use2D = true;
+    //    gg.collision.diameter = _obstacleSize;
+    //    gg.collision.mask = layers;
+    //    return gg;
+    //}
 
     public void SetMainRoom()
     {

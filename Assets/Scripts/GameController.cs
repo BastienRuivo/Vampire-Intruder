@@ -361,10 +361,10 @@ public class GameController : Singleton<GameController>
     private void GenerateAStarGraph()
     {
         Debug.Log("There is " + rooms.Count + " rooms to build");
-        rooms.ForEach(room =>
-        {
-            room.BuildGraph(room.transform.position);
-        });
+        //rooms.ForEach(room =>
+        //{
+        //    room.BuildGraph(room.transform.position);
+        //});
         AstarPath.active.Scan();
     }
 
