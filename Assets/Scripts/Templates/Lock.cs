@@ -29,6 +29,7 @@ namespace DefaultNamespace.Templates
                 return;
             }
             _count--;
+            Debug.Log("Remaining count " + _count);
         }
     }
 }

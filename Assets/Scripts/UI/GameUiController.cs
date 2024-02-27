@@ -273,7 +273,7 @@ public class GameUiController : MonoBehaviour,
         switch (context)
         {
             case TimeProgression.Begin:
-                _levelCompleteFade = UpdateLevelLoadScreen();
+                _levelCompleteFade = FadeOutLevelLoadScreen();
                 StartCoroutine(_levelCompleteFade);
                 EnqueueMessage(new GameController.UserMessageData(
                     GameController.UserMessageData.MessageToUserSenderType.Player,
@@ -299,6 +299,8 @@ public class GameUiController : MonoBehaviour,
                 //StartCoroutine(DialogRoutine($"Jessika : \"{jessikaFinalQuote}\"", new Color(1,1,1)));
                 break;
             case TimeProgression.End:
+                _levelCompleteFade = FadeInLevelLoadScreen();
+                StartCoroutine(_levelCompleteFade);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(context), context, null);
@@ -326,7 +328,7 @@ public class GameUiController : MonoBehaviour,
         EnqueueMessage(context);
     }
 
-    public IEnumerator UpdateLevelLoadScreen()
+    public IEnumerator FadeOutLevelLoadScreen()
     {
 
         Image im = levelLoadingPanel.GetComponent<Image>();
@@ -337,5 +339,19 @@ public class GameUiController : MonoBehaviour,
             im.color = c;
             yield return null;
         }
+    }
+
+    public IEnumerator FadeInLevelLoadScreen()
+    {
+
+        Image im = levelLoadingPanel.GetComponent<Image>();
+        while (im.color.a < 1f)
+        {
+            Color c = im.color;
+            c.a += Time.deltaTime;
+            im.color = c;
+            yield return null;
+        }
+        GameController.GetInstance().endFadeIn = true;
     }
 }

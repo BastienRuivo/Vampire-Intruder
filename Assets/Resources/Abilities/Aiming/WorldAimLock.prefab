@@ -205,7 +205,8 @@ MonoBehaviour:
   currentTarget: {fileID: 0}
   visionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 192
+  isTargetValid: 1
 --- !u!1 &4087952227269222503
 GameObject:
   m_ObjectHideFlags: 0

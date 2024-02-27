@@ -37,7 +37,7 @@ public abstract class Singleton<T> : MonoBehaviour
         }
         else
         {
-            //Destroy(gameObject);
+            Destroy(gameObject);
         }
     }
 }

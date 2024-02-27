@@ -14,11 +14,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: reference
-      value: _DeisplayBook
+      value: _DisplaySword
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: objectivePhrase
-      value: "Crochetez la vitrine et r\xE9cup\xE9rer le tome de M\xF6rh"
+      value: "Crochetez la vitrine et r\xE9cup\xE9rer l'\xE9p\xE9e rituel"
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: replacementSprite

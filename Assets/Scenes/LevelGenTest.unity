@@ -152,6 +152,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2671e4c2e6384664a9a6b8c3ef5296b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelData:
+  - mainRef: _DisplaySword
+    mainPhrase: "Crochetez la vitrine contenant l'\xE9p\xE9e marqu\xE9e"
+    startingEnergy: 0.21
+    nbObjectives: 0
+    seed: Tartanpion
+  - mainRef: _StoleScroll
+    mainPhrase: Volez la lettre du Cardinal de Rohan au Roi
+    startingEnergy: 0.39
+    nbObjectives: 0
+    seed: Tagazok
+  - mainRef: _StealPriestNote
+    mainPhrase: Lire le journal intime du Cardinal de Rohan
+    startingEnergy: 0.41
+    nbObjectives: 1
+    seed: Et
+  - mainRef: _ChestToOpen
+    mainPhrase: Volez l'argent du coffre du Comte de la Motte
+    startingEnergy: 0.59
+    nbObjectives: 2
+    seed: Puis
+  - mainRef: _StoleScroll
+    mainPhrase: Volez une lettre portant la signature de la Reine
+    startingEnergy: 0.61
+    nbObjectives: 3
+    seed: Baston
+  - mainRef: _SuckBloodBed
+    mainPhrase: Assassinez l'amant de la Baronne d'Oliva
+    startingEnergy: 0.79
+    nbObjectives: 4
+    seed: ceci est une seed
+  - mainRef: _Vampire_Hunt_Bible
+    mainPhrase: Lisez les notes de la Comtesse de la Motte
+    startingEnergy: 0.81
+    nbObjectives: 4
+    seed: Rabibocher
+  - mainRef: _SuckBloodBed
+    mainPhrase: "Assassinez Louis Marc Antoine R\xE9taux de Villette"
+    startingEnergy: 0.99
+    nbObjectives: 5
+    seed: Technoblade
+  - mainRef: _ChestToOpen
+    mainPhrase: Volez les diamants restants
+    startingEnergy: 1.01
+    nbObjectives: 5
+    seed: J3551K4
+  - mainRef: _SuckBloodBed
+    mainPhrase: Assassinez Boehmer
+    startingEnergy: 1.19
+    nbObjectives: 6
+    seed: MordMoiLNoeud
 --- !u!4 &116513871
 Transform:
   m_ObjectHideFlags: 0
@@ -465,11 +516,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3566486573396230255, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -141.59998
+      value: -141.60004
       objectReference: {fileID: 0}
     - target: {fileID: 3566486573396230255, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -205.1
+      value: -205.09998
       objectReference: {fileID: 0}
     - target: {fileID: 6160038320768464199, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_UiScaleMode
@@ -501,7 +552,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7525506633661033723, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7983674350068298140, guid: 6475bcdd293375640b4a006027eb0b6f, type: 3}
       propertyPath: m_SizeDelta.x
@@ -700,8 +751,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2eb1fb4eb747f4a4d847b4e1b573047e, type: 2}
   instanciatedRooms: []
   convexHull: []
-  startingEnergy: 0.6
-  seed: 0
+  startingEnergy: 0.21
+  seed: Tartanpion
 --- !u!1001 &1535210841
 PrefabInstance:
   m_ObjectHideFlags: 0

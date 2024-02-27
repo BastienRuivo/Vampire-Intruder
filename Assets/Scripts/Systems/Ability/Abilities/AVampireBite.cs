@@ -4,6 +4,7 @@ using Systems.Ability;
 using Systems.Ability.Aiming;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace Systems.Ability.Abilities
 {
@@ -13,6 +14,7 @@ namespace Systems.Ability.Abilities
         {
             Cooldown = 0.5f;
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Bite";
+            
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
@@ -65,11 +67,23 @@ namespace Systems.Ability.Abilities
             
             if (target != null)
             {
-                avatar.transform.position = target.transform.position;
+                WorldAimLockController cursorController = cursor.GetComponent<WorldAimLockController>();
+                Vector2 dir = (target.transform.position - avatar.transform.position);
+                RaycastHit2D hit = Physics2D.Raycast(avatar.transform.position, dir, Vector2.Distance(avatar.transform.position, target.transform.position), cursorController.visionMask | LayerMask.GetMask("Enemy"));
+                Debug.DrawRay(avatar.transform.position, dir.normalized, Color.red, 10);
+                if(hit.collider != null)
+                {
+                    Vector2 newpos = dir.normalized * hit.distance * 0.9f;
+                    avatar.transform.position = avatar.transform.position + new Vector3(newpos.x, newpos.y);
+                }
+                Direction rawDir = DirectionHelper.BetweenTwoObjects(avatar, target);
+                Vector2 d = DirectionHelper.FromDirection(rawDir);
+                player.GetAnimator().SetFloat("xSpeed", d.x);
+                player.GetAnimator().SetFloat("ySpeed", d.y);
                 GetAbilitySystemComponent(avatar).CancelAbility("Invisibility");
                 GetAbilitySystemComponent(avatar).TriggerAbility("Bite");
                 GetAbilitySystemComponent(target).TriggerAbility("Eaten");
-                player.LockVision(avatar.transform.position);
+                player.LockVision(target.transform.position);
             }
             
             yield return null;

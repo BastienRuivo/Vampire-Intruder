@@ -32,8 +32,8 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     [Range(0.1f, 10f)] public float currentZoom;
 
     // private variables
-    private Animator animator;
-    private Rigidbody2D rigidBody;
+    private Animator _animator;
+    private Rigidbody2D _rigidBody;
     public Direction directionPerso;//todo cleanup this trash
     
     private AbilitySystemComponent _ascRef;
@@ -68,8 +68,8 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
-        rigidBody = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _rigidBody = GetComponent<Rigidbody2D>();
         
         _ascRef = GetComponent<AbilitySystemComponent>();
         _coneController = visionObject.GetComponent<VisionConeController>();
@@ -162,7 +162,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     {
         float hAxis = 0f;
         float vAxis = 0f;
-        if (PlayerState.GetInstance().CanMove())
+        if (_ascRef.GetInputLock().IsOpened())
         {
             hAxis = Input.GetAxis("Horizontal");
             vAxis = Input.GetAxis("Vertical");
@@ -176,21 +176,21 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
             directionPerso = DirectionHelper.FromVector(direction);
         }
 
-        rigidBody.velocity = direction * speed * Time.deltaTime;
+        _rigidBody.velocity = direction * speed * Time.deltaTime;
 
-        if(rigidBody.velocity.magnitude > 0)
+        if(_rigidBody.velocity.magnitude > 0)
         {
-            animator.SetInteger("state", (int)State.Walking);
-            Vector2 velocityMag = rigidBody.velocity;
+            _animator.SetInteger("state", (int)State.Walking);
+            Vector2 velocityMag = _rigidBody.velocity;
             velocityMag.y *= 2f;
             velocityMag = velocityMag.normalized;
 
-            animator.SetFloat("xSpeed", velocityMag.x);
-            animator.SetFloat("ySpeed", velocityMag.y);
+            _animator.SetFloat("xSpeed", velocityMag.x);
+            _animator.SetFloat("ySpeed", velocityMag.y);
         }
         else
         {
-            animator.SetInteger("state", (int)State.Idle);
+            _animator.SetInteger("state", (int)State.Idle);
         }
     }
 
@@ -215,14 +215,6 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 
     private void FixedUpdate()
     {
-        if (_ascRef.GetInputLock().IsOpened())
-        {
-            PlayerState.GetInstance().UnlockInput();
-        }
-        else
-        {
-            PlayerState.GetInstance().LockInput();
-        }
         Move();
     }
 
@@ -261,5 +253,20 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     public void OnEvent(string context)
     {
         AppState.GetInstance().getItems()[context]--;
+    }
+
+    public void LockInput()
+    {
+        _ascRef.GetInputLock().Take();
+    }
+
+    public void UnlockInput()
+    {
+        _ascRef.GetInputLock().Release();
+    }
+
+    public Animator GetAnimator()
+    {
+        return _animator;
     }
 }

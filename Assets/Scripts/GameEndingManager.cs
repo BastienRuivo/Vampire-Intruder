@@ -1,6 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static GameEndingManager;
 
 
 public class GameEndingManager : MonoBehaviour
@@ -62,23 +64,33 @@ public class GameEndingManager : MonoBehaviour
         }
         
         SceneManager.LoadScene("Story");
-
     }
 
-    public void onPlayerDeath(GameOverState gameOverState){
-        if(gameOverState == GameOverState.Caught)
+    public void onPlayerDeath(GameOverState gameOverState)
+    {
+        StartCoroutine(DeathCoroutine(gameOverState));
+    }
+
+    public IEnumerator DeathCoroutine(GameOverState gameOverState)
+    {
+        while (!GameController.GetInstance().endFadeIn)
         {
-            
-            AppState.GetInstance().endLevel(false,false,true,false);
-        } 
-        else if(gameOverState == GameOverState.Dead)
-        {
-            AppState.GetInstance().endLevel(false,false,false,true);
-        } 
-        else if(gameOverState == GameOverState.TimeEnd)
-        {
-            AppState.GetInstance().endLevel(false,true,false,false);
+            yield return null;
         }
+        if (gameOverState == GameOverState.Caught)
+        {
+            AppState.GetInstance().endLevel(false, false, true, false);
+        }
+        else if (gameOverState == GameOverState.Dead)
+        {
+            AppState.GetInstance().endLevel(false, false, false, true);
+        }
+        else if (gameOverState == GameOverState.TimeEnd)
+        {
+            AppState.GetInstance().endLevel(false, true, false, false);
+        }
+
+
 
         SceneManager.LoadScene("Story");
     }
