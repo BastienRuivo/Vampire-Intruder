@@ -6714,11 +6714,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4951410592992516583, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
       propertyPath: width
-      value: 24
+      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 4951410592992516583, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
       propertyPath: height
-      value: 20
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 4951410592992516583, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
       propertyPath: localGraphPosition.x

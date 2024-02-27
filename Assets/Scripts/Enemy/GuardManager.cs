@@ -144,14 +144,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
     private VisionSystemController _visionSystemController;
 
-    
-    
-    
-    private float _foVThetaMin;
-    private float _foVThetaMax;
-
-    private bool _playerInFOV;
-    private bool _playerInRange;
+    private AudioSource _footstepSource;
     
     private Animator _animator;
     private Transform _cameraPos;
@@ -171,6 +164,8 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         _visionSystemController.OnOverlapChanged.Subscribe(this);
 
         _playerController = PlayerState.GetInstance().GetPlayerController();
+
+        _footstepSource = GetComponent<AudioSource>();
     }
     private void Start()
     {
@@ -255,7 +250,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     {
         if (p.error)
         {
-            Debug.Log("Error in path");
+            Debug.Log("Error in path for guard in room " + _currentRoom.name + " with target " + _pathfindTarget.name);
             return;
         }
         _currentPath = p;
@@ -266,7 +261,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     {
         get
         {
-            //Debug.Log(_targets.Count + " > " + _ignoredTargets.Count);
             return _targets.Count - (_ignoredTargets.Count - _ignoredTargetsLeaved) > 0;
         }
     }
@@ -549,8 +543,10 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         {
             _currentWaitingTimer = Mathf.Max(0f, _currentWaitingTimer - Time.deltaTime);
             // Go to idle if moving really slow
-            if (_body.velocity.magnitude < 0.25)
+            if (_body.velocity.magnitude < 0.125)
             {
+
+
                 _animator.SetInteger("state", (int)AnimationState.IDLE);
             }
             // Compute current dir on node and change direction to seek for player
@@ -638,7 +634,12 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             else if (dir.y < -e) vAx = -1f;
             _animator.SetFloat("xSpeed", Mathf.Lerp(px, hAx, Time.deltaTime));
             _animator.SetFloat("ySpeed", Mathf.Lerp(py, vAx, Time.deltaTime));
-            if(currentTarget != null)
+            //if (!_footstepSource.isPlaying)
+            //{
+            //    _footstepSource.Play();
+            //}
+
+            if (currentTarget != null)
             {
                 _animator.SetInteger("state", (int)AnimationState.RUNNING);
             }
@@ -647,6 +648,13 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                 _animator.SetInteger("state", (int)AnimationState.WALKING);
             }
 
+        }
+        else
+        {
+            //if (_footstepSource.isPlaying)
+            //{
+            //    _footstepSource.Stop();
+            //}
         }
 
 
@@ -829,6 +837,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         if(!context.Target.CompareTag("Targetable")) return;
         Targetable targetable = context.Target.GetComponent<Targetable>();
         if (!targetable.IsVisibleByGuard) return;
+        
         if(context.BeginOverlap)
         {
             Debug.Log(targetable.name + "is entering guard sight");

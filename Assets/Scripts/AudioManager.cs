@@ -29,9 +29,13 @@ public class AudioManager : Singleton<AudioManager>
     //     audioSource.Play();
     // }
 
-    public AudioSource playClip(AudioClip song, Vector3 pos){
+    public AudioSource playClip(AudioClip song, Vector3 pos, Transform parent = null){
         GameObject temp = new GameObject("TemAudio");
         temp.transform.position = pos;
+        if(parent != null)
+        {
+            temp.transform.parent = parent;
+        }
         AudioSource audioSource = temp.AddComponent<AudioSource>();
         audioSource.clip = song;
         //audioSource.outputAudioMixerGroup = soundEffectMixeur;

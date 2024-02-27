@@ -115,6 +115,7 @@ MonoBehaviour:
   speedZoom: 50
   currentZoom: 2.1
   directionPerso: 0
+  footstep: {fileID: 8300000, guid: 2679214099c84bf41b3c450ca06fefb3, type: 3}
 --- !u!95 &5108974979676792213
 Animator:
   serializedVersion: 5

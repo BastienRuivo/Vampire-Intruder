@@ -158,11 +158,13 @@ public class GameController : Singleton<GameController>
 
         Debug.Log("There is " + objectivesToComplete.Count + " Objectives");
         Debug.Log("Main is in" + main);
-        objectives.Sort((a, b) =>
+        objectivesToComplete.Sort((a, b) =>
         {
-            if (a.isMainObjective) return 1;
-            else if(b.isMainObjective) return -1;
-            else return a.reference.CompareTo(b.reference);
+            Debug.Log(a.reference + " , " + b.reference);
+            Debug.Log(a.isMain + " , " + b.isMain);
+            if (a.isMain) return -1;
+            else if(b.isMain) return 1;
+            else return a.phrase.CompareTo(b.phrase);
         });
     }
 

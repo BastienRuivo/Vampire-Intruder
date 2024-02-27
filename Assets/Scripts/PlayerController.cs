@@ -35,9 +35,11 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     private Animator _animator;
     private Rigidbody2D _rigidBody;
     public Direction directionPerso;//todo cleanup this trash
-    
+
     private AbilitySystemComponent _ascRef;
     private InputToVisionSystemBehavior[] _coneBehaviors;
+
+    private AudioSource _footstep;
 
     private enum State
     {
@@ -70,6 +72,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     {
         _animator = GetComponent<Animator>();
         _rigidBody = GetComponent<Rigidbody2D>();
+        _footstep = GetComponent<AudioSource>();
         
         _ascRef = GetComponent<AbilitySystemComponent>();
         _coneController = visionObject.GetComponent<VisionConeController>();
@@ -154,6 +157,7 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         {
             return;
         }
+
         playerCamera.orthographicSize = currentZoom;
         //float dzoom = speedZoom * Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 10.0f;
     }
@@ -187,10 +191,18 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
 
             _animator.SetFloat("xSpeed", velocityMag.x);
             _animator.SetFloat("ySpeed", velocityMag.y);
+            if (!_footstep.isPlaying)
+            {
+                _footstep.Play();
+            }
         }
         else
         {
             _animator.SetInteger("state", (int)State.Idle);
+            if (_footstep.isPlaying)
+            {
+                _footstep.Stop();
+            }
         }
     }
 

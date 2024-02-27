@@ -53563,11 +53563,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4959566679046247321, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: width
-      value: 52
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 4959566679046247321, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: height
-      value: 56
+      value: 68
       objectReference: {fileID: 0}
     - target: {fileID: 4959566679046247321, guid: 2580deec1e94445408384be37a2f3f30, type: 3}
       propertyPath: localGraphPosition.x
