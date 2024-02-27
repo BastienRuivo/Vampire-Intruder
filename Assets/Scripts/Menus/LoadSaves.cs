@@ -31,12 +31,12 @@ public class LoadSaves : MonoBehaviour
                 int runNumber = PlayerPrefs.GetInt("runNumber" + ((i % 3 + 1))) + 1;
                 int levelNumber = PlayerPrefs.GetInt("levelNumber" + ((i % 3) + 1)) + 1;
 
-                descriptions[i].text = "Run n�" + runNumber
-                    + " - Niveau n�" + levelNumber
+                descriptions[i].text = "Run " + runNumber
+                    + " - Niveau " + levelNumber
                     + " - " + PlayerPrefs.GetInt("day" + ((i % 3) + 1))
                     + "/" + PlayerPrefs.GetInt("month" + ((i % 3) + 1))
                     + "/" + PlayerPrefs.GetInt("year" + ((i % 3) + 1))
-                    + " � " + PlayerPrefs.GetInt("hour" + ((i % 3) + 1))
+                    + " - " + PlayerPrefs.GetInt("hour" + ((i % 3) + 1))
                     + "h" + PlayerPrefs.GetInt("minute" + ((i % 3) + 1))
                     + "m" + PlayerPrefs.GetInt("second" + ((i % 3) + 1)) + "s";
 
@@ -47,11 +47,9 @@ public class LoadSaves : MonoBehaviour
                 }
 
                 // Screenshot
-                #if UNITY_EDITOR
-                Sprite captureSprite = (Sprite) AssetDatabase.LoadAssetAtPath<Sprite>(
-                    "Assets/Resources/Graphics/Menus/Screenshot" + ((i % 3) + 1) + ".png");
+
+                Sprite captureSprite = Resources.Load<Sprite>($"Graphics/Menus/Screenshot{(i % 3) + 1}");
                 captures[i].GetComponent<Image>().sprite = captureSprite;
-                #endif
             }
         }
     }

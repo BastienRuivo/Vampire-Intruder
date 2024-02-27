@@ -181,7 +181,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 78f8afc9f07f37340a25c802b78eeb39, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ab8e6f3ebbf2dc948b1d2886a0dffacf, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1092,7 +1092,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 70c4c7922eb877145a72180a6ba1520f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d2e8125768658db4dbb98fc35dd225de, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1287,7 +1287,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 
 --- !u!222 &435822887
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1833,7 +1833,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 
 --- !u!222 &803709105
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2002,7 +2002,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 
 --- !u!222 &934782542
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2376,7 +2376,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 
 --- !u!222 &1027361632
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2398,7 +2398,7 @@ GameObject:
   - component: {fileID: 1074347478}
   - component: {fileID: 1074347480}
   m_Layer: 5
-  m_Name: Elric
+  m_Name: Elrik
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2443,7 +2443,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e4a943caa6516d24a9ff8021218e9663, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9bc991e75584324468afc50e926a503d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2694,7 +2694,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 06086254d1b67e04ea2cdd1362af76ce, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 062831b34abd0934fbc6a998e5dba847, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3080,7 +3080,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 
 --- !u!222 &1389619033
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3668,7 +3668,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 
 --- !u!222 &1579211420
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3935,7 +3935,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: 
 --- !u!222 &1808939635
 CanvasRenderer:
   m_ObjectHideFlags: 0

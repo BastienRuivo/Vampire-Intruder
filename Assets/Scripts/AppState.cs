@@ -99,7 +99,7 @@ public class AppState : Singleton<AppState>
         new Level(0.21f, 0, "_DisplaySword", "Crochetez la vitrine contenant l'épée marquée", "Tartanpion"),
         new Level(0.39f, 0, "_StoleScroll", "Volez la lettre du Cardinal de Rohan au Roi", "Tagazok"),
         // RUN 1
-        new Level(0.41f, 1, "_StealPriestNote", "Lire le journal intime du Cardinal de Rohan", "Et"),
+        new Level(0.41f, 1, "_StealPriestNote", "Lisez le journal intime du Cardinal de Rohan", "Et"),
         new Level(0.59f, 2, "_ChestToOpen", "Volez l'argent du coffre du Comte de la Motte", "Puis"),
         // RUN 2
         new Level(0.61f, 3, "_StoleScroll", "Volez une lettre portant la signature de la Reine", "Baston"),
