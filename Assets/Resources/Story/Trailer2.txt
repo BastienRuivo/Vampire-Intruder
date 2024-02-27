@@ -11,4 +11,4 @@ Ah... Je vois.
 @@@Background Corridor J 2 Jessika Neutral 0 Ellena Fear 0
 @@@SetFrame 3
 1 J Jessika Jessika Cry 1
-Ellena, non...\nNooooon !
+Ellena, non...@Nooooon !

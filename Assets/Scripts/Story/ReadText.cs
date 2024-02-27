@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System.Text.RegularExpressions;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -1441,8 +1443,8 @@ public class ReadText : Singleton<ReadText>
             }
         }
 
-        //Initialize(dialogName, -1);
-        Initialize("Trailer", -1);
+        Initialize(dialogName, -1);
+        //Initialize("Trailer", -1);
 	}
 
 	/// <summary>
@@ -1858,11 +1860,11 @@ public class ReadText : Singleton<ReadText>
 					// Read the narration lines
 					string[] narrationLines;
 					// Cut in two lines
-					string[] lines1 = this.lines[++currentLineNumber].Split('\n');
+					string[] lines1 = this.lines[++currentLineNumber].Split('@');
 					// If more than one part, cut the subparts
 					if (lines1.Length > 1)
 					{
-						string[] lines2 = lines1[1].Split(new string[] { "\\n" }, 12, StringSplitOptions.None);
+						string[] lines2 = lines1[1].Split(new string[] { "@" }, 12, StringSplitOptions.None);
 						narrationLines = new string[lines2.Length + 1];
 						// Get the first part and all the next parts
 						for (int i = 0; i < narrationLines.Length; i++)
@@ -2279,9 +2281,6 @@ public class ReadText : Singleton<ReadText>
     /// </summary>
     private void LoadDialog(string filename)
 	{
-        // The dialog path
-        string path = "Assets/Resources/Story/" + filename + ".txt";
-
 		// The current line
 		string line;
 
@@ -2294,26 +2293,27 @@ public class ReadText : Singleton<ReadText>
 		int narrationsNumber = 0;
 		int choiceNumber = 0;
 
-		// Read the file once to find the commands and narrations
-		StreamReader sr = new StreamReader(path);
-		using (sr)
-		{
-			do
+        // The dialog file
+        TextAsset textFile = Resources.Load<TextAsset>($"Story/{filename}");
+        string[] fileTextLines = Regex.Split(textFile.ToString(), "\n|\r|\r\n|\n\r");
+
+        // Read the file once to find the commands and narrations
+
+        int lineCount = 0;
+        for (int l = 0; l < fileTextLines.Length; l++)
+        {
+            line = fileTextLines[l];
+			if (line != "")
 			{
-				line = sr.ReadLine();
-				if (line != null)
-				{
-					if (line.Length > 2 && line.Substring(0, 3) == "@@@") commandsNumber++;
-					if(line.Length > 11 && line.Substring(0, 12) == "@@@Narration") narrationsNumber++;
-					if(line.Length > 8 && line.Substring(0, 9) == "@@@Choice") choiceNumber++;
-				}
+				if (line.Length > 2 && line.Substring(0, 3) == "@@@") commandsNumber++;
+				if(line.Length > 11 && line.Substring(0, 12) == "@@@Narration") narrationsNumber++;
+				if(line.Length > 8 && line.Substring(0, 9) == "@@@Choice") choiceNumber++;
+                lineCount++;
 			}
-			while (line != null);
 		}
-		sr.Close();
 
 		// Count the number of dialogue lines
-		linesNumber = (File.ReadLines(@path).Count() - commandsNumber - narrationsNumber - choiceNumber) / 2
+		linesNumber = (lineCount - commandsNumber - narrationsNumber - choiceNumber) / 2
 			+ commandsNumber + narrationsNumber + choiceNumber;
 
 		// The dialog lists parameters to fill
@@ -2332,130 +2332,125 @@ public class ReadText : Singleton<ReadText>
         //////////////////////////////
 
         // Read the file line by line
-        sr = new StreamReader(path);
-		using (sr) {
-			do
+        for (int l = 0; l < fileTextLines.Length; l++)
+        {
+            // Read the line
+            line = fileTextLines[l];
+
+            //////////////////////////
+            /////// PARAMETERS ///////
+            //////////////////////////
+
+            // If the line is not null
+            if (line != "")
 			{
-				// Read the line
-				line = sr.ReadLine();
+                ////////////////////////
+                /////// COMMANDS ///////
+                ////////////////////////
 
-                //////////////////////////
-                /////// PARAMETERS ///////
-                //////////////////////////
-
-                // If the line is not null
-                if (line != null)
+                if (line.Length > 2 && line.Substring(0, 3) == "@@@")
 				{
-                    ////////////////////////
-                    /////// COMMANDS ///////
-                    ////////////////////////
+					// Put the command line in lines
+					lines[i] = line;
+					// No expression, no name
+					expressions[i] = null;
+					names[i] = "";
 
-                    if (line.Length > 2 && line.Substring(0, 3) == "@@@")
+					// Narration
+					if (line.Length > 11 && line.Substring(0, 12) == "@@@Narration")
 					{
-						// Put the command line in lines
-						lines[i] = line;
-						// No expression, no name
-						expressions[i] = null;
-						names[i] = "";
+						// Get the narration name
+						names[i + 1] = "";
+						string[] words = line.Split(' ');
+						string name = words[1];
+						name = name.Replace('_', ' ');
+						names[i + 1] = name;
+					}
+                    // Next scene
+                    if (line.Length > 7 && line.Substring(0, 8) == "@@@Scene")
+                    {
+                        string[] mots = line.Split(' ');
+                        nextSceneNumber = int.Parse(mots[1]);
+                        nextLevelNumber = int.Parse(mots[2]);
+                        nextDialogFile = "null";
+                    }
+                    // Next dialog
+                    if (line.Length > 6 && line.Substring(0, 7) == "@@@Next")
+                    {
+                        string[] mots = line.Split(' ');
+                        nextDialogFile = mots[1];
+                        nextSceneNumber = -10;
+                        nextLevelNumber = -10;
+                    }
 
-						// Narration
-						if (line.Length > 11 && line.Substring(0, 12) == "@@@Narration")
+					// Default text box
+					textBoxes[i] = '0';
+
+					// Next line
+					i++;
+				}
+				else
+				{
+                    ////////////////////////////
+                    /////// DIALOG LINES ///////
+                    ////////////////////////////
+							
+                    string[] words = line.Split(' ');
+					int charactersNumber;
+							
+					// If the first word is an integer, this is a character description
+					if (int.TryParse(words[0], out charactersNumber))
+					{
+						// Box type
+						textBoxes[i] = words[1][0];
+
+						// Name
+						string name = words[2];
+						name = name.Replace('_', ' ');
+						names[i] = name;
+
+						// Characters ID and expression
+						characters[i] = new int[charactersNumber];
+						expressions[i] = new int[charactersNumber];
+						isSpeaking[i] = new bool[charactersNumber];
+
+						for (int j = 0; j < charactersNumber; j++)
 						{
-							// Get the narration name
-							names[i + 1] = "";
-							string[] words = line.Split(' ');
-							string name = words[1];
-							name = name.Replace('_', ' ');
-							names[i + 1] = name;
+							// Character
+                            string characterName = words[3 + j * 3];
+							characters[i][j] = possibleCharacters[characterName];
+								
+							// Expression
+							string characterExpression = words[4 + j * 3];
+							expressions[i][j] = possibleExpressions[characterExpression];
+                               
+							// Speaking
+							isSpeaking[i][j] = int.Parse(words[5 + j * 3]) == 1;
 						}
-                        // Next scene
-                        if (line.Length > 7 && line.Substring(0, 8) == "@@@Scene")
-                        {
-                            string[] mots = line.Split(' ');
-                            nextSceneNumber = int.Parse(mots[1]);
-                            nextLevelNumber = int.Parse(mots[2]);
-                            nextDialogFile = "null";
-                        }
-                        // Next dialog
-                        if (line.Length > 6 && line.Substring(0, 7) == "@@@Next")
-                        {
-                            string[] mots = line.Split(' ');
-                            nextDialogFile = mots[1];
-                            nextSceneNumber = -10;
-                            nextLevelNumber = -10;
-                        }
-
-						// Default text box
-						textBoxes[i] = '0';
+                    }
+					// If the first word is not an integer, this is a dialog line
+					else
+					{
+						// Get the line return (if there is one)
+						int place = line.IndexOf(@"@");
+						if (place != -1)
+						{
+							// If there is one, put the line return in the line
+							string part1 = line.Substring(0, place);
+							string part2 = line.Substring(place + 1, line.Length - place - 1);
+							lines[i] = part1 + "\n" + part2;
+						}
+						else
+						{
+							lines[i] = line;
+						}
 
 						// Next line
 						i++;
 					}
-					else
-					{
-                        ////////////////////////////
-                        /////// DIALOG LINES ///////
-                        ////////////////////////////
-							
-                        string[] words = line.Split(' ');
-						int charactersNumber;
-							
-						// If the first word is an integer, this is a character description
-						if (int.TryParse(words[0], out charactersNumber))
-						{
-							// Box type
-							textBoxes[i] = words[1][0];
-
-							// Name
-							string name = words[2];
-							name = name.Replace('_', ' ');
-							names[i] = name;
-
-							// Characters ID and expression
-							characters[i] = new int[charactersNumber];
-							expressions[i] = new int[charactersNumber];
-							isSpeaking[i] = new bool[charactersNumber];
-
-							for (int j = 0; j < charactersNumber; j++)
-							{
-								// Character
-                                string characterName = words[3 + j * 3];
-								characters[i][j] = possibleCharacters[characterName];
-								
-								// Expression
-								string characterExpression = words[4 + j * 3];
-								expressions[i][j] = possibleExpressions[characterExpression];
-                               
-								// Speaking
-								isSpeaking[i][j] = int.Parse(words[5 + j * 3]) == 1;
-							}
-                        }
-						// If the first word is not an integer, this is a dialog line
-						else
-						{
-							// Get the line return (if there is one)
-							int place = line.IndexOf(@"\n");
-							if (place != -1)
-							{
-								// If there is one, put the line return in the line
-								string part1 = line.Substring(0, place);
-								string part2 = line.Substring(place + 2, line.Length - place - 2);
-								lines[i] = part1 + "\n" + part2;
-							}
-							else
-							{
-								lines[i] = line;
-							}
-
-							// Next line
-							i++;
-						}
-					}
 				}
 			}
-			while (line != null);
 		}
-		sr.Close();
 	}
 
     /////////////////////////////
