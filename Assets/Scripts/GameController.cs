@@ -31,12 +31,14 @@ public class GameController : Singleton<GameController>
         public ObjectiveState state;
         public string reference;
         public string phrase;
-        public Objective(bool isMain, string reference, string phrase, ObjectiveState state)
+        public GameObject gameObject;
+        public Objective(bool isMain, string reference, string phrase, ObjectiveState state, GameObject gameObject)
         {
             this.isMain = isMain;
             this.reference = reference;
             this.phrase = phrase;
             this.state = state;
+            this.gameObject = gameObject;
         }
     }
 
@@ -115,7 +117,7 @@ public class GameController : Singleton<GameController>
             else if (isMain || (nbObjectives > 0 && UnityEngine.Random.Range(0, 100) > 75))
             {
                 o.isMainObjective= isMain;
-                Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
+                Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS, o.gameObject);
                 if (isMain)
                 {
                     _main = obj;
@@ -145,7 +147,7 @@ public class GameController : Singleton<GameController>
                 continue;
             }
 
-            Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS);
+            Objective obj = new Objective(o.isMainObjective, o.reference, o.objectivePhrase, ObjectiveState.UKNOWN_POS, o.gameObject);
             objectivesToComplete.Add(obj);
             chosenRefs.Add(o.reference);
             nbObjectives--;
@@ -460,11 +462,24 @@ public class GameController : Singleton<GameController>
     void Update()
     {
         UpdateGameStatus();
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            PlayerState.GetInstance().transform.position = _main.gameObject.transform.position;
+            RoomData r = _main.gameObject.GetComponentInParent<RoomData>(true);
+            r.gameObject.SetActive(true);
+            RoomData prev = PlayerState.GetInstance().currentRoom;
+            r.SetCurrent(prev);
+            OnRoomChange(r);
+        }
+
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            PlayerState.GetInstance().ToggleCollisions();
+        }
     }
 
     public void OnRoomChange(RoomData activeRoot)
     {
-
         activesRoom = activeRoot.GetConnectedRooms();
         rooms.ForEach(r =>
         {

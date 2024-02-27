@@ -27,4 +27,10 @@ public class PlayerState : Singleton<PlayerState>
         return _endLock;
     }
 
+    public void ToggleCollisions()
+    {
+        CapsuleCollider2D coll = GetComponent<CapsuleCollider2D>();
+        coll.enabled = !coll.enabled;
+    }
+
 }
