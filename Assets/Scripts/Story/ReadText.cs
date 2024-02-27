@@ -1441,8 +1441,8 @@ public class ReadText : Singleton<ReadText>
             }
         }
 
-        Initialize(dialogName, -1);
-        //Initialize("Trailer", -1);
+        //Initialize(dialogName, -1);
+        Initialize("Trailer", -1);
 	}
 
 	/// <summary>
@@ -1632,6 +1632,7 @@ public class ReadText : Singleton<ReadText>
 		// Black background fading in animation
         if (fadingIn)
 		{
+            fadingOut = false;
 			// Make the fading in animation
 			blackObject.GetComponent<Image>().color = new Vector4(1.0f, 1.0f, 1.0f, blackObject.GetComponent<Image>().color.a + Time.deltaTime);
 			
@@ -1646,6 +1647,7 @@ public class ReadText : Singleton<ReadText>
 		// Black background fading out animation
 		if (fadingOut)
 		{
+            fadingIn = false;
 			// Make the fading out animation
 			blackObject.GetComponent<Image>().color = new Vector4(1.0f, 1.0f, 1.0f, blackObject.GetComponent<Image>().color.a - Time.deltaTime);
 

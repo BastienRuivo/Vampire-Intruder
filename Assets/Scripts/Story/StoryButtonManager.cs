@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using Unity.VisualScripting;
 
 /// <summary>
 /// Manage the story mode buttons
@@ -93,6 +94,7 @@ public class StoryButtonManager : MonoBehaviour
 	{
         // Goes to the dialog end
         int[] nextSceneAndLevel = GetComponent<ReadText>().getNextScene();
+        StopAllCoroutines();
         StartCoroutine(GetComponent<ReadText>().ChangeScene(nextSceneAndLevel[0], nextSceneAndLevel[1]));
 	}
 
@@ -228,6 +230,10 @@ public class StoryButtonManager : MonoBehaviour
 
         confirmMenu.SetActive(false);
         savesMenu.SetActive(true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        savesMenu.GetComponent<LoadSaves>().ReloadInformations();
     }
 
     /// <summary>
@@ -236,9 +242,6 @@ public class StoryButtonManager : MonoBehaviour
     public void OnConfirmSave1Clicked()
     {
         // Make and save the screenshot
-        savesConfirms[0].SetActive(false);
-        confirmMenu.SetActive(false);
-        savesMenu.SetActive(false);
 		StartCoroutine(waitForCapture(1));
 
         // Save on the first
@@ -254,10 +257,7 @@ public class StoryButtonManager : MonoBehaviour
 		float[] currentPositions = GetComponent<ReadText>().getCurrentPositions();
         appState.Save(1, dialogName, currentLine, isGameScene,
             currentBackground, currentFrame, currentTextBox,
-            currentCharacters, currentExpressions, currentPositions); ;
-
-		// Print
-        savesMenu.GetComponent<LoadSaves>().ReloadInformations();
+            currentCharacters, currentExpressions, currentPositions);
     }
 
     /// <summary>
@@ -282,11 +282,6 @@ public class StoryButtonManager : MonoBehaviour
         appState.Save(2, dialogName, currentLine, isGameScene,
             currentBackground, currentFrame, currentTextBox,
             currentCharacters, currentExpressions, currentPositions); ;
-
-        // Print
-        savesMenu.GetComponent<LoadSaves>().ReloadInformations();
-        confirmMenu.SetActive(false);
-        savesMenu.SetActive(true);
     }
 
     /// <summary>
@@ -295,9 +290,6 @@ public class StoryButtonManager : MonoBehaviour
     public void OnConfirmSave3Clicked()
     {
         // Make and save the screenshot
-        savesConfirms[2].SetActive(false);
-        confirmMenu.SetActive(false);
-        savesMenu.SetActive(false);
         StartCoroutine(waitForCapture(3));
 
         // Save on the third
@@ -314,11 +306,6 @@ public class StoryButtonManager : MonoBehaviour
         appState.Save(3, dialogName, currentLine, isGameScene,
             currentBackground, currentFrame, currentTextBox,
             currentCharacters, currentExpressions, currentPositions); ;
-
-        // Print
-        savesMenu.GetComponent<LoadSaves>().ReloadInformations();
-        confirmMenu.SetActive(false);
-        savesMenu.SetActive(true);
     }
 
     /// <summary>
