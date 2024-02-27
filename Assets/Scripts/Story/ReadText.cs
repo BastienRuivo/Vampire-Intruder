@@ -61,7 +61,7 @@ public class ReadText : Singleton<ReadText>
 	private SortedDictionary<string, int> possibleCharacters;	// All the possible characters
 	private SortedDictionary<string, int> possibleExpressions;	// All the possible expressions
 	private SortedDictionary<string, int> possibleBackgrounds;	// All the possible backgrounds
-	private SortedDictionary<char, int> possibleTextBoxes;	// All the possible text boxes
+	private SortedDictionary<char, int> possibleTextBoxes;	    // All the possible text boxes
 
     // Private code variables
     private int linesNumber = 0;					// The number of dialog lines
@@ -2076,8 +2076,11 @@ public class ReadText : Singleton<ReadText>
 			position * GetComponent<RectTransform>().rect.size.y * 0.3f,
 			0.0f, 0.0f);
 
-		// Fade In Out animation
-		charactersObjects[character].GetComponent<FadeInOut>().LaunchFadeIn();
+        // Change the character expression
+        charactersObjects[character].GetComponent<ChangeExpressions>().ChangeExpression(idExpression, false);
+
+        // Fade In Out animation
+        charactersObjects[character].GetComponent<FadeInOut>().LaunchFadeIn();
 
         // Save parameter
         currentCharacters[character] = true;
