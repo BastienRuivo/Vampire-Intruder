@@ -122,7 +122,14 @@ public class ReadText : Singleton<ReadText>
         };
         possibleBackgrounds = new SortedDictionary<string, int>
         {
-            {"Narration", 0}, {"Day", 1}, {"Evening", 2}, {"Night", 3}
+            {"Narration", 0}, {"Day", 1}, {"Evening", 2}, {"Night", 3},
+            {"Alley1", 4}, {"Alley2", 5}, {"Antechamber", 6}, {"Corridor", 7},
+            {"EllenaBedroom", 8}, {"ElrikBedroom", 9}, {"JessikaBedroom", 10}, {"LivingRoom", 11},
+            {"Manor1", 12}, {"Manor2", 13}, {"Manor3", 14}, {"Manor4", 15},
+            {"Manor5", 16}, {"Manor6", 17}, {"Manor7", 18}, {"Manor8", 19},
+            {"Manor9", 20}, {"ManorHall1", 21}, {"ManorHall2", 22}, {"ManorHall3", 23},
+            {"Office", 24}, {"Prison1", 25}, {"Prison2", 26}, {"Prison3", 27},
+            {"ReceptionHall", 28}, {"SecretRoom", 29}, {"Versailles1", 30}, {"Versailles2", 31}
         };
         possibleTextBoxes = new SortedDictionary<char, int>
         {
@@ -1435,7 +1442,7 @@ public class ReadText : Singleton<ReadText>
         }
 
         Initialize(dialogName, -1);
-        //Initialize("0", -1);
+        //Initialize("Trailer", -1);
 	}
 
 	/// <summary>
@@ -1794,7 +1801,7 @@ public class ReadText : Singleton<ReadText>
 					string characterExpression = mots[3];
 					CharacterDisappear(possibleCharacters[characterName]);
 					CharacterAppear(possibleCharacters[characterName],
-						1.0f, possibleExpressions[characterExpression]);
+						1.5f, possibleExpressions[characterExpression]);
 
 					// Choices parameters
 					int choiceNumber = int.Parse(mots[4]);
@@ -2064,7 +2071,7 @@ public class ReadText : Singleton<ReadText>
 		// Change the character position
 		charactersObjects[character].transform.position = originalCharactersObjects[character].transform.position
 			+ new Vector3(
-			position * GetComponent<RectTransform>().rect.size.y * 0.2f,
+			position * GetComponent<RectTransform>().rect.size.y * 0.3f,
 			0.0f, 0.0f);
 
 		// Fade In Out animation
