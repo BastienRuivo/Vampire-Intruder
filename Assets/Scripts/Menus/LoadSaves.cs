@@ -1,6 +1,9 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 public class LoadSaves : MonoBehaviour
 {
@@ -16,7 +19,9 @@ public class LoadSaves : MonoBehaviour
 
     public void ReloadInformations()
     {
+        #if UNITY_EDITOR
         AssetDatabase.Refresh();
+        #endif
 
         for (int i = 0; i < captures.Length; i++)
         {
@@ -26,12 +31,12 @@ public class LoadSaves : MonoBehaviour
                 int runNumber = PlayerPrefs.GetInt("runNumber" + ((i % 3 + 1))) + 1;
                 int levelNumber = PlayerPrefs.GetInt("levelNumber" + ((i % 3) + 1)) + 1;
 
-                descriptions[i].text = "Run n°" + runNumber
-                    + " - Niveau n°" + levelNumber
+                descriptions[i].text = "Run nï¿½" + runNumber
+                    + " - Niveau nï¿½" + levelNumber
                     + " - " + PlayerPrefs.GetInt("day" + ((i % 3) + 1))
                     + "/" + PlayerPrefs.GetInt("month" + ((i % 3) + 1))
                     + "/" + PlayerPrefs.GetInt("year" + ((i % 3) + 1))
-                    + " à " + PlayerPrefs.GetInt("hour" + ((i % 3) + 1))
+                    + " ï¿½ " + PlayerPrefs.GetInt("hour" + ((i % 3) + 1))
                     + "h" + PlayerPrefs.GetInt("minute" + ((i % 3) + 1))
                     + "m" + PlayerPrefs.GetInt("second" + ((i % 3) + 1)) + "s";
 
@@ -42,9 +47,11 @@ public class LoadSaves : MonoBehaviour
                 }
 
                 // Screenshot
+                #if UNITY_EDITOR
                 Sprite captureSprite = (Sprite) AssetDatabase.LoadAssetAtPath<Sprite>(
                     "Assets/Resources/Graphics/Menus/Screenshot" + ((i % 3) + 1) + ".png");
                 captures[i].GetComponent<Image>().sprite = captureSprite;
+                #endif
             }
         }
     }

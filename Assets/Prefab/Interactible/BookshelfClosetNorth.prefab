@@ -57,8 +57,12 @@ PrefabInstance:
       value: _bookShelfGlass
       objectReference: {fileID: 0}
     - target: {fileID: 4783516749485578990, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
+      propertyPath: isMainObjective
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4783516749485578990, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: objectivePhrase
-      value: "Prendre l'\xE9xemplaire de Vampirae Obscura"
+      value: Prenez l'exemplaire de Vampirae Obscura
       objectReference: {fileID: 0}
     - target: {fileID: 4783516749485578990, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: replacementSprite

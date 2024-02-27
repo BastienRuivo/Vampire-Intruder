@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3126822427458392918, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: m_Name
-      value: BookshelfFat
+      value: BookshelfFatEast
       objectReference: {fileID: 0}
     - target: {fileID: 4783516749485578990, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: reference
@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4783516749485578990, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: objectivePhrase
-      value: Volez les notes dissimuler dans les recettes de tatie Dracully
+      value: "Volez les notes dissimul\xE9es dans les recettes de Tatie Dracully"
       objectReference: {fileID: 0}
     - target: {fileID: 4783516749485578990, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: replacementSprite

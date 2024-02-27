@@ -404,7 +404,7 @@ MonoBehaviour:
   afterUse: 0
   replacementSprite: {fileID: 0}
   reference: _Null
-  objectivePhrase: "Caisse pars d\xE9faut, elle est Null."
+  objectivePhrase: "Caisse par d\xE9faut, elle est Null."
   isMainObjective: 0
   passiveGlowColor: {r: 1, g: 1, b: 1, a: 1}
   glowColor: {r: 1, g: 0.9184297, b: 0, a: 1}
@@ -413,6 +413,7 @@ MonoBehaviour:
   duration: 10
   _currentTime: 0
   _isActive: 0
+  dialogOnStart: 
 --- !u!114 &2433332018954054390
 MonoBehaviour:
   m_ObjectHideFlags: 0

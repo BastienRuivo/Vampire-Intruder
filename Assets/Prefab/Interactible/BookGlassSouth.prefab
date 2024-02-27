@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: objectivePhrase
-      value: "Crochetez la vitrine et r\xE9cup\xE9rer le tome de M\xF6rh"
+      value: "Crochetez la vitrine et r\xE9cup\xE9rez le tome de M\xF6rh"
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: replacementSprite
