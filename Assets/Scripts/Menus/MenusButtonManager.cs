@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// Manage the story mode buttons
