@@ -6,28 +6,27 @@ public class AudioManager : Singleton<AudioManager>
 {
     public AudioClip[] playlist;
     public AudioSource audioSource; 
-    //private int indexSong = 0;
+    private int indexSong = 0;
     //public AudioMixerGroup soundEffectMixeur; 
 
-    // void Start()
-    // {
-    //     audioSource.clip = playlist[0];
-    //     audioSource.Play();
-    // }
+    void Start()
+    {
+        audioSource.clip = playlist[0];
+        audioSource.Play();
+    }
 
-    
-    // void Update()
-    // {
-    //     if(!audioSource.isPlaying){
-    //         playNext();
-    //     } 
-    // }
+    void Update()
+    {
+        if(!audioSource.isPlaying){
+            playNext();
+        } 
+    }
 
-    // private void playNext(){
-    //     indexSong = (indexSong + 1) % playlist.Length;
-    //     audioSource.clip = playlist[indexSong];
-    //     audioSource.Play();
-    // }
+    private void playNext(){
+        indexSong = (indexSong + 1) % playlist.Length;
+        audioSource.clip = playlist[indexSong];
+        audioSource.Play();
+    }
 
     public AudioSource playClip(AudioClip song, Vector3 pos, Transform parent = null){
         GameObject temp = new GameObject("TemAudio");
