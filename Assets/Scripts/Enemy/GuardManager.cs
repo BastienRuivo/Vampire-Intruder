@@ -80,6 +80,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     public float timerRefreshTargetable = 0.2f;
     // total Timer to stay Idle when the guard is reaching a target, will be divided by the number of dir to check inside node
     public float timerWaitingBetweenNodes = 2f;
+    public float timerWaitingLure = 4f;
     // total timer to stay idle when the guard is seeking for player
     public float timerWaitingTempNodes = 0.5f;
     // Distance of losing game for player
@@ -87,7 +88,17 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     // Prefab of a node, used to create a temporary node when needed
     public GameObject nodePrefab;
     // percentage of point placement between player and mob when guard see player in vision
-    public float distancePercentageSuspicious = 0.33f;
+    public float distancePercentageSuspicious = 0.5f;
+
+    
+    public enum TimerState
+    {
+        NODE,
+        TEMP,
+        LURE
+    }
+
+    private TimerState _timerState;
 
     [Header("SpotEffect")]
     // Speed when player
@@ -125,8 +136,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     private Rigidbody2D _body;
     // Current waiting timer at node
     private float _currentWaitingTimer = 0f;
-    // Is doing a short or a long timer
-    private bool _fastNodeWaiting = false;
     // current node
     private List<Direction> _directions;
     // Path update coroutine
@@ -330,7 +339,8 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                         }
 
                         alertStage = AlertStage.Suspicious;
-                        _currentWaitingTimer = timerWaitingBetweenNodes * 2f;
+                        _currentWaitingTimer = timerWaitingLure;
+                        _timerState = TimerState.LURE;
                         break;
                 }
             }
@@ -418,7 +428,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                     AudioManager.GetInstance().playClip(_spotSound, transform.position);
                     _speed = spotSpeed;
                     _currentWaitingTimer = 0f;
-                    _fastNodeWaiting = false;
+                    _timerState = TimerState.NODE;
                     Destroy(_tempPathfindTarget);
                     _tempPathfindTarget = null;
                     if(currentTarget.targetType == Targetable.TargetType.PLAYER)
@@ -435,7 +445,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                     GameObject nodeGO = Instantiate(nodePrefab);
                     nodeGO.transform.position = Vector3.Lerp(_body.position, currentTarget.transform.position, distancePercentageSuspicious);
                     _currentWaitingTimer = 0;
-                    _fastNodeWaiting = false;
+                    _timerState = TimerState.NODE;
                     SetTemporaryTarget(nodeGO);
                     Node node = nodeGO.GetComponent<Node>();
                     Direction dir = DirectionHelper.BetweenTwoObjects(gameObject, currentTarget.gameObject);
@@ -545,15 +555,23 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             // Go to idle if moving really slow
             if (_body.velocity.magnitude < 0.125)
             {
-
-
                 _animator.SetInteger("state", (int)AnimationState.IDLE);
             }
             // Compute current dir on node and change direction to seek for player
-            float timer = _fastNodeWaiting ? timerWaitingTempNodes : timerWaitingBetweenNodes;
+            float timer;
+            switch(_timerState)
+            {
+                case TimerState.LURE:
+                    timer = timerWaitingLure; break;
+                case TimerState.TEMP:
+                    timer = timerWaitingTempNodes; break;
+                default:
+                    timer = timerWaitingBetweenNodes; break;
+            }
             int currentDir = (int)((_directions.Count) * (1f - _currentWaitingTimer / timer));
             if(currentDir < _directions.Count)
             {
+                Debug.Log($"{currentDir} < {_directions.Count}");
                 LookAt(DirectionHelper.AngleDeg(_directions[currentDir]));
                 Vector2 d = DirectionHelper.FromDirection(_directions[currentDir]);
                 d = d.normalized;
@@ -573,7 +591,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                 _directions = node.directionsToLook;
                 ChangeTarget(_pathfindTarget);
                 _currentWaitingTimer = timerWaitingTempNodes;
-                _fastNodeWaiting = true;
+                _timerState = TimerState.TEMP;
                 Destroy(_tempPathfindTarget);
                 _tempPathfindTarget = null;
             }
@@ -587,7 +605,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                     if (node.isPathEnd) isPathReversed = !isPathReversed;
                     ChangeTarget(node.NextTarget(isPathReversed));
                     _currentWaitingTimer = timerWaitingBetweenNodes;
-                    _fastNodeWaiting = false;
+                    _timerState = TimerState.NODE;
                 }
             }
             return;

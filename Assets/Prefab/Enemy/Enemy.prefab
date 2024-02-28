@@ -157,10 +157,11 @@ MonoBehaviour:
   timerRefresh: 2
   timerRefreshTargetable: 0.2
   timerWaitingBetweenNodes: 3
+  timerWaitingLure: 4
   timerWaitingTempNodes: 1.5
   caughtDistance: 0.5
   nodePrefab: {fileID: 6393544510777605423, guid: 37de456b571d38b4ab66cfbde9b7c9d3, type: 3}
-  distancePercentageSuspicious: 0
+  distancePercentageSuspicious: 0.5
   spotSpeed: 2000
   camSpeed: 10
   _spotSound: {fileID: 8300000, guid: 5821fc230882ed7478616d752ddc67d2, type: 3}
