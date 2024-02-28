@@ -41,6 +41,7 @@ public class RoomConnector : MonoBehaviour
     {
         for (int i = 0; i < allowedBranch.Length; ++i)
         {
+            Debug.Log("GetFromDice :: " + roll.ToString() + " < " + branchPercentage[i].ToString());
             if (roll < branchPercentage[i])
             {
                 return allowedBranch[i];

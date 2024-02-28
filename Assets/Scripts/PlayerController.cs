@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using DefaultNamespace;
 using Interfaces;
+using Pathfinding;
 using Systems.Ability;
 using Systems.Ability.Abilities;
 using Systems.Ability.tests;
@@ -40,6 +42,19 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
     private InputToVisionSystemBehavior[] _coneBehaviors;
 
     private AudioSource _footstep;
+    public ArrowPointer arrowPointer;
+    private Seeker _seeker;
+    public float nextPointDistance = 1f;
+    // Current player path
+    private Path _currentPath;
+    // Id inside the path
+    private int _currentPointInPath = 0;
+    // Path update coroutine
+    private IEnumerator _updatePathCoroutine;
+    private bool _shouldUpdatePath = true;
+    public Transform _pathfindTarget;
+
+    public float timerRefresh = 0.25f;
 
     private enum State
     {
@@ -73,7 +88,9 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         _animator = GetComponent<Animator>();
         _rigidBody = GetComponent<Rigidbody2D>();
         _footstep = GetComponent<AudioSource>();
-        
+        arrowPointer = GetComponentInChildren<ArrowPointer>();
+        _seeker = GetComponent<Seeker>();
+
         _ascRef = GetComponent<AbilitySystemComponent>();
         _coneController = visionObject.GetComponent<VisionConeController>();
 
@@ -162,6 +179,37 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         //float dzoom = speedZoom * Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 10.0f;
     }
 
+    private IEnumerator UpdatePath()
+    {
+        _shouldUpdatePath = false;
+        while (!GameController.GetInstance().IsLevelLoaded())
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        if (!_seeker.IsDone())
+        {
+            yield return null;
+        }
+            
+        _seeker.StartPath(_rigidBody.position, _pathfindTarget.position, OnPathComplete);
+
+        yield return new WaitForSeconds(timerRefresh);
+        _shouldUpdatePath = true;
+    }
+
+    void OnPathComplete(Path p)
+    {
+        if (p.error)
+        {
+            Debug.Log("Error in path for player with target " + _pathfindTarget.name);
+            return;
+        }
+
+        _currentPath = p;
+        _currentPointInPath = 0;
+        arrowPointer.SetTarget(p.vectorPath[Math.Min(10, p.vectorPath.Count - 1)]);
+    }
+
     void Move()
     {
         float hAxis = 0f;
@@ -206,9 +254,22 @@ public class PlayerController : MonoBehaviour, IEventObserver<VisionSystemContro
         }
     }
 
+    public void SetArrowTarget(Transform target)
+    {
+        _pathfindTarget = target;
+    }
+
     // Update is called once per frame
     void Update()
     {
+
+        if(_shouldUpdatePath && _pathfindTarget != null)
+        {
+            _updatePathCoroutine = UpdatePath();
+            StartCoroutine(_updatePathCoroutine);
+        }
+
+
         ZoomCamera();
         if(_ascRef.GetInputLock().IsOpened())
         {

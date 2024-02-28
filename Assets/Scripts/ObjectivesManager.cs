@@ -9,7 +9,7 @@ public class ObjectivesManager : MonoBehaviour
     private TextMeshProUGUI _textMeshPro;
     private IEnumerator _textCoroutine;
     public Animator _animObjectives;
-    private bool _isUp = false;
+    private bool _isUp = true;
 
     public Color mainColor;
     public Color mainTitleColor;
@@ -20,6 +20,8 @@ public class ObjectivesManager : MonoBehaviour
         _textMeshPro= GetComponent<TextMeshProUGUI>();
         _textCoroutine = UpdateText();
         StartCoroutine(_textCoroutine);
+
+        _animObjectives.SetTrigger("Up");
     }
 
     // Update is called once per frame

@@ -213,4 +213,22 @@ public class RoomData : MonoBehaviour
             yield return null;
         }
     }
+
+    public GuardManager ClosestGuard(Vector3 origin)
+    {
+        float dstMin = float.MaxValue;
+        GuardManager closest = null;
+        foreach(GuardManager guard in guards)
+        {
+            float dst = Vector3.Distance(origin, guard.transform.position);
+            Debug.Log($"dst min {dstMin} / dst {dst}");
+            if (dst < dstMin)
+            {
+                dstMin = dst;
+                closest = guard;
+            }
+        }
+        Debug.Log("Closest ? " + closest.name);
+        return closest;
+    }
 }

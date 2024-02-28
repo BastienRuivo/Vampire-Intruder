@@ -33,6 +33,7 @@ public class Interactible : MonoBehaviour
     public Color glowColor;
     public Color startColor;
     public Color endColor;
+    public RoomData roomData;
 
     private SpriteRenderer _clock;
     private SpriteRenderer _keyTooltip;
@@ -67,6 +68,8 @@ public class Interactible : MonoBehaviour
         _icon = transform.Find("Icon").GetComponent<SpriteRenderer>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
 
+        roomData = GetComponentInParent<RoomData>();
+
         _glows = GetComponents<Glow>();
 
         _clock.material.SetColor("_Start_Color", startColor);
@@ -76,21 +79,21 @@ public class Interactible : MonoBehaviour
 
     public void StartCollision()
     {
-        if (!GameController.GetInstance().IsLevelLoaded()) return;
-        _isColliding = true;
+        if (roomData != PlayerState.GetInstance().currentRoom) return;
         if (_isActive)
         {
             if (afterUse == AfterUse.END_LVL)
             {
+                if (!GameController.GetInstance().HasObtainedMainObjective)
+                {
+                    return;
+                }
                 GameController.GetGameMode().MessageToUser(
                     new GameController.UserMessageData(
                         GameController.UserMessageData.MessageToUserSenderType.Player,
-                        GameController.GetInstance().HasObtainedMainObjective ? "J'ai accomplie ma mission, je peut partir !" : "Si je pars sans remplir ma mission, je vais décevoir le prince...",
+                        "J'ai accomplie ma mission, je peut partir !",
                         priority: GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnReadability)
                 );
-
-                _glows[0].effectColor = GameController.GetInstance().HasObtainedMainObjective ? Color.green : Color.red;
-                Debug.Log(GameController.GetInstance().HasObtainedMainObjective.ToString() + " " + _glows[0].effectColor.ToString());
             }
             else if(isMainObjective || !string.IsNullOrEmpty(dialogOnStart))
             {
@@ -101,6 +104,7 @@ public class Interactible : MonoBehaviour
                         priority: GameController.UserMessageData.MessageToUserScheduleType.ImportanceOnReadability)
                 );
             }
+            _isColliding = true;
             _glows[1].Deactivate();
             _glows[0].Activate();
             DisplayTooltips(true);
@@ -134,8 +138,6 @@ public class Interactible : MonoBehaviour
         if (!_isActive) return;
         var axis = Input.GetAxis("Interact");
 
-        
-        
 
         if (type == InteractibleType.TIMER_LOCKED)
         {
