@@ -30694,7 +30694,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6967399874646899866, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7098570307634793083, guid: a429e6ccc3414164088c81f16d7b863f, type: 3}
       propertyPath: m_ChunkCullingBounds.y

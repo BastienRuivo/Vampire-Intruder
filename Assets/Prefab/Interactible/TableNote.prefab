@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: afterUse
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: reference
@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: objectivePhrase
-      value: Volez les notes du scribe
+      value: "Lisez les notes du pr\xEAtre"
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: replacementSprite
