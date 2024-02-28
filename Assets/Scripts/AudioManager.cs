@@ -11,6 +11,9 @@ public class AudioManager : Singleton<AudioManager>
 
     void Start()
     {
+        if(playlist.Length == 0)
+            return;
+        
         audioSource.clip = playlist[0];
         audioSource.Play();
     }
@@ -23,6 +26,8 @@ public class AudioManager : Singleton<AudioManager>
     }
 
     private void playNext(){
+        if(playlist.Length == 0)
+            return;
         indexSong = (indexSong + 1) % playlist.Length;
         audioSource.clip = playlist[indexSong];
         audioSource.Play();
