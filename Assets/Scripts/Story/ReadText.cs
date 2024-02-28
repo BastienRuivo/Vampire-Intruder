@@ -346,7 +346,7 @@ public class ReadText : Singleton<ReadText>
                         }
                         else if (guardKilledPercent <= 0.1f)
                         {
-                            dialogName = "Run1/Level0/StealthObjectives"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
+                            dialogName = "Run1/Level0/StealthFirstObjectives"; // -> Run1/Level0/End -> Run 1 Level 1 Scene
                         }
                         else
                         {

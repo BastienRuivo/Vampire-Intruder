@@ -69,9 +69,16 @@ public class GameUIAbilitySelectorController : MonoBehaviour
         abilityName.GetComponent<TextMeshProUGUI>().SetText(_ASC.QueryAbilityUIName(boundAbility));
         abilityBloodCost.GetComponent<TextMeshProUGUI>().SetText($"Sang : {-blood} %");
         abilityDescription.GetComponent<TextMeshProUGUI>().SetText(_ASC.QueryAbilityUIDescription(boundAbility));
-        float abilityCooldownForString = _ASC.QueryAbilityCooldownBase(boundAbility);
-        float abilityCooldownString = abilityCooldownForString < 0 ? 0 : abilityCooldownForString;
-        abilityCooldown.GetComponent<TextMeshProUGUI>().SetText($"Temps de recharge : { abilityCooldownString } s");
+        float abilityCooldownValue = _ASC.QueryAbilityCooldownBase(boundAbility);
+        if (abilityCooldownValue < 0)
+        {
+            abilityCooldown.SetActive(false);
+        }
+        else
+        {
+            abilityCooldown.GetComponent<TextMeshProUGUI>().SetText($"Temps de recharge : { abilityCooldownValue } s");
+            abilityCooldown.SetActive(true);
+        }
     }
 
     public void SetOpacity(float alpha)

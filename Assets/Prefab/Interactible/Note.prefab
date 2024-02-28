@@ -10,11 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: type
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: afterUse
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1541939039910489340, guid: 29d591be06c056a4b913b92528e05162, type: 3}
       propertyPath: reference

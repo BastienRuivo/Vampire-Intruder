@@ -571,7 +571,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             int currentDir = (int)((_directions.Count) * (1f - _currentWaitingTimer / timer));
             if(currentDir < _directions.Count)
             {
-                Debug.Log($"{currentDir} < {_directions.Count}");
                 LookAt(DirectionHelper.AngleDeg(_directions[currentDir]));
                 Vector2 d = DirectionHelper.FromDirection(_directions[currentDir]);
                 d = d.normalized;
