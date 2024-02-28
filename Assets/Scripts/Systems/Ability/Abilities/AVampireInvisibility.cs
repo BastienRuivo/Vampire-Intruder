@@ -32,7 +32,7 @@ namespace Systems.Ability.Abilities
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Invisibility";
             UIName = "Invisibilité";
             AbilityDescription = "Disparaissez complètement du regard des autres pendant 15 secondes et devenez" +
-                                 " indétectable avec Invisibilité.";
+                                 " indétectable.";
         }
 
         public override IEnumerator OnAbilityTriggered(GameObject avatar)

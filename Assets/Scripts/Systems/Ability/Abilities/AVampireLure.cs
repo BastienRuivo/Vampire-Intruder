@@ -29,9 +29,9 @@ namespace Systems.Ability.Abilities
                                             //or manually using the CommitAbility() function.
                                             
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Lure";
-            UIName = "Leure";
-            AbilityDescription = "Créez un leure qui détournera vos ennemis pendant un certain temps. Attirez-les hors" +
-                                 " de votre chemin. Attention, un bon garde saura repérer la supercherie.";
+            UIName = "Leurre";
+            AbilityDescription = "Créez un leurre pendant 15 secondes qui pourra détourner vos ennemis. Attirez-les hors" +
+                                 " de votre chemin. Néanmoins, arrivés au leurre, les gardes se rendront compte de la supercherie.";
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)

@@ -19,12 +19,12 @@ public class AppState : Singleton<AppState>
     // The abilities and their acquisition
     private SortedDictionary<string, bool> abilities = new SortedDictionary<string, bool>
     {
-        {"Teleportation", false }, {"Decieving", false}, {"Cataract", false}, {"Invisibility", false}
+        {"Teleportation", true }, {"Decieving", true}, {"Cataract", true}, {"Invisibility", true}
     };
     // The items and their acquire numbers
     private SortedDictionary<string, int> items = new SortedDictionary<string, int>
     {
-        {"Sedative", 0}, {"BloodPouch", 0 }
+        {"Sedative", 3}, {"BloodPouch", 3 }
     };
 
     // Story parameters
