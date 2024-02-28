@@ -8,14 +8,11 @@ public class ArrowPointer : MonoBehaviour
 {
     public Vector3 target;
     private SpriteRenderer _spriteRenderer;
-    private SpriteRenderer _seal;
-    private SpriteRenderer _exit;
+    public SpriteRenderer _seal;
+    public SpriteRenderer _exit;
     void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        var sprs = GetComponentsInChildren<SpriteRenderer>();
-        _seal = sprs[1];
-        _exit = sprs[2];
     }
 
     // Update is called once per frame
