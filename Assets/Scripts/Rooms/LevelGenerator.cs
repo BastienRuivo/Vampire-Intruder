@@ -227,7 +227,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 {
                     roomTested.Add(instance);
 
-                    instance.name += Random.Range(0, 42).ToString();
+                    instance.name += Random.Range(0, 420).ToString();
 
                     Direction invDir = DirectionHelper.Inverse(c.dir);
                     RoomData instData = instance.GetComponent<RoomData>();
@@ -484,6 +484,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         _mainObjective = level.mainRef;
         convexHull = new List<RoomData>();
         seed = level.seed;
+        Debug.Log("Seed is " + level.seed);
         startingEnergy = level.startingEnergy;
         Debug.Log("Level is generating with seed " + seed);
         if(!string.IsNullOrEmpty(seed)) 
@@ -543,9 +544,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             yield return null;
         }
 
-
-
-        Debug.Log("ConvexHull size is " + convexHull.Count.ToString() + " has placed main ? " + _hasGenerateMain.ToString());
+        Debug.Log("ConvexHull size is " + convexHull.Count.ToString() + " has placed main ? " + _hasGenerateMain.ToString() + " main is " + _mainObjective);
 
         if (!_hasGenerateMain)
         {
