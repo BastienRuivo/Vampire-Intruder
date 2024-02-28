@@ -30,7 +30,7 @@ namespace Systems.Ability.Abilities
                                           
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Blind";
             UIName = "Cataracte";
-            AbilityDescription = "Aveugle un garde pendant une durée déterminé."; //todo description
+            AbilityDescription = "Aveuglez un garde pendant 5 secondes."; //todo description
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)

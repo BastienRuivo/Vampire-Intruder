@@ -30,8 +30,8 @@ namespace Systems.Ability.Abilities
                                           
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_Sedation";
             UIName = "Sédatif";
-            AbilityDescription = "Endor un ennemi pendant une longue durée. Approchez-vous d’un garde pour le " +
-                                 "neutraliser mais faites attention, vous ne pouvez sédater un garde s’il se doute " +
+            AbilityDescription = "Endormez un ennemi pendant 30 secondes. Approchez-vous d’un garde pour le " +
+                                 "neutraliser, mais faites attention, vous ne pouvez pas sédater un garde s’il se doute " +
                                  "de quelque chose.";
         }   
         

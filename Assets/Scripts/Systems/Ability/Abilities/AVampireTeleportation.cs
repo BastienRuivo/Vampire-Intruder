@@ -19,7 +19,7 @@ namespace Systems.Ability.Abilities
             
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_TP";
             UIName = "Téléportation";
-            AbilityDescription = ""; //todo description
+            AbilityDescription = "Téléportez-vous instantanément à un autre endroit choisi."; //todo description
         }
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {

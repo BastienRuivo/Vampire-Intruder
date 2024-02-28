@@ -28,7 +28,7 @@ namespace Systems.Ability.Abilities
                                             
             IconPath = "Graphics/Sprite/UI/T_AbilityIcon_BloodSupply";
             UIName = "Poche de sang";
-            AbilityDescription = "";
+            AbilityDescription = "Buvez-la pour régénérer votre énergie de sang.";
         }
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
