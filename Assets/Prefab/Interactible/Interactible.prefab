@@ -446,9 +446,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 820b8291709b7984c9d7d36efd112e68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upSpeed: 1
-  downSpeed: 1.5
-  maxAlpha: 0.15
+  upSpeed: 2
+  downSpeed: 3
+  maxAlpha: 0.25
   effectColor: {r: 1, g: 0, b: 0, a: 1}
   activeAtStart: 0
   render: {fileID: 2581829258208804590}

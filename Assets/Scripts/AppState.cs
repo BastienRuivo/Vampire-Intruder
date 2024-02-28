@@ -15,6 +15,7 @@ public class AppState : Singleton<AppState>
     private int mainObjectiveSkip = 2;                  // Number of main objectives skip (can skip only 2 main objectives)
     private int levelNumber = 0;                       // The level number in the run
     private int runNumber = 0;                          // The run number
+    private int gameSeed;
 
     // The abilities and their acquisition
     private SortedDictionary<string, bool> abilities = new SortedDictionary<string, bool>
@@ -130,6 +131,14 @@ public class AppState : Singleton<AppState>
             currentCharacters = new bool[4];
             currentExpressions = new int[4];
             currentPositions = new float[4];
+        }
+
+        gameSeed = UnityEngine.Random.Range(0, 9999999);
+        UnityEngine.Random.InitState(gameSeed);
+
+        foreach(Level lvl in levelData)
+        {
+            lvl.seed = UnityEngine.Random.Range(0, 9999999).ToString();
         }
     }
 

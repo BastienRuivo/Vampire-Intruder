@@ -622,7 +622,6 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
             var visionTarget = _tempPathfindTarget == null ? _pathfindTarget : _tempPathfindTarget;
             bool canSeeTarget = NoWallToTarget(visionTarget);
             angle = Tools.ComputeAngle(transform.position, canSeeTarget ? visionTarget.transform.position : pathPos) * Mathf.Rad2Deg;
-
         }
         // Get current path in 
 
