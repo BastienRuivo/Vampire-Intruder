@@ -27,6 +27,8 @@ namespace Systems.Ability.Abilities
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
+            ParticleSystem particleSystem = avatar.GetComponent<ParticleSystem>();
+            particleSystem.Play();
             yield return new WaitForSeconds(lifeTime);
             avatar.transform.position = new Vector3(1000, 1000, 0);
             yield return null;
