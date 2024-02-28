@@ -97,7 +97,7 @@ public class AppState : Singleton<AppState>
     public Level[] levelData =
     {
         // RUN 0
-        new Level(0.21f, 0, "_DisplaySword", "Crochetez la vitrine contenant l'épée marquée", "Tartanpion"),
+        new Level(0.21f, 0, "_DisplaySword", "Crochetez la vitrine contenant l'ï¿½pï¿½e marquï¿½e", "Tartanpion"),
         new Level(0.39f, 0, "_StoleScroll", "Volez la lettre du Cardinal de Rohan au Roi", "Tagazok"),
         // RUN 1
         new Level(0.41f, 1, "_StealPriestNote", "Lisez le journal intime du Cardinal de Rohan", "Et"),
@@ -107,7 +107,7 @@ public class AppState : Singleton<AppState>
         new Level(0.79f, 4, "_SuckBloodBed", "Assassinez l'amant de la Baronne d'Oliva", "ceci est une seed"),
         // Run 3
         new Level(0.81f, 4, "_Vampire_Hunt_Bible", "Lisez les notes de la Comtesse de la Motte", "Rabibocher"),
-        new Level(0.99f, 5, "_SuckBloodBed", "Assassinez Louis Marc Antoine Rétaux de Villette", "Technoblade"),
+        new Level(0.99f, 5, "_SuckBloodBed", "Assassinez Louis Marc Antoine Rï¿½taux de Villette", "Technoblade"),
         // Run 4
         new Level(1.01f, 5, "_ChestToOpen", "Volez les diamants restants", "J3551K4"),
         new Level(1.19f, 6, "_SuckBloodBed", "Assassinez Boehmer", "MordMoiLNoeud"),
@@ -154,7 +154,7 @@ public class AppState : Singleton<AppState>
         abilities["Teleportation"] = false;
         abilities["Decieving"] = false;
         abilities["Cataract"] = false;
-        abilities["Invisibility"] = false;
+        abilities["Invisibility"] = true;
         items["Sedative"] = 0;
         items["BloodPouch"] = 0;
 

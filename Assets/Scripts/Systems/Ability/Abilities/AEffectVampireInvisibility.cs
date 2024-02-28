@@ -39,8 +39,24 @@ namespace Systems.Ability.Abilities
   
             avatar.GetComponent<Targetable>().targetType = Targetable.TargetType.NOONE;
             playerRenderer.color = invisibilityColor;
+
+            
+            Transform childTransform = avatar.transform.Find("ParticleSystemInvi");
+            // Vérifiez si l'enfant a été trouvé
+            if (childTransform != null)
+            {
+                GameObject childObject = childTransform.gameObject;
+                ParticleSystem particleSystem = childObject.GetComponent<ParticleSystem>();
+                particleSystem.Play();
+            }
+            else
+            {
+                Debug.LogError("L'enfant avec le nom spécifié n'a pas été trouvé. ParticleSystemInvi");
+            }
+
             yield return new WaitForSeconds(15f);
             
+
             //todo spawn particle at the 5 lasts seconds to indicate it ends
             
             avatar.GetComponent<Targetable>().targetType = Targetable.TargetType.PLAYER;
