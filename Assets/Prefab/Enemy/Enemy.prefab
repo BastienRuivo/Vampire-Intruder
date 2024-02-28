@@ -231,7 +231,7 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -450,8 +450,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 38c75205d172e7e4ea7bdee41e1537a5, type: 2}
     - target: {fileID: 3000714032349069863, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
+      propertyPath: fov
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3000714032349069863, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: viewDistance
-      value: 3
+      value: 2.25
       objectReference: {fileID: 0}
     - target: {fileID: 3000714032349069863, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: refreshDistance
@@ -519,7 +523,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5462318061661815336, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: refreshDistance
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5462318061661815336, guid: 03d6f47bc421a2640a3b09652069e89d, type: 3}
       propertyPath: targetEntityTag
