@@ -44,7 +44,10 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     }
 
     [Header("Alert")]
-    public Animator feedbackAnimator;
+    public Animator feedbackAnimatorAlert;
+    public Animator feedBackAnimatorBite;
+    public Animator feedBackAnimatorCataract;
+    public Animator feedBackAnimatorSedate;
     public AlertStage alertStage;
     private AlertStage _previousAlertStage;
     public float alertTimer;
@@ -733,22 +736,22 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
         AlertStage newAlertStage;
         if (alertRatio >= 1f)
         {
-            feedbackAnimator.SetTrigger("DetectAlert");
+            feedbackAnimatorAlert.SetTrigger("DetectAlert");
             newAlertStage = AlertStage.Alerted;
         }
         else if (alertRatio > 0.5f)
         {
-            feedbackAnimator.SetTrigger("DetectStay");
+            feedbackAnimatorAlert.SetTrigger("DetectStay");
             newAlertStage = AlertStage.Suspicious;
         }
         else if (alertRatio > 0f)
         {
-            feedbackAnimator.SetBool("Dectect", true);
+            feedbackAnimatorAlert.SetBool("Dectect", true);
             newAlertStage = AlertStage.SeenSomething;
         }
         else
         {
-            feedbackAnimator.SetBool("Dectect", false);
+            feedbackAnimatorAlert.SetBool("Dectect", false);
             newAlertStage = AlertStage.Idle;
         }
         return newAlertStage;
@@ -821,6 +824,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
 
     public void CallForHelp()
     {
+        
         _currentRoom.guards.ForEach(guard =>
         {
             // TODO : ISOMETRIC DISTANCE

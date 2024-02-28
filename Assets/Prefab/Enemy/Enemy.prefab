@@ -472,7 +472,10 @@ MonoBehaviour:
     m_Bits: 64
   guardVisionSpeed: 2
   targetableTag: Targetable
-  feedbackAnimator: {fileID: 2047237445904502220}
+  feedbackAnimatorAlert: {fileID: 2047237445904502220}
+  feedBackAnimatorBite: {fileID: 7980434854253018217}
+  feedBackAnimatorCataract: {fileID: 7091870577267696532}
+  feedBackAnimatorSedate: {fileID: 1028233997314682262}
   alertStage: 0
   alertTimer: 2
   viewDistance: 3.5

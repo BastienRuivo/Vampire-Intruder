@@ -61,7 +61,7 @@ public class AEffectGuardBiten : Ability
         
         float timer = AEffectVampireBite.eatTime;
         guard.GetAnimator().SetInteger("state", (int)GuardManager.AnimationState.IDLE);
-        
+        guard.feedBackAnimatorBite.SetBool("isBite",true);
         while (timer > 0)
         {
             if(timer < 0.6f && !effectDone){
@@ -73,6 +73,7 @@ public class AEffectGuardBiten : Ability
             yield return new WaitForSeconds(0.1f);
             timer -= 0.1f;
         }
+        guard.feedBackAnimatorBite.SetBool("isBite",true);
         DestroyObject(avatar, avatar);
 
     }

@@ -14,9 +14,9 @@ namespace Systems.Ability.Abilities
             float baseViewDistance = guardController.GetVision().viewDistance;
             guardController.GetVision().fov = 70;
             guardController.GetVision().viewDistance = 1.5f;
-            
+            guardController.feedBackAnimatorCataract.SetBool("isCataract",true);
             yield return new WaitForSeconds(BlindnessTime);
-            
+            guardController.feedBackAnimatorCataract.SetBool("isCataract",false);
             guardController.GetVision().fov = baseFOV;
             guardController.GetVision().viewDistance = baseViewDistance;
         }
