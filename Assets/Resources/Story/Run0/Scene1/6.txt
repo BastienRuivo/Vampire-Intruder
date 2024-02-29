@@ -10,8 +10,4 @@ Pour vérifier la mission à accomplir.
 Sur ce, Jessika, je te laisse@pénétrer dans le manoir…
 0 C Lord_Jasper
 Et j’attends avec impatience de voir@si tu es réellement capable de m’impressionner.
-1 C Lord_Jasper Jasper Smile 1
-Et, cher lecteur, si vous voulez la suite de l'histoire...
-1 C Lord_Jasper Jasper Laugh 1
-Il faut aller la lire dans le Notion !
 @@@Scene 0 0
