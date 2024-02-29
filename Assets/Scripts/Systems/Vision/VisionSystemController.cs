@@ -78,23 +78,22 @@ namespace Systems.Vision
             IEnumerable<Collider2D> targets = _collider2DBuff.Where(target => i++ < size && target != null && target.gameObject.CompareTag(Targetable.TargetableTag));
             foreach (Collider2D target in targets)
             {
-                bool isKnown = _inCollisionObjects.Contains(target.gameObject);
+                bool hadKnown = _inCollisionObjects.Contains(target.gameObject);
                 
                 Vector3 transformPosition = target.transform.position;
                 bool targetRefreshable = _shapeController.HasRefreshability(transformPosition);
                 if(!targetRefreshable)
-                    if (isKnown)
+                    if (hadKnown)
                     {
                         _inCollisionObjects.Remove(target.gameObject);
                         OnOverlapChanged.BroadcastEvent(new (target.gameObject, false));
-                        continue;
                     }
                     else
                         continue;
-                shouldRefresh = true;
                 
+                shouldRefresh = true;
                 bool hasCollision = _shapeController.HasVisibility(transformPosition);
-                if (isKnown)
+                if (hadKnown)
                 {
                     if (!hasCollision)
                     {
