@@ -1,0 +1,13 @@
+@@@Disappear Jasper
+@@@Appear Jasper Angry 0
+2 C Lord_Jasper Jasper Angry 1 Jessika Flush 0
+“Désolée” ? “Désolée” ?!
+0 S Lord_Jasper
+Si vous étiez vraiment désolée, vous ne seriez@pas en train de me prendre le chou !
+1 C Lord_Jasper Jasper Upset 1
+Alors, c’est pour quoi ?
+1 T Jessika Jasper Upset 0
+Bon, ce vieux croûton n’a pas l’air@d’apprécier les personnes hésitantes…
+1 J Jessika Jessika Flush 1
+Hum… La candidature… Le poste de garde@royal personnel du Prince Elrik…
+@@@Next Run0/Scene1/1

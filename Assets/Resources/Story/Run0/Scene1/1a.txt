@@ -1,0 +1,13 @@
+@@@Disappear Jasper
+@@@Appear Jasper Angry 0
+1 S Lord_Jasper Jasper Angry 1
+Non mais oh, tu vas me parler@sur un autre ton, gamine !
+0 S Lord_Jasper
+Sois déjà contente que je ne t’ai pas@renvoyée dans les jupes de ta mère !
+1 C Lord_Jasper Jasper Upset 1
+Humpf, tu vas pas faire long feu à la cour@du Prince Elrik avec une telle attitude !
+0 C Lord_Jasper
+Allez, on va se grouiller de remplir ces papelards@pour te renvoyer plus vite d’où tu viens.
+2 T Jessika Jasper Upset 0 Jessika Neutral 0
+Eh beh, il est définitivement pas commode…@Je vais tâcher de me montrer plus polie.
+@@@Next Run0/Scene1/2

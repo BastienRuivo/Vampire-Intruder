@@ -1,0 +1,7 @@
+@@@Disappear Jasper
+@@@Appear Jasper Upset 0
+1 C Lord_Jasper Jasper Upset 1
+Ne prends pas trop la confiance, gamine.
+0 C Lord_Jasper
+Tu verras quand tu seras en situation,@tu feras moins la fière…
+@@@Next Run0/Scene1/4

@@ -93,9 +93,11 @@ public class StoryButtonManager : MonoBehaviour
 	public void OnSkipClicked()
 	{
         // Goes to the dialog end
-        int[] nextSceneAndLevel = GetComponent<ReadText>().getNextScene();
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        int runNumber = appState.getRunNumber();
+        int levelNumber = appState.getLevelNumber();
         StopAllCoroutines();
-        StartCoroutine(GetComponent<ReadText>().ChangeScene(nextSceneAndLevel[0], nextSceneAndLevel[1]));
+        StartCoroutine(GetComponent<ReadText>().ChangeScene(runNumber, levelNumber));
 	}
 
 	/// <summary>

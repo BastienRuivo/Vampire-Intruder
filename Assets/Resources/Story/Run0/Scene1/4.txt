@@ -1,0 +1,56 @@
+1 C Lord_Jasper Jasper Neutral 1
+Allez, suis-moi.
+@@@Background Manor1 C 2 Jasper Neutral 0 Jessika Neutral 0
+1 C Lord_Jasper Jasper Neutral 1
+Bon, nous voilà arrivés devant@le manoir d’entraînement.
+0 C Lord_Jasper
+Le principe est simple.
+0 C Lord_Jasper
+En tant que garde royal personnel du Prince Elrik,@tu dois être discrète comme une ombre...
+0 C Lord_Jasper
+Capable de te battre et à même de remplir@les missions secrètes qu’il te confiera.
+0 C Lord_Jasper
+On va vérifier cela avec une mission d’infiltration.
+0 C Lord_Jasper
+Tu dois pénétrer dans ce manoir@et remplir la mission qui te sera confiée.
+0 C Lord_Jasper
+Il s’agit d’un manoir d’Humains.@Tu n’as donc que la nuit pour t’infiltrer.
+0 C Lord_Jasper
+Il te faut impérativement être sortie@du manoir avant le lever du soleil...
+0 C Lord_Jasper
+Ou tu risques de te faire capturer.
+0 C Lord_Jasper
+Dans le manoir,@des gardes Humains patrouillent.
+0 C Lord_Jasper
+S’ils t’attrapent, tu auras échoué.
+2 J Jessika Jasper Neutral 0 Jessika Neutral 1
+Et qu’est-ce qu’il se passe s’ils…@M’attrapent ?
+2 C Lord_Jasper Jasper Neutral 1 Jessika Neutral 0
+Lord Jasper : Eh bien,@là c’est un entraînement, donc rien…
+1 C Lord_Jasper Jasper Smile 1
+Mais en situation réelle, ils feront ce qu’ils font@avec tous les espions entrés par effraction.
+2 J Jessika Jasper Smile 0 Jessika Surprise 1
+C’est-à-dire ?
+2 C Lord_Jasper Jasper Smile 1 Jessika Neutral 0
+Eh bien, fais travailler ton imagination !
+1 C Lord_Jasper Jasper Laugh 1
+Ils t’enfermeront en prison, puis te tortureront@pour te soutirer des informations…
+1 C Lord_Jasper Jasper Surprise 1
+Et si les Humains découvrent ta nature Vampire,@ce sera carrément la panique !
+1 C Lord_Jasper Jasper Smile 1
+Donc tu n’as pas intérêt à te faire attraper.
+2 J Jessika Jasper Neutral 0 Jessika Neutral 1
+D’accord. Et comment je peux leur échapper ?
+2 C Lord_Jasper Jasper Neutral 1 Jessika Neutral 0
+Lord Jasper : Tu dois juste éviter qu’ils ne te voient.
+0 C Lord_Jasper
+Ah, et évidemment, comme tu es une Vampire,@tu peux les mordre pour te débarrasser d’eux…
+0 C Lord_Jasper
+Si tu parviens à mordre un garde Humain en t’approchant@derrière lui sans qu’il te repère, il mourra.
+0 C Lord_Jasper
+Et alors, tu auras le champ libre !
+0 C Lord_Jasper
+Enfin, prends garde, il y a toujours plusieurs@Humains à rôder dans le manoir.
+1 C Lord_Jasper Jasper Surprise 1
+Tu as déjà mordu un Humain ?
+@@@Choice Si_j’ai_déjà_sucé_le_sang_d’un_Humain_?_Mmh… Jasper Surprise 2 Run0/Scene1/4a 0 0 Évidemment._Plein_de_fois._Je_suis_une_vraie_Vampire,_après_tout. Run0/Scene1/4b 0 0 Euh…_Non,_j’avoue,_jamais.

@@ -1,8 +1,76 @@
-@@@Background Day C 2 Jessika Neutral 0 Jasper Neutral 1
-1 C Lord_Jasper Jasper Neutral 1
-Ceci est le début de l'histoire !
-1 C Lord_Jasper Jasper Neutral 1
-Et ma deuxième quote !
-1 C Lord_Jasper Jasper Neutral 1
-Et ma troisième quote !
-@@@Scene 0 0
+@@@Background Narration N 0
+@@@Narration Narrateur
+Paris, 1784.
+@@@Narration Narrateur
+Alors que le Roi Louis XVI et la Reine Marie-Antoinette@font rayonner la cour de Versailles,@la société secrète des Vampires, tirant les ficelles de la politique dans l’ombre,@s’apprête à faire sombrer cette monarchie de luxe et d’opulence.
+@@@Narration Narrateur
+Le Prince Elrik, monarque des Vampires,@a un plan pour faire payer aux souverains français@la dilapidation des richesses du pays.
+@@@Narration Narrateur
+C’est cependant sans compter l’arrivée de Jessika dans sa vie…
+@@@Background Alley2 J 1 Jessika Neutral 0
+1 J Jessika Jessika Neutral 1
+Ouf, me voilà enfin à Paris.
+1 T Jessika Jessika Neutral 0
+C’était un sacré trajet depuis@mon village de campagne…
+1 T Jessika Jessika Smile 0
+Enfin, je n’ai pas rencontré@de problème grâce à ma formation.
+0 T Jessika
+Mes talents de voleuse et d’espionne@m’ont permis de dormir confortablement...
+0 T Jessika
+Et de me nourrir à ma faim.
+1 T Jessika Jessika Upset 0
+J’appréhende davantage les épreuves@qui m’attendent ici que le voyage…
+0 T Jessika
+On m’a dit que les Vampires de la capitale@étaient à l’image des Humains parisiens.
+0 T Jessika
+Riches, égoïstes, inconscients du monde@qui les entoure et particulièrement désagréables.
+1 T Jessika Jessika Neutral 0
+Il va pourtant bien falloir que@je m’y adapte et que je m’y fonde…
+0 T Jessika
+Afin d’avoir la chance de rencontrer@le Prince Vampire Elrik et sa promise.
+0 T Jessika
+Et ma première étape est de trouver@le Bureau des Administrations Vampires.
+1 T Jessika Jessika Smile 0
+Vingt ans que j’attends une@occasion pareille...
+0 T Jessika
+Je ne vais pas perdre une minute@de plus !
+@@@Background Alley1 J 1 Jessika Neutral 0
+1 J Jessika Jessika Neutral 1
+Alors, d’après le plan joint@à la lettre de recrutement...
+0 J Jessika
+C’est à ce croisement…
+1 T Jessika Jessika Surprise 0
+Ah, voilà le signe des@franc-maçons sur le mur.
+1 T Jessika Jessika Neutral 0
+Le Bureau des Administrations Vampires@doit se situer au sous-sol de la taverne.
+1 J Jessika Jessika Upset 1
+Bon…
+0 J Jessika
+Allez, Jessika,@un peu de courage…
+1 T Jessika Jessika Upset 0
+Je ne me suis pas entraînée tout ce temps@pour flancher au moment de passer à l’action !
+1 T Jessika Jessika Neutral 0
+Je ne sais pas comment une jeune@Vampire de province comme moi...
+0 T Jessika
+Sera reçue dans la haute@société parisienne…
+1 T Jessika Jessika Upset 0
+Mais j’ai un objectif à accomplir.
+0 T Jessika
+Et je suis prête à tout@pour l’atteindre !
+0 J Jessika
+Allez, je me lance !
+@@@Background Office N 0
+@@@SetFrame 0
+@@@Narration Narrateur
+Toc toc
+@@@Background Office C 1 Jessika Neutral 0
+1 C Lord_Jasper Jasper Upset 1
+Scrogneugneu, la nuit vient@à peine de tomber...
+0 C Lord_Jasper
+Et on vient déjà me déranger !
+0 C Lord_Jasper
+Tu parles d’une semaine qui@commence bien !
+@@@Appear Jasper Angry 0
+2 S Lord_Jasper Jasper Angry 1 Jessika Surprise 0
+Oui, quoi ? Qui êtes-vous ?@C’est pour quoi ?
+@@@Choice Ouh_là,_il_a_pas_l’air_bien_luné,_ce_type…@_Comment_lui_répondre_? Jasper Upset 2 Run0/Scene1/0a 0 0 Bonsoir,_je_viens_proposer_ma_candidature_pour_le_poste_de_garde_royal_personnel_du_Prince_Elrik. Run0/Scene1/0b 0 0 Mmmh,_euuuuh…_Désolée_de_vous_déranger…
