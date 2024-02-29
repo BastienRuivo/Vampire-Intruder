@@ -1534,13 +1534,13 @@ public class ReadText : Singleton<ReadText>
 		/////////////////////////////
 
 		// Goes to the next line (if no choice)
-		if (!isChoice)
+		if (!isChoice && !GetComponent<StoryButtonManager>().getSave())
 		{
 			// Conditions: mouse click or auto time exceeded, no log screen, no ongoing fading animations
 			if ((Input.GetMouseButtonDown(0) || (Time.time - startTime > printingTime
 				&& GetComponent<StoryButtonManager>().getAuto()))
 				&& !GetComponent<StoryButtonManager>().getLog()
-				&& !GetComponent<StoryButtonManager>().getSave() && !fadingProtect)
+				&& !fadingProtect)
 			{
 				// If a narration is ongoing, destroy all the narration lines
 				if (isNarration)
@@ -2351,6 +2351,8 @@ public class ReadText : Singleton<ReadText>
 
                     if (line.Length > 8 && line.Substring(0, 9) == "@@@Choice")
                     {
+                        string[] mots = line.Split(' ');
+                        nextDialogFile = mots[5];
                         textBoxes[i] = 'T';
                     }
                     else
