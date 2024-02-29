@@ -5,7 +5,7 @@ namespace Systems.Ability.Abilities
 {
     public class AEffectGuardBlinded : Ability
     {
-        private const float BlindnessTime = 5.0f;
+        private const float BlindnessTime = 15.0f;
         
         public override IEnumerator OnAbilityTriggered(GameObject avatar)
         {
