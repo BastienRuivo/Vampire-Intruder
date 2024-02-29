@@ -1,0 +1,33 @@
+2 C Lord_Jasper Jasper Neutral 1 Jessika Neutral 0
+Simplement, garde en tête que@plus tu tues de gardes...
+0 C Lord_Jasper
+Et plus tu passeras pour une Vampire sanguinaire@dans la cour du Prince Elrik.
+2 J Jessika Jasper Neutral 0 Jessika Surprise 1
+Mais… Si c’est une mission d’entraînement...
+0 J Jessika
+Je peux réellement tuer les gardes@qui patrouillent actuellement ?
+2 C Lord_Jasper Jasper Laugh 1 Jessika Surprise 0
+Oh, oui ! On les paie pour ça...
+0 C Lord_Jasper
+Peu importe qu’ils meurent ou non !
+1 T Jessika Jasper Laugh 0
+Euh… OK…
+1 T Jessika Jessika Neutral 0
+En campagne, on considère un peu mieux@les Humains que ça, mais soit…
+1 C Lord_Jasper Jasper Neutral 1
+Enfin, outre échapper aux gardes...
+0 C Lord_Jasper
+Tout ce que tu auras à faire durant@cette mission est de récupérer une épée.
+0 C Lord_Jasper
+Tu la repèreras facilement en trouvant@la pièce qui la contient.
+0 C Lord_Jasper
+Elle est située dans une vitrine@que tu devras crocheter.
+0 C Lord_Jasper
+Évidemment, tu n’auras pas le plan du manoir en avance...
+0 C Lord_Jasper
+Donc tu devras explorer pour trouver@l’objectif que l’on te demande d’accomplir.
+1 C Lord_Jasper Jasper Smile 1
+Voilà, c’est tout.@Tu es prête à démarrer ton entraînement.
+0 C Lord_Jasper
+Alors, est-ce que tu as tout compris,@ou tu veux que je te fasse un résumé ?
+@@@Choice Mmh..._Ai-je_tout_bien_compris_? Jasper Smile 2 Run0/Scene1/5a 0 0 C’est_tout_bon,_merci. Run0/Scene1/5b 0 0 Euh…_Je_veux_bien_que_vous_résumiez,_pour_être_sûre…

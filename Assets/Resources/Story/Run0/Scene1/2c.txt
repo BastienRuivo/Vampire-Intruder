@@ -1,0 +1,19 @@
+@@@Disappear Jasper
+@@@Appear Jasper Surprise 0
+1 C Lord_Jasper Jasper Smile 1
+Ah, ça ! Une paysanne qui assume@ses ambitions de richesse et de pouvoir !
+1 C Lord_Jasper Jasper Laugh 1
+Ha ha,@ça a le mérite d’être rafraîchissant.
+1 C Lord_Jasper Jasper Smile 1
+Je veux dire, à Paris,@la ville des masques et des faux-semblants...
+0 C Lord_Jasper
+On en oublie la franchise@dont peuvent faire preuve les gens !
+1 C Lord_Jasper Jasper Laugh 1
+Ha ha ha !
+1 C Lord_Jasper Jasper Neutral 1
+Enfin, je ne vais pas marquer ça, ou@ton dossier risque de passer à la trappe.
+0 C Lord_Jasper
+Je vais plutôt noter@que tu souhaites protéger le Prince Elrik.
+0 T Jessika Jasper Neutral 0 Jessika Surprise 0
+Eh bien, malgré ses airs guindés,@ce vieux croûton a l’air d’apprécier l’honnêteté…
+@@@Next Run0/Scene1/3

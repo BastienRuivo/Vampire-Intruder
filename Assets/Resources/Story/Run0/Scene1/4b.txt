@@ -1,0 +1,9 @@
+@@@Disappear Jasper
+@@@Appear Jasper Smile 0
+1 J Jessika Jasper Surprise 0 Jessika Neutral 1
+On a un villageois qui se charge de récolter@des poches de sang dans ma communauté.
+1 C Lord_Jasper Jasper Neutral 1 Jessika Neutral 0
+Bon, ça n’a pas d’importance…
+0 C Lord_Jasper
+Tu pourras essayer si tu en as l’envie@ou si tu dois te débarrasser en urgence d’un garde.
+@@@Next Run0/Scene1/5

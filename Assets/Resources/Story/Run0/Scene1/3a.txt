@@ -1,0 +1,11 @@
+@@@Disappear Jasper
+@@@Appear Jasper Laugh 0
+1 C Lord_Jasper Jasper Laugh 1
+Ha ha !
+1 C Lord_Jasper Jasper Smile 1
+T’as les pétoches, hein ?
+0 C Lord_Jasper
+Pff, que de la bravade, depuis tout à l’heure !
+1 C Lord_Jasper Jasper Laugh 1
+J’attends avec impatience ce test, moi !
+@@@Next Run0/Scene1/4

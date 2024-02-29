@@ -1,0 +1,15 @@
+@@@Disappear Jasper
+@@@Appear Jasper Surprise 0
+1 C Lord_Jasper Jasper Surprise 1
+Q-Quoi ? Pour le… “rencontrer” ?
+2 J Jessika Jasper Surprise 0 Jessika Flush 1
+Oui. Enfin, je veux dire…
+0 J Jessika
+Le Prince Elrik doit être une personne fort intéressante@et sa rencontre ne peut que m’élever spirituellement.
+2 C Lord_Jasper Jasper Surprise 1 Jessika Flush 0
+C’est… Original…
+1 C Lord_Jasper Jasper Neutral 1
+On va plutôt marquer que@tu souhaites le protéger.
+1 T Jessika Jasper Neutral 0
+Mmh, j’ai peut-être été un peu trop directe…
+@@@Next Run0/Scene1/3
