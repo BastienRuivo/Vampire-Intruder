@@ -14,7 +14,9 @@ public class AudioManager : Singleton<AudioManager>
         if(playlist.Length == 0)
             return;
         
-        audioSource.clip = playlist[0];
+        System.Random rand = new System.Random();
+        indexSong = rand.Next(0, playlist.Length);
+        audioSource.clip = playlist[indexSong];
         audioSource.Play();
     }
 
@@ -47,4 +49,5 @@ public class AudioManager : Singleton<AudioManager>
         Destroy(temp, song.length);
         return audioSource;
     }
+
 }
