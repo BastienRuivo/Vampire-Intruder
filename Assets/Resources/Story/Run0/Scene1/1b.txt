@@ -1,0 +1,5 @@
+@@@Disappear Jasper
+@@@Appear Jasper Upset 0
+1 C Lord_Jasper Jasper Upset 1
+Bon, bon… Eh bien, plus qu’à remplir les papelards…
+@@@Next Run0/Scene1/2

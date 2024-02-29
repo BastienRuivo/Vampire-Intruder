@@ -93,9 +93,11 @@ public class StoryButtonManager : MonoBehaviour
 	public void OnSkipClicked()
 	{
         // Goes to the dialog end
-        int[] nextSceneAndLevel = GetComponent<ReadText>().getNextScene();
+        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        int runNumber = appState.getRunNumber();
+        int levelNumber = appState.getLevelNumber();
         StopAllCoroutines();
-        StartCoroutine(GetComponent<ReadText>().ChangeScene(nextSceneAndLevel[0], nextSceneAndLevel[1]));
+        StartCoroutine(GetComponent<ReadText>().ChangeScene(runNumber, levelNumber));
 	}
 
 	/// <summary>
@@ -245,7 +247,7 @@ public class StoryButtonManager : MonoBehaviour
 		StartCoroutine(waitForCapture(1));
 
         // Save on the first
-        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        AppState appState = AppState.GetInstance().GetComponent<AppState>();
 		string dialogName = GetComponent<ReadText>().getDialogName();
 		int currentLine = GetComponent<ReadText>().getLineNumber();
 		bool isGameScene = GetComponent<ReadText>().getGameScene();
@@ -318,7 +320,7 @@ public class StoryButtonManager : MonoBehaviour
         confirmMenu.SetActive(false);
 
         // Load the first
-        AppState appState = GameObject.Find("AppState").GetComponent<AppState>();
+        AppState appState = AppState.GetInstance().GetComponent<AppState>();
 		appState.Load(1);
         SceneManager.LoadSceneAsync("Story");
     }

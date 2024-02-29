@@ -1,0 +1,29 @@
+1 C Lord_Jasper Jasper Neutral 1
+Allez, assieds-toi là, on va remplir@le formulaire de candidature.
+0 C Lord_jasper
+Alors, ton nom ?
+2 J Jessika Jasper Neutral 0 Jessika Neutral 1
+Jessika.
+2 C Lord_Jasper Jasper Surprise 1 Jessika Neutral 0
+… Bah, et ton nom de famille ?
+2 J Jessika Jasper Surprise 0 Jessika Neutral 1
+Je n’en ai pas.
+2 C Lord_Jasper Jasper Smile 1 Jessika Upset 0
+Ah ! Ça ! C’est que tu es bien une paysanne, donc.
+2 C Lord_Jasper Jasper Neutral 1 Jessika Neutral 0
+Tu viens d’où ?
+2 J Jessika Jasper Neutral 0 Jessika Neutral 1
+De Sancti-Hilari-de-Capoleg.
+2 C Lord_Jasper Jasper Surprise 1 Jessika Neutral 0
+Sancti… Euh… Ma carte… C’est où, ce patelin ?
+2 J Jessika Jasper Surprise 0 Jessika Neutral 1
+Dans le Gévaudan, au nord.
+2 C Lord_Jasper Jasper Surprise 1 Jessika Neutral 0
+Ah, certes ! Eh bien, tu viens de loin, fillette…
+2 J Jessika Jasper Neutral 0 Jessika Neutral 1
+Oui. Je vous ai dit que j’étais motivée.
+2 C Lord_Jasper Jasper Upset 1 Jessika Neutral 0
+Oui, oui, j’ai bien compris…
+1 C Lord_Jasper Jasper Neutral 1
+Et donc, pourquoi tu veux devenir garde royale ?
+@@@Choice Ah,_voilà_la_question_épineuse… Jasper Neutral 3 Run0/Scene1/2a 0 0 Pour_rencontrer_le_Prince_Elrik. Run0/Scene1/2b 0 0 Pour_protéger_notre_monarque. Run0/Scene1/2c 0 0 Pour_le_statut_que_confère_le_titre_de_garde_royal.

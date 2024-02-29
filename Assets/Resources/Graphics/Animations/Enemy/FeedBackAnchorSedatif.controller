@@ -63,7 +63,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: IsSedat
+    m_ConditionEvent: isSedat
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -4945611243149565468}
@@ -88,7 +88,7 @@ AnimatorController:
   m_Name: FeedBackAnchorSedatif
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: IsSedat
+  - m_Name: isSedat
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -116,7 +116,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: IsSedat
+    m_ConditionEvent: isSedat
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -7514995731948107848}

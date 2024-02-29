@@ -1,0 +1,13 @@
+2 C Lord_Jasper Jasper Neutral 1 Jessika Neutral 0
+Allez, c’est fait.
+0 C Lord_Jasper
+Bon, les questions suivantes concernent tes capacités…
+1 C Lord_Jasper Jasper Smile 1
+Mais, honnêtement, mieux vaut les tester directement@plutôt que de s’embêter à gratter le papier.
+0 C Lord_Jasper
+Comme ça, si tu échoues,@ce qui est fort probable...
+1 C Lord_Jasper Jasper Laugh 1
+Je ne me serai pas embêté pour rien !
+1 C Lord_Jasper Jasper Smile 1
+Qu’est-ce que tu en penses ?
+@@@Choice Ouh_là,_on_va_passer_tout_de_suite_à_la_mise_en_situation_?@J’avoue_ne_pas_être_sereine… Jasper Smile 2 Run0/Scene1/3a 0 0 Eh_bien…_Oui,_oui,_pourquoi_pas… Run0/Scene1/3b 0 0 Aucun_souci,_je_vais_vous_montrer_de_quoi_je_suis_capable.

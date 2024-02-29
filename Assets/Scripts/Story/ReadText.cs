@@ -3,12 +3,10 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.Text.RegularExpressions;
-
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -181,7 +179,6 @@ public class ReadText : Singleton<ReadText>
             bool isScene = appState.getGameScene();
             if (isScene)
             {
-                Debug.Log("Here I am");
                 SceneManager.LoadSceneAsync("LevelGenTest");
                 return;
             }
@@ -1733,6 +1730,15 @@ public class ReadText : Singleton<ReadText>
 					Initialize(nextDialog, -1);
 				}
 
+                else if (mots[0] == "@@@RemoveFrame")
+                {
+                    for (int i = 0; i < framesObjects.Length; i++)
+                    {
+                        framesObjects[i].SetActive(false);
+                        NextLine();
+                    }
+                }
+
 				// Background change (with new characters or not)
 				else if (mots[0] == "@@@Background")
 				{
@@ -1786,6 +1792,7 @@ public class ReadText : Singleton<ReadText>
 					// Make the Jessika's thinking
 					string phrase = mots[1];
 					phrase = phrase.Replace('_', ' ');
+					phrase = phrase.Replace('@', '\n');
                     isNarration = false;
                     // Fill the phrase and name
                     textBoxPhraseObject.text = phrase;
@@ -1858,29 +1865,10 @@ public class ReadText : Singleton<ReadText>
 					textBoxObject.SetActive(false);
 
 					// Read the narration lines
-					string[] narrationLines;
-					// Cut in two lines
-					string[] lines1 = this.lines[++currentLineNumber].Split('@');
-					// If more than one part, cut the subparts
-					if (lines1.Length > 1)
-					{
-						string[] lines2 = lines1[1].Split(new string[] { "@" }, 12, StringSplitOptions.None);
-						narrationLines = new string[lines2.Length + 1];
-						// Get the first part and all the next parts
-						for (int i = 0; i < narrationLines.Length; i++)
-						{
-							if (i == 0) narrationLines[i] = lines1[0];
-							else narrationLines[i] = lines2[i - 1];
-						}
-					}
-					// If only one part, get this part
-					else
-					{
-						narrationLines = lines1;
-					}
+					string[] narrationLines = Regex.Split(lines[++currentLineNumber], "\n|@");
 
-					// Log
-					CreateLog(narrationLines, names[currentLineNumber], "", 6);
+                    // Log
+                    CreateLog(narrationLines, names[currentLineNumber], "", 6);
 
 					// Launch the narration animation
 					narrationCoroutine = StartCoroutine(SetNarration(narrationLines));
@@ -2119,51 +2107,25 @@ public class ReadText : Singleton<ReadText>
 		// Change the background
 		backgroundObject.sprite = backgrounds[backgroundID];
 
-		// Check if it's a narration
-		if (backgroundID == 0)
-		{
-			backgroundObject.GetComponent<Image>().color = new Vector4(0.75f, 0.75f, 0.75f, 1.0f);
-			narrationObject.SetActive(true);
+        // Check if it's a narration
+        if (textBoxID == 'N')
+        {
+            narrationObject.SetActive(true);
             textBoxObject.SetActive(false);
         }
 		else
 		{
-			backgroundObject.GetComponent<Image>().color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 			narrationObject.SetActive(false);
             textBoxObject.SetActive(true);
+
+            // Change the textbox to the next textbox sprite
+            textBoxObject.GetComponent<Image>().sprite = textBoxSprites[
+                possibleTextBoxes[textBoxID]];
         }
 
 		// Disable the Arrow
 		textBoxArrowObject.SetActive(false);
 
-        // Change the textbox to the next textbox sprite
-        switch (textBoxID)
-        {
-            case 'L':
-                textBoxObject.GetComponent<Image>().sprite = textBoxSprites[0];
-                break;
-            case 'R':
-                textBoxObject.GetComponent<Image>().sprite = textBoxSprites[4];
-                break;
-            case 'C':
-                textBoxObject.GetComponent<Image>().sprite = textBoxSprites[2];
-                break;
-            case 'S':
-                textBoxObject.GetComponent<Image>().sprite = textBoxSprites[6];
-                break;
-            case 'G':
-                textBoxObject.GetComponent<Image>().sprite = textBoxSprites[1];
-                break;
-            case 'D':
-                textBoxObject.GetComponent<Image>().sprite = textBoxSprites[5];
-                break;
-            case 'M':
-                textBoxObject.GetComponent<Image>().sprite = textBoxSprites[3];
-                break;
-            default:
-                textBoxObject.GetComponent<Image>().sprite = textBoxSprites[0];
-                break;
-        }
 
         // Put the effect frame
         if (frameID != -1)
@@ -2225,8 +2187,9 @@ public class ReadText : Singleton<ReadText>
     /// <returns>The animation coroutine</returns>
     private IEnumerator SetNarration(string[] lines)
 	{
-		// Launch the animation
-		fadingProtect = true;
+
+        // Launch the animation
+        fadingProtect = true;
 
 		// Create the narration lines game objects for each line
 		narrationPhrases = new GameObject[lines.Length];
@@ -2281,8 +2244,11 @@ public class ReadText : Singleton<ReadText>
     /// </summary>
     private void LoadDialog(string filename)
 	{
-		// The current line
-		string line;
+
+        dialogName = filename;
+
+        // The current line
+        string line;
 
         ///////////////////////////
         /////// DIALOG SIZE ///////
@@ -2383,12 +2349,20 @@ public class ReadText : Singleton<ReadText>
                         nextLevelNumber = -10;
                     }
 
-					// Default text box
-					textBoxes[i] = '0';
+                    if (line.Length > 8 && line.Substring(0, 9) == "@@@Choice")
+                    {
+                        textBoxes[i] = 'T';
+                    }
+                    else
+                    {
 
-					// Next line
-					i++;
-				}
+                        // Default text box
+                        textBoxes[i] = '0';
+                    }
+
+                    // Next line
+                    i++;
+                }
 				else
 				{
                     ////////////////////////////
@@ -2414,7 +2388,9 @@ public class ReadText : Singleton<ReadText>
 						expressions[i] = new int[charactersNumber];
 						isSpeaking[i] = new bool[charactersNumber];
 
-						for (int j = 0; j < charactersNumber; j++)
+                        Debug.Log(filename + " : " + line);
+
+                        for (int j = 0; j < charactersNumber; j++)
 						{
 							// Character
                             string characterName = words[3 + j * 3];
@@ -2445,12 +2421,14 @@ public class ReadText : Singleton<ReadText>
 							lines[i] = line;
 						}
 
-						// Next line
-						i++;
-					}
+                        // Next line
+                        i++;
+                    }
 				}
 			}
 		}
+
+        Debug.Log("Loaded " + filename);
 	}
 
     /////////////////////////////

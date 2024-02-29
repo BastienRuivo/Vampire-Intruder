@@ -1,0 +1,51 @@
+1 C Lord_Jasper Jasper Surprise 1
+Hein ? Le poste de garde@royal personnel du Prince Elrik ?
+0 C Lord_Jasper
+Mais… Qui candidate ?@Vous êtes toute seule.
+2 J Jessika Jasper Surprise 0 Jessika Flush 1
+Eh bien, moi.
+2 C Lord_Jasper Jasper Surprise 1 Jessika Neutral 0
+Toi ? Une gamine ?@Tu veux devenir garde royale ?!
+2 J Jessika Jasper Surprise 0 Jessika Neutral 1
+J’ai eu mes cinquante ans il y a deux semaines,@je suis donc majeure.
+0 J Jessika
+On a reçu l’appel à candidature@dans mon village la semaine dernière.
+0 J Jessika
+La lettre précisait que tout Vampire@majeur et compétent pouvait postuler.
+2 C Lord_Jasper Jasper Surprise 1 Jessika Neutral 0
+Certes, certes, mais bon…
+1 C Lord_Jasper Jasper Neutral 1
+L’ancien garde royal personnel du Prince Elrik@a atteint ce poste à l’âge de cinq cent vingt-sept ans !
+0 C Lord_Jasper
+Ce n’est pas une charge à prendre à la légère…
+1 C Lord_Jasper Jasper Upset 1
+Pas une charge pour une Vampire@à peine sortie de l’enfance !
+1 C Lord_Jasper Jasper Angry 1
+Il faut être prêt à braver l’adversité !
+0 S Lord_Jasper
+À mettre sa vie en péril@pour protéger le Prince !
+0 S Lord_Jasper
+À tout sacrifier pour son devoir :@amour, famille, richesses !
+1 T Jessika Jasper Angry 0
+Vu que je ne possède ni amour, ni famille, ni richesses,@ça ne va pas me poser problème…
+0 T Jessika
+Mais je ne suis pas sûre que ce soit ce que@ce vieux tonton veuille entendre.
+1 J Jessika Jessika Upset 1
+Ma candidature est très sérieuse.
+0 J Jessika
+Sans vouloir me vanter,@vous pourriez être surpris par mes capacités.
+0 J Jessika
+Je souhaite passer les épreuves me permettant d’accéder à ce poste,@au même titre que les autres candidats.
+2 C Lord_Jasper Jasper Upset 0 Jessika Upset 0
+…
+2 C Lord_Jasper Jasper Upset 1 Jessika Neutral 0
+Par tous les Diables, quelle perte de temps !
+0 C Lord_Jasper
+Je ne peux pas refuser ta candidature…
+0 C Lord_Jasper
+Mais sérieusement,@faire passer les épreuves à une fillette !
+0 C Lord_Jasper
+Ah, je suis convaincu que tu vas échouer,@ça m’arrangerait bien que tu te défiles avant de faire toute la paperasse.
+0 C Lord_Jasper
+Tu es bien sûre de ton coup ?@Ta sécurité lors du test ne sera pas garantie…
+@@@Choice Quel_accueil,_dites_donc_!@Que_devrais-je_lui_répondre_? Jasper Upset 2 Run0/Scene1/1a 0 0 Je_vous_ai_déjà_dit_que_j’étais_sérieuse,_mettez-moi_en_situation_! Run0/Scene1/1b 0 0 Oui,_j’en_suis_certaine.

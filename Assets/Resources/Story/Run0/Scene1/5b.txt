@@ -1,0 +1,17 @@
+@@@Disappear Jasper
+@@@Appear Jasper Upset 0
+1 C Lord_Jasper Jasper Upset 1
+Pff, et ça se dit compétente…
+0 C Lord_Jasper
+Bien, bien.
+1 C Lord_Jasper Jasper Neutral 1
+En bref, tu dois pénétrer dans le manoir et@l’explorer pour trouver un objectif à accomplir.
+0 C Lord_Jasper
+Tu dois absolument sortir du manoir@avant le lever du jour.
+0 C Lord_Jasper
+Et tu dois éviter@les gardes qui patrouillent.
+0 C Lord_Jasper
+Tu peux également mordre les gardes pour te@débarrasser d’eux, mais tu n’es pas obligée.
+1 C Lord_Jasper Jasper Upset 1
+C’est clair, maintenant ?
+@@@Choice Mmh..._Ai-je_tout_bien_compris_? Jasper Smile 2 Run0/Scene1/5a 0 0 C’est_tout_bon,_merci. Run0/Scene1/5b 0 0 Euh…_Je_veux_bien_que_vous_répétiez,_pour_être_sûre…
