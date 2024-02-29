@@ -12,11 +12,11 @@ namespace Systems.Ability.Abilities
         {
             GuardManager guardManager = avatar.GetComponent<GuardManager>();
             guardManager.GetVision().GetComponent<VisionSystemController>().enabled = false;
-            guardManager.feedBackAnimatorSedate.SetBool("isSedate",true);
+            guardManager.feedBackAnimatorSedate.SetBool("isSedat",true);
             guardManager.enabled = false;
             yield return new WaitForSeconds(SleepTime);
             guardManager.enabled = true;
-            guardManager.feedBackAnimatorSedate.SetBool("isSedate",false);
+            guardManager.feedBackAnimatorSedate.SetBool("isSedat",false);
             guardManager.GetVision().GetComponent<VisionSystemController>().enabled = true;
             
         }
