@@ -3211,7 +3211,7 @@ MonoBehaviour:
   levelData:
   - mainRef: _DisplaySword
     mainPhrase: "Crochetez la vitrine contenant l'\xE9p\xE9e marqu\xE9e"
-    startingEnergy: 0.21
+    startingEnergy: 0.1
     nbObjectives: 0
     seed: Tartanpion
   - mainRef: _StoleScroll

@@ -436,6 +436,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
                     _tempPathfindTarget = null;
                     if(currentTarget.targetType == Targetable.TargetType.PLAYER)
                     {
+                        transform.parent = currentTarget.transform;
                         CameraShake.GetInstance().Shake(0.2f);
                         EnterPlayerSigth();
                     }
@@ -923,6 +924,7 @@ public class GuardManager : MonoBehaviour, IEventObserver<VisionSystemController
     public void OnEvent(Targetable context)
     {
         _ignoredTargets.Remove(context);
+        currentTarget = null;
     }
 }
 // CONE VISION

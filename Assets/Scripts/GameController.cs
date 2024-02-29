@@ -98,10 +98,28 @@ public class GameController : Singleton<GameController>
         GameEndingManager.instance.onPlayerExtraction();
         Debug.Log("Level Completed.");
     }
-    
+
+    public List<T> ShuffleList<T>(List<T> list)
+    {
+        List<T> temp = new List<T>();
+        temp.AddRange(list);
+
+        List<T> res = new List<T>();
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            int index = UnityEngine.Random.Range(0, temp.Count - 1);
+            res.Add(temp[index]);
+            temp.RemoveAt(index);
+        }
+
+        return res;
+    }
+
     public void SetObjectives()
     {
         var objectives = GameObject.FindGameObjectsWithTag("Interactible").Select(x => x.GetComponent<Interactible>()).ToList();
+        objectives = ShuffleList(objectives);
         Debug.Log(objectives.Count + " on map");
         List<string> chosenRefs = new List<string>();
         List<Interactible> rejected = new List<Interactible>();
@@ -408,6 +426,18 @@ public class GameController : Singleton<GameController>
         PlayerState.GetInstance().GetPlayerController().UnlockInput();
 
         _hasLevelLoaded = true;
+        Debug.Log("Run number ? " + AppState.GetInstance().getRunNumber());
+        if(AppState.GetInstance().getRunNumber() == 0)
+        {
+            PlayerState.GetInstance().GetPlayerController().SetArrowTarget(_main.gameObject.transform.Find("pathfindTarget"));
+            PlayerState.GetInstance().GetPlayerController().arrowPointer.SetColor(Color.red);
+            PlayerState.GetInstance().GetPlayerController().arrowPointer.ShowSeal();
+        }
+        else
+        {
+            PlayerState.GetInstance().GetPlayerController().arrowPointer.Disable();
+        }
+        
     }
 
     private void countGard(){
@@ -454,7 +484,36 @@ public class GameController : Singleton<GameController>
         {
             case ObjectiveEvent.IN_RANGE: obj.state = ObjectiveState.PLAYER_AT; break;
             case ObjectiveEvent.OUT_RANGE: obj.state = ObjectiveState.DISCOVERED; break;
-            case ObjectiveEvent.COMPLETE: obj.state = ObjectiveState.DONE; break;
+            case ObjectiveEvent.COMPLETE: 
+                obj.state = ObjectiveState.DONE; 
+                if(obj.isMain && AppState.GetInstance().getRunNumber() == 0)
+                {
+                    PlayerState.GetInstance().GetPlayerController().arrowPointer.SetColor(Color.blue);
+                    float dstMin = float.MaxValue;
+                    Interactible closest = null;
+                    foreach(RoomData room in rooms)
+                    {
+                        var interactibles = room.transform.GetComponentsInChildren<Interactible>(true).Where(i => i.afterUse == Interactible.AfterUse.END_LVL);
+                        
+                        foreach(Interactible inter in interactibles)
+                        {
+                            float dst = Vector3.Distance(PlayerState.GetInstance().transform.position, inter.transform.position);
+                            if (dst < dstMin)
+                            {
+                                closest = inter;
+                                dstMin = dst;
+                            }
+                        }
+                    }
+                    if(closest != null)
+                    {
+                        PlayerState.GetInstance().GetPlayerController().SetArrowTarget(closest.transform.Find("pathfindTarget"));
+                        PlayerState.GetInstance().GetPlayerController().arrowPointer.SetColor(Color.blue);
+                        PlayerState.GetInstance().GetPlayerController().arrowPointer.ShowExit();
+                    }
+
+                }
+                break;
         }
     }
 
@@ -500,7 +559,12 @@ public class GameController : Singleton<GameController>
     {
         get
         {
-            return _main.state == ObjectiveState.DONE;
+            return _hasLevelLoaded && _main.state == ObjectiveState.DONE;
         }
+    }
+
+    public Vector3 GetMainPos()
+    {
+        return _main.gameObject.transform.position;
     }
 }

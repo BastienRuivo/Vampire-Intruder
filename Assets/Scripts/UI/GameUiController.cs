@@ -43,11 +43,7 @@ public class GameUiController : MonoBehaviour,
 
     private readonly SmoothScalarValue _playerBloodStatSmooth = new SmoothScalarValue(1);
     private readonly SmoothScalarValue _playerBloodStatEyeEffectSmooth =  new SmoothScalarValue(0, 5f);
-    
-    private float _objectiveDownY;
-    private float _objectiveUpY;
-    private bool _isObjectiveDisplayed;
-    private IEnumerator _objectiveDisplayCoroutine;
+
     private IEnumerator _levelCompleteFade;
 
     private AbilitySystemComponent _playerASC;
@@ -113,10 +109,6 @@ public class GameUiController : MonoBehaviour,
         _abilitySelector.SetAbilitySystemComponent(_playerASC);
         _abilitySelector.UpdateAbilityUIBase();
         _abilitySelector.SetOpacity(0);
-        
-        _objectiveDownY = objectivesPanel.transform.localPosition.y;
-        _objectiveUpY = _objectiveDownY * objectivesHeightOnScreen;
-        _isObjectiveDisplayed = false;
     }
 
     // Update is called once per frame
@@ -125,17 +117,7 @@ public class GameUiController : MonoBehaviour,
         healthBarPanel.GetComponent<Image>().material.SetFloat("_Progression",_playerBloodStatSmooth.UpdateGetValue());
         eyeballBarPanel.GetComponent<Image>().material.SetFloat("_Damage",_playerBloodStatEyeEffectSmooth.UpdateGetValue());
 
-        _objectiveUpY = _objectiveDownY * objectivesHeightOnScreen;
         HandleMessageUpdate();
-
-        if(Input.GetKeyDown(KeyCode.O))
-        {
-            _isObjectiveDisplayed = !_isObjectiveDisplayed;
-            if (_objectiveDisplayCoroutine != null) 
-                StopCoroutine(_objectiveDisplayCoroutine);
-            _objectiveDisplayCoroutine = _isObjectiveDisplayed ? DisplayObjective() : HideObjective();
-            StartCoroutine(_objectiveDisplayCoroutine);
-        }
 
         _abilitySelector.SetOpacity(_abilitySelectorOpacity.UpdateGetValue());
         _abilityEIndicator.SetOpacity(1 - _abilitySelectorOpacity.GetValue());
@@ -169,28 +151,6 @@ public class GameUiController : MonoBehaviour,
             _playerASC.GetInputLock().Release();
             _abilityEIndicator.SetAbilityTag(_playerASC.GetAbilityByBinding(KeyCode.E));
             _hasLock = false;
-        }
-    }
-
-    IEnumerator DisplayObjective()
-    {
-        while(objectivesPanel.transform.localPosition.y < _objectiveUpY)
-        {
-            var pos = objectivesPanel.transform.localPosition;
-            pos.y = Mathf.Lerp(objectivesPanel.transform.localPosition.y, _objectiveUpY, Time.deltaTime * upSpeed);
-            objectivesPanel.transform.localPosition = pos;
-            yield return null;
-        }
-    }
-
-    IEnumerator HideObjective()
-    {
-        while (objectivesPanel.transform.localPosition.y > _objectiveDownY)
-        {
-            var pos = objectivesPanel.transform.localPosition;
-            pos.y = Mathf.Lerp(objectivesPanel.transform.localPosition.y, _objectiveDownY, Time.deltaTime * downSpeed);
-            objectivesPanel.transform.localPosition = pos;
-            yield return null;
         }
     }
 

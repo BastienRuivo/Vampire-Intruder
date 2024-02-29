@@ -64,6 +64,14 @@ PrefabInstance:
       propertyPath: replacementSprite
       value: 
       objectReference: {fileID: 21300000, guid: 97986855ad4038846b0fcf05151c1d08, type: 3}
+    - target: {fileID: 5188962441455097790, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5188962441455097790, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.212
+      objectReference: {fileID: 0}
     - target: {fileID: 8417480897970637052, guid: 28be07fe7ef65fb44ba96548031c4daf, type: 3}
       propertyPath: m_Sprite
       value: 

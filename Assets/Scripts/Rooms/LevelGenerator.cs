@@ -69,7 +69,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public List<RoomData> convexHull;
     public Queue<GameObject> roomToFill;
 
-    public float startingEnergy = 5f;
+    public float startingEnergy = -1f;
     bool hasStart = false;
 
     private static float _maximumOverlapp = 0.3f;
@@ -195,6 +195,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             List<RoomData.Type> typeTested = new List<RoomData.Type>();
 
             // If energy is really low, avoid generating corridor
+            Debug.Log("Can place corridor ? " + (roomData.energy - roomParameters[(int)RoomData.Type.CORRIDORS].cost).ToString());
             if(roomData.energy - roomParameters[(int)RoomData.Type.CORRIDORS].cost <= 0f)
             {
                 typeTested.Add(RoomData.Type.CORRIDORS);
@@ -486,7 +487,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         seed = level.seed;
         Debug.Log("Seed is " + level.seed);
         startingEnergy = level.startingEnergy;
-        Debug.Log("Level is generating with seed " + seed);
+        Debug.Log("Level is generating with seed " + seed + " and energy " + startingEnergy);
         if(!string.IsNullOrEmpty(seed)) 
         { 
             Random.InitState(StringToInt(seed));
@@ -511,7 +512,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
         {
             if (!hasStart)
             {
-                //Debug.Log("Starting " + startingEnergy.ToString());
                 FillRoom(roomToFill.Dequeue(), startingEnergy);
                 hasStart = true;
             }
@@ -519,7 +519,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
             {
                 FillRoom(roomToFill.Dequeue());
             }
-            //Debug.Log("Remain " + roomToFill.Count + " in queue");
         }
     }
 
